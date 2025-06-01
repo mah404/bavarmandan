@@ -17,6 +17,8 @@ const KashfolmoradSchema = new mongoose.Schema({
 
 const Kashfolmorad = mongoose.models.Kashfolmorad || mongoose.model("Kashfolmorad", KashfolmoradSchema);
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     await connectDB();
