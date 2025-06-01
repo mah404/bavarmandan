@@ -25,6 +25,7 @@ const MaktobatSchema = new mongoose.Schema({
   content: String,
   pdf: Buffer,
   mimeType: String,
+  audioUrl: String, // ✅ added audio support
 });
 
 let Maktobat;
@@ -44,8 +45,8 @@ export async function GET() {
     title: doc.title,
     content: doc.content,
     pdfUrl: `data:${doc.mimeType};base64,${doc.pdf.toString("base64")}`,
+    audioUrl: doc.audioUrl || null, // ✅ added this
   }));
 
   return NextResponse.json(data);
 }
-
