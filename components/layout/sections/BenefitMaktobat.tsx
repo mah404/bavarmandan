@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import Lottie from "lottie-react";
+import loadingPdfAnim from "@/public/loadingpdf.json";
 
 interface Maktobat {
   id: string;
@@ -107,9 +109,11 @@ export const BenefitMaktobat = () => {
           </SheetHeader>
 
           {loading ? (
-            <div className="text-muted-foreground px-4 py-6">
-              در حال بارگذاری فایل‌ها...
-            </div>
+             <Lottie
+                  animationData={loadingPdfAnim}
+                  loop
+                  className="text-muted-foreground bg-transparent mt-4"
+                />
           ) : (
             <Accordion type="single" collapsible className="w-full">
               {maktobats.map((maktobat) => (
