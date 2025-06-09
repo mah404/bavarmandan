@@ -1,47 +1,69 @@
-// components/layout/sections/BenefitCard.tsx
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Icon } from "@/components/ui/icon";
-import { icons } from "lucide-react";
 
-export interface BenefitCardProps {
-  icon: string;
-  title: string;
-  description: string;
-  index: number;
-  onClick: () => void;
-}
+export const BenefitsCard = () => {
+  const [open, setOpen] = useState(false);
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
 
-export const BenefitCard = ({
-  icon,
-  title,
-  description,
-  index,
-  onClick,
-}: BenefitCardProps) => {
+  const fetchDescription = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/benefit?id=akhlagh");
+      const data = await res.json();
+      setDescription(data.description);
+    } catch {
+      setDescription("خطا در دریافت اطلاعات.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <Card
-      onClick={onClick}
-      className="cursor-pointer hover:bg-background transition-all delay-75 group/number"
-    >
-      <CardHeader>
-        <div className="flex justify-between">
-          <Icon
-            name={icon as keyof typeof icons}
-            size={32}
-            color="hsl(var(--primary))"
-            className="mb-6 text-primary"
-          />
-          <span className="text-5xl text-muted-foreground/15 font-medium transition-all delay-75 group-hover/number:text-muted-foreground/30">
-            0{index + 1}
-          </span>
-        </div>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="text-muted-foreground">
-        {description.slice(0, 60)}...
-      </CardContent>
-    </Card>
+    <>
+      <Card
+        onClick={() => {
+          fetchDescription();
+          setOpen(true);
+        }}
+        className="cursor-pointer hover:bg-background transition"
+      >
+        <CardHeader>
+          <div className="flex justify-between">
+            <Icon name="Wallet" size={32} color="hsl(var(--primary))" />
+            <span className="text-5xl text-muted-foreground/15 font-medium">04</span>
+          </div>
+          <CardTitle>مباحث متفرقه</CardTitle>
+        </CardHeader>
+     
+      </Card>
+
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>مباحث اخلاقی</SheetTitle>
+            <SheetDescription>
+              {loading ? "در حال بارگذاری..." : description}
+            </SheetDescription>
+      
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 };

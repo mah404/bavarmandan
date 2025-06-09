@@ -1,12 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -15,6 +10,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Icon } from "@/components/ui/icon";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export const BenefitAkhlaq = () => {
   const [open, setOpen] = useState(false);
@@ -34,6 +35,39 @@ export const BenefitAkhlaq = () => {
     }
   };
 
+  const audioFiles = [
+    {
+      title: "جلسه اول مجموعه شیعه و میراث فاطمی ",
+      description: "دوشنبه،آن روز تاریک",
+      url: "https://www.dropbox.com/scl/fi/btmozuf3laxsbgsmbmy24/1shieefatemi1.mp3?rlkey=lc0q4kshy9af1tbwqy290oa6x&st=mp9fwkgr&dl=1",
+    },
+    {
+      title: "جلسه دوم مجموعه شیعه و میراث فاطمی",
+      description: "سقیفه ، حلوای حکومت، بلوای بدعت",
+      url: "https://www.dropbox.com/scl/fi/5oz26x4j7osyxvuxxfck3/2shieefatemi2.mp3?rlkey=li2lib2nfpp5do5brcjhcj8ua&st=vr39in6y&dl=1",
+    },
+        {
+      title: "جلسه سوم مجموعه شیعه و میراث فاطمی",
+      description: " فدک ، صدای حق طلبی فاطمی",
+      url: "https://www.dropbox.com/scl/fi/rh1sorwji64exrxm3flqs/3shieefatemi4.mp3?rlkey=ur0oa9u7f1ve39qfq6zzshysu&st=j4ek72gy&dl=1",
+    },
+        {
+      title: "جلسه چهارم مجموعه شیعه و میراث فاطمی",
+      description: "در تکاپوی نجات امت رسول (ص)",
+      url: "https://www.dropbox.com/scl/fi/47rrmjad2ho2r3exs76b4/4shieefatemi3.mp3?rlkey=r5yzdbzo5kvqhckg7gv0cpl71&st=g7oehbku&dl=1",
+    },
+        {
+      title: "گفتگوی قرآنی",
+      description: "عصمت انبیا",
+      url: "https://www.dropbox.com/scl/fi/z72trsexlmb6qqdwpuebs/5goftegooqoraaniesmat.mp3?rlkey=rowl60vaoscx9kc9jrvhh5nh2&st=uf6tidxe&dl=1",
+    },
+        {
+      title: "گفتگوی قرآنی",
+      description: "شفاعت",
+      url: "https://www.dropbox.com/scl/fi/b4ryi5fysvuilaebrh4hq/6goftegooyeqoraanishefaat.mp3?rlkey=w1kd24o757hyh88jollmzdp89&st=0vaqeb7s&dl=1",
+    },
+  ];
+
   return (
     <>
       <Card
@@ -46,13 +80,12 @@ export const BenefitAkhlaq = () => {
         <CardHeader>
           <div className="flex justify-between">
             <Icon name="Wallet" size={32} color="hsl(var(--primary))" />
-            <span className="text-5xl text-muted-foreground/15 font-medium">03</span>
+            <span className="text-5xl text-muted-foreground/15 font-medium">
+              03
+            </span>
           </div>
           <CardTitle>مباحث اخلاقی</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground">
-          برای مشاهده کلیک کنید
-        </CardContent>
       </Card>
 
       <Sheet open={open} onOpenChange={setOpen}>
@@ -60,7 +93,31 @@ export const BenefitAkhlaq = () => {
           <SheetHeader>
             <SheetTitle>مباحث اخلاقی</SheetTitle>
             <SheetDescription>
-              {loading ? "در حال بارگذاری..." : description}
+              {loading ? (
+                "در حال بارگذاری..."
+              ) : (
+                <div>
+                  <Accordion type="single" collapsible className="w-full">
+                    {audioFiles.map((file, i) => (
+                      <AccordionItem key={i} value={`item-${i}`}>
+                        <AccordionTrigger>{file.title}</AccordionTrigger>
+                        <AccordionContent className="flex flex-col gap-4 text-balance">
+                          <audio controls className="w-full mt-2">
+                            <source src={file.url} type="audio/mpeg" />
+                            مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
+                          </audio>
+                          <p
+                            dir="rtl"
+                            className="text-primary text-sm font-semibold mb-2"
+                          >
+                            {file.description}
+                          </p>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              )}
             </SheetDescription>
           </SheetHeader>
         </SheetContent>

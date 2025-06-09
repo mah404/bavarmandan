@@ -27,7 +27,6 @@ export const metadata = {
       },
     ],
   },
-
 };
 
 export default function Home() {
@@ -37,7 +36,7 @@ export default function Home() {
       <BenefitsSection />
       <ServicesSection />
       <CommunitySection />
-           <FooterSection />
+      <FooterSection />
     </>
   );
 }

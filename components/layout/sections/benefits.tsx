@@ -1,8 +1,7 @@
 import { BenefitAkhlaq } from "./BenefitAkhlaq ";
 import { BenefitMaktobat } from "./BenefitMaktobat";
 import { BenefitTajrid } from "./BenefitTajrid ";
-
-
+import { BenefitsCard } from "./BenefitsCard";
 export const BenefitsSection = () => {
   return (
     <section className="container py-24 sm:py-32">
@@ -18,6 +17,7 @@ export const BenefitsSection = () => {
           <BenefitMaktobat />
           <BenefitTajrid />
           <BenefitAkhlaq />
+          <BenefitsCard />
         </div>
       </div>
     </section>
