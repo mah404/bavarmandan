@@ -9,7 +9,7 @@ export const BenefitsSection = () => {
         <div dir="rtl">
           <h2 className="text-3xl font-bold mb-4">محتوای صوتی و نوشتاری</h2>
           <p className="text-xl text-muted-foreground mb-8">
-            معرفی موضوعات متنوع برای توسعه فکری.
+مجموعه ی صوتی کامل و تدوین نشده ی جلسات
           </p>
         </div>
 
