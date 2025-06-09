@@ -84,14 +84,14 @@ export const BenefitAkhlaq = () => {
               03
             </span>
           </div>
-          <CardTitle>مباحث اخلاقی</CardTitle>
+          <CardTitle> مباحث متفرقه</CardTitle>
         </CardHeader>
       </Card>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>مباحث اخلاقی</SheetTitle>
+            <SheetTitle>مباحث متفرقه</SheetTitle>
             <SheetDescription>
               {loading ? (
                 "در حال بارگذاری..."
