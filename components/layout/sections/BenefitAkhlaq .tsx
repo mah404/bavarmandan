@@ -101,21 +101,18 @@ export const BenefitAkhlaq = () => {
                     {/* First 4 sessions */}
                     <AccordionItem value="group-1">
                       <AccordionTrigger>
-                        مجموعه شیعه و میراث فاطمی (جلسه ۱ تا ۴)
+                         شیعه و میراث فاطمی
                       </AccordionTrigger>
                       <AccordionContent className="flex flex-col gap-4">
                         {audioFiles.slice(0, 4).map((file, i) => (
                           <div key={i} className="border rounded-lg p-2">
-                            <div className="font-semibold mb-1">
-                              {file.title}
+                            <div className="font-semibold mb-1 text-primary">
+                              {file.description}
                             </div>
                             <audio controls className="w-full">
                               <source src={file.url} type="audio/mpeg" />
                               مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
                             </audio>
-                            <p dir="rtl" className="text-primary text-sm mt-1">
-                              {file.description}
-                            </p>
                           </div>
                         ))}
                       </AccordionContent>
@@ -123,9 +120,7 @@ export const BenefitAkhlaq = () => {
 
                     {/* Last 2 sessions */}
                     <AccordionItem value="group-2">
-                      <AccordionTrigger>
-                        گفتگوهای قرآنی (جلسه ۵ و ۶)
-                      </AccordionTrigger>
+                      <AccordionTrigger>گفتگوهای قرآنی</AccordionTrigger>
                       <AccordionContent className="flex flex-col gap-4">
                         {audioFiles.slice(4).map((file, i) => (
                           <div key={i + 4} className="border rounded-lg p-2">
@@ -141,6 +136,12 @@ export const BenefitAkhlaq = () => {
                             </p>
                           </div>
                         ))}
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="group-2">
+                      <AccordionTrigger> مباحث متفرقه</AccordionTrigger>
+                      <AccordionContent className="flex flex-col gap-4">
+                   
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
