@@ -130,7 +130,8 @@ export const BenefitMaktobat = () => {
                         </a>
                       </div>
                       <div className=" rounded-xl shadow-md p-4 mt-4  ">
-                        <SheetDescription className="text-primary text-sm font-semibold mb-2">
+                        <SheetDescription
+                           className="text-primary text-sm font-semibold mb-2">
                           🎧 پخش صوت
                         </SheetDescription>
                         {maktobat.audioUrl ? (
