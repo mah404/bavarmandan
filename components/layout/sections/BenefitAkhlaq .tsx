@@ -46,22 +46,22 @@ export const BenefitAkhlaq = () => {
       description: "سقیفه ، حلوای حکومت، بلوای بدعت",
       url: "https://www.dropbox.com/scl/fi/5oz26x4j7osyxvuxxfck3/2shieefatemi2.mp3?rlkey=li2lib2nfpp5do5brcjhcj8ua&st=vr39in6y&dl=1",
     },
-        {
+    {
       title: "جلسه سوم مجموعه شیعه و میراث فاطمی",
       description: " فدک ، صدای حق طلبی فاطمی",
       url: "https://www.dropbox.com/scl/fi/rh1sorwji64exrxm3flqs/3shieefatemi4.mp3?rlkey=ur0oa9u7f1ve39qfq6zzshysu&st=j4ek72gy&dl=1",
     },
-        {
+    {
       title: "جلسه چهارم مجموعه شیعه و میراث فاطمی",
       description: "در تکاپوی نجات امت رسول (ص)",
       url: "https://www.dropbox.com/scl/fi/47rrmjad2ho2r3exs76b4/4shieefatemi3.mp3?rlkey=r5yzdbzo5kvqhckg7gv0cpl71&st=g7oehbku&dl=1",
     },
-        {
+    {
       title: "گفتگوی قرآنی",
       description: "عصمت انبیا",
       url: "https://www.dropbox.com/scl/fi/z72trsexlmb6qqdwpuebs/5goftegooqoraaniesmat.mp3?rlkey=rowl60vaoscx9kc9jrvhh5nh2&st=uf6tidxe&dl=1",
     },
-        {
+    {
       title: "گفتگوی قرآنی",
       description: "شفاعت",
       url: "https://www.dropbox.com/scl/fi/b4ryi5fysvuilaebrh4hq/6goftegooyeqoraanishefaat.mp3?rlkey=w1kd24o757hyh88jollmzdp89&st=0vaqeb7s&dl=1",
@@ -98,23 +98,51 @@ export const BenefitAkhlaq = () => {
               ) : (
                 <div>
                   <Accordion type="single" collapsible className="w-full">
-                    {audioFiles.map((file, i) => (
-                      <AccordionItem key={i} value={`item-${i}`}>
-                        <AccordionTrigger>{file.title}</AccordionTrigger>
-                        <AccordionContent className="flex flex-col gap-4 text-balance">
-                          <audio controls className="w-full mt-2">
-                            <source src={file.url} type="audio/mpeg" />
-                            مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
-                          </audio>
-                          <p
-                            dir="rtl"
-                            className="text-primary text-sm font-semibold mb-2"
-                          >
-                            {file.description}
-                          </p>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
+                    {/* First 4 sessions */}
+                    <AccordionItem value="group-1">
+                      <AccordionTrigger>
+                        مجموعه شیعه و میراث فاطمی (جلسه ۱ تا ۴)
+                      </AccordionTrigger>
+                      <AccordionContent className="flex flex-col gap-4">
+                        {audioFiles.slice(0, 4).map((file, i) => (
+                          <div key={i} className="border rounded-lg p-2">
+                            <div className="font-semibold mb-1">
+                              {file.title}
+                            </div>
+                            <audio controls className="w-full">
+                              <source src={file.url} type="audio/mpeg" />
+                              مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
+                            </audio>
+                            <p dir="rtl" className="text-primary text-sm mt-1">
+                              {file.description}
+                            </p>
+                          </div>
+                        ))}
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Last 2 sessions */}
+                    <AccordionItem value="group-2">
+                      <AccordionTrigger>
+                        گفتگوهای قرآنی (جلسه ۵ و ۶)
+                      </AccordionTrigger>
+                      <AccordionContent className="flex flex-col gap-4">
+                        {audioFiles.slice(4).map((file, i) => (
+                          <div key={i + 4} className="border rounded-lg p-2">
+                            <div className="font-semibold mb-1">
+                              {file.title}
+                            </div>
+                            <audio controls className="w-full">
+                              <source src={file.url} type="audio/mpeg" />
+                              مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
+                            </audio>
+                            <p dir="rtl" className="text-primary text-sm mt-1">
+                              {file.description}
+                            </p>
+                          </div>
+                        ))}
+                      </AccordionContent>
+                    </AccordionItem>
                   </Accordion>
                 </div>
               )}
