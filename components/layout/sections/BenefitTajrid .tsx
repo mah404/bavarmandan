@@ -77,14 +77,14 @@ export const BenefitTajrid = () => {
               02
             </span>
           </div>
-          <CardTitle>کتاب تجرید الاعتقاد</CardTitle>
+          <CardTitle>دروس شرح کتاب تجرید الاعتقاد</CardTitle>
         </CardHeader>
       </Card>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent className="max-h-screen overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>کتاب تجرید الاعتقاد</SheetTitle>
+            <SheetTitle>دروس شرح کتاب تجرید الاعتقاد</SheetTitle>
             <SheetDescription>
               {loading ? (
                 <Lottie
@@ -97,7 +97,7 @@ export const BenefitTajrid = () => {
                   {/* PDFs in one item */}
                   <AccordionItem value="tajrid-pdfs">
                     <AccordionTrigger>
-                      فایل‌های PDF تجرید الاعتقاد
+                      کتاب شرح تجرید الاعتقاد{" "}
                     </AccordionTrigger>
                     <AccordionContent>
                       {sections.map((section: any) => (
