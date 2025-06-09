@@ -184,14 +184,14 @@ export const BenefitsCard = () => {
               04
             </span>
           </div>
-          <CardTitle>مباحث اعتقادی</CardTitle>
+          <CardTitle>مباحث اخلاقی</CardTitle>
         </CardHeader>
       </Card>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent className=" overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>مباحث اعتقادی</SheetTitle>
+            <SheetTitle>مباحث اخلاقی</SheetTitle>
             <SheetDescription>
               {loading ? (
                 "در حال بارگذاری..."

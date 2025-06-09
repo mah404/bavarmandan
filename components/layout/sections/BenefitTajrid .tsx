@@ -30,9 +30,23 @@ const tajridAudios: string[] = [
   "https://www.dropbox.com/scl/fi/solal1yet7rcdzfxm507c/tajrid6.mp3?rlkey=imv1r2ywtnj9nytl95z7mal07&st=bzzssevl&dl=1",
   "https://www.dropbox.com/scl/fi/tuvxatxw83gocza67dfny/tajrid7.mp3?rlkey=w11h3pw4hn3j0c5d5zvra1ffq&st=8ftsfwlz&dl=1",
   "https://www.dropbox.com/scl/fi/vu2nkhvfsb07tkgn8n85o/tajrid8.mp3?rlkey=12jcwtev2tq5pex53wy48kym3&st=3ehufuqa&dl=1",
+  "https://www.dropbox.com/scl/fi/32gq08cqvm52eob8s0qsy/tajrid9.mp3?rlkey=7e4huy451fkz15sxjwd5y3q53&st=tt9ap55p&dl=1",
+
+  "https://www.dropbox.com/scl/fi/1vdl2x6ue2urfztgu1wsg/tajrid10.mp3?rlkey=s5igsuz69ke2v1xkgadg1owu6&st=jek6i9cn&dl=1",
+  "https://www.dropbox.com/scl/fi/qelngel22f7j8nse8ubiw/tajrid11.mp3?rlkey=spm58poolujz4bo6iru0fqem3&st=jo7x73vi&dl=1",
+  "https://www.dropbox.com/scl/fi/44illo71jw06tyj6ugjph/tajrid12.mp3?rlkey=p211tb3pn7q1ipxl0eu6wz6fp&st=0uj0ne9i&dl=1",
+  "https://www.dropbox.com/scl/fi/dbcsk491hwbv8hoxrti4r/tajrid13.mp3?rlkey=qrnqgdu2bpbqb50pbq4y8fvn9&st=m6ze0d27&dl=1",
+  "https://www.dropbox.com/scl/fi/dq1thxesyvpe3jjo9l6y3/tajrid14.mp3?rlkey=s64ejts2apwoqpgbqqyq0cia2&st=5xedt3bs&dl=1",
+  "https://www.dropbox.com/scl/fi/aeclnvfn223tf5q9wbv6n/tajrid15.mp3?rlkey=mdkd3bgjydwl85pyu6pw4pnty&st=4kzul2bo&dl=1",
+  "https://www.dropbox.com/scl/fi/vco9kk3v27lew5rc7pnh1/tajrid16.mp3?rlkey=2sqyjomjvff8lqcjcvcpeniem&st=fbuwpp6p&dl=1",
+  "https://www.dropbox.com/scl/fi/u295bcy6e9mvgx7vwfdf7/tajrid17.mp3?rlkey=cuxbuzr3yv5cfgg0klyke4bov&st=njkes2kl&dl=1",
+  "https://www.dropbox.com/scl/fi/3enwxgoe0o7rgom8hm2eu/tajrid18.mp3?rlkey=cemfyp5n448q3mbipawwa9k7o&st=tyy79kif&dl=1",
+  "https://www.dropbox.com/scl/fi/2wwp64nu3p53uoq23ch69/tajrid19.mp3?rlkey=8rtig64yi9fdoiwjak9zqjtaw&st=7pacwlm7&dl=1",
+  "https://www.dropbox.com/scl/fi/fz600nrej39galrvbinno/tajrid20.mp3?rlkey=sm3r2wekd6jqc6suoj4w0wv8u&st=xs3lioa9&dl=1",
+  "https://www.dropbox.com/scl/fi/slfjmnlmahm4zb0krcvwz/tajrid21.mp3?rlkey=3dbq3ig6wbhryyx6vd55rbgys&st=bvg128ph&dl=1",
+  "https://www.dropbox.com/scl/fi/btt3vrlpjbx351irr7828/tajrid22.mp3?rlkey=xty7hkn2jgcg7xlpcf9nluqip&st=7c6izqhh&dl=1",
+  "https://www.dropbox.com/scl/fi/rp0272b3bp1blntoi2i5k/tajrid23.mp3?rlkey=je7yj26e6n0z0pacc3c27amhd&st=jr6mfi0i&dl=1",
 ];
-
-
 
 export const BenefitTajrid = () => {
   const [open, setOpen] = useState(false);
@@ -80,31 +94,56 @@ export const BenefitTajrid = () => {
                 />
               ) : (
                 <Accordion type="single" collapsible className="w-full mt-4">
-                  {sections.map((section: any) => (
-                    <AccordionItem key={section.id} value={section.id}>
-                      <AccordionTrigger>{section.title}</AccordionTrigger>
-                      <AccordionContent>
-                        <a href={section.pdfUrl} download>
-                          <Button>PDF</Button>
-                        </a>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-
-                  <AccordionItem value="tajrid-audio">
-                    <AccordionTrigger>فایل‌های صوتی تجرید الاعتقاد</AccordionTrigger>
+                  {/* PDFs in one item */}
+                  <AccordionItem value="tajrid-pdfs">
+                    <AccordionTrigger>
+                      فایل‌های PDF تجرید الاعتقاد
+                    </AccordionTrigger>
                     <AccordionContent>
-                      {tajridAudios.map((url, i) => (
-                        <div key={i} className="mb-4">
-                          <SheetDescription className="text-sm mb-1">جلسه {i + 1}</SheetDescription>
-                          <audio controls className="w-full">
-                            <source src={url} type="audio/mpeg" />
-                            مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
-                          </audio>
+                      {sections.map((section: any) => (
+                        <div
+                          key={section.id}
+                          className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+                        >
+                          <span className="text-sm text-muted-foreground">
+                            {section.title}
+                          </span>
+                          <div className="flex gap-2">
+                            <a
+                              href={section.pdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Button variant="outline">نمایش</Button>
+                            </a>
+                            <a href={section.pdfUrl} download>
+                              <Button>دانلود</Button>
+                            </a>
+                          </div>
                         </div>
                       ))}
                     </AccordionContent>
                   </AccordionItem>
+
+                  {[...tajridAudios].reverse().map((url, i) => {
+                    const sessionNumber = tajridAudios.length - i; // 23 - i
+                    return (
+                      <AccordionItem
+                        key={`audio-${sessionNumber}`}
+                        value={`audio-${sessionNumber}`}
+                      >
+                        <AccordionTrigger>
+                          جلسه {sessionNumber}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <audio controls className="w-full">
+                            <source src={url} type="audio/mpeg" />
+                            مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
+                          </audio>
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
                 </Accordion>
               )}
             </SheetDescription>
