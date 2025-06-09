@@ -125,15 +125,13 @@ export const BenefitAkhlaq = () => {
                         {audioFiles.slice(4).map((file, i) => (
                           <div key={i + 4} className="border rounded-lg p-2">
                             <div className="font-semibold mb-1">
-                              {file.title}
+                              {file.description}
                             </div>
                             <audio controls className="w-full">
                               <source src={file.url} type="audio/mpeg" />
                               مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
                             </audio>
-                            <p dir="rtl" className="text-primary text-sm mt-1">
-                              {file.description}
-                            </p>
+                        
                           </div>
                         ))}
                       </AccordionContent>
