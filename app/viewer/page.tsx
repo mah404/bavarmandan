@@ -1,13 +1,21 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function PdfViewerPage() {
+export default function ViewerPage() {
   const searchParams = useSearchParams();
-  const pdfUrl = searchParams.get("pdf");
+  const [pdfUrl, setPdfUrl] = useState("");
+
+  useEffect(() => {
+    const pdf = searchParams.get("pdf");
+    if (pdf) {
+      setPdfUrl(pdf);
+    }
+  }, [searchParams]);
 
   if (!pdfUrl) {
-    return <div className="p-4 text-red-500">PDF یافت نشد</div>;
+    return <p className="text-center mt-10">در حال بارگذاری فایل PDF...</p>;
   }
 
   return (
