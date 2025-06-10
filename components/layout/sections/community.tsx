@@ -17,24 +17,24 @@ export const CommunitySection = () => {
         <div className="lg:w-[60%] mx-auto">
           <Card
             dir="rtl"
-            className="bg-background border-none shadow-none text-right flex flex-col items-center justify-center"
+            className="bg-background border-none shadow-none text-center flex flex-col items-center justify-center"
           >
             <CardHeader>
               <CardTitle className="text-4xl md:text-5xl font-bold flex flex-col items-center">
                 <div>
                   <span className=" pl-2 bg-gradient-to-r text-yellow-300 bg-clip-text">
-                    تذکرات جلسات مجمع باورمندان کلاب هاوس
+                    تذکرات و نکات جلسات «مجمع باورمندان» در کلاب‌هاوس
                   </span>
                 </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="lg:w-[80%] text-xl text-muted-foreground leading-relaxed">
-              بنا به هدف از تشکیل جلسات مجمع باورمندان کلاب هاوس در تلاش به جهت
-              هم افزایی فکر و تبادل نظرات در راستای ایجاد کمک در مهیا نمودن فضای
-              گفتگوی سالم در سایه عقل، منطق و ادب و همچنین ایجاد مودت و فضای
-              آرام و بدون تشنج در حد وسع و توان در مسیر رشد و تعالی عقلی، اخلاقی
-              و معنوی از همه دوستان و عزیزان شرکت کننده در این جلسات خواستار
-              رعایت موارد و تذکرات ذیل می‌باشد.
+              با توجه به اهداف شکل‌گیری جلسات «مجمع باورمندان» در کلاب‌هاوس، که
+              با نیت هم‌افزایی فکری و تبادل آرا در راستای ایجاد فضایی سالم برای
+              گفت‌وگو، در سایه عقل، منطق و ادب و همچنین تقویت مودت و آرامش در
+              مسیر رشد عقلی، اخلاقی و معنوی برگزار می‌شود، از همه دوستان و
+              همراهان گرامی درخواست می‌شود در جهت حفظ کیفیت جلسات، موارد زیر را
+              رعایت فرمایند:
             </CardContent>
             <CardContent className="lg:w-[80%] text-xl text-muted-foreground ">
               🔸 حفظ آرامش، ادب و اخلاق و رعایت کرامت انسانی در رفتار، گفتار و
