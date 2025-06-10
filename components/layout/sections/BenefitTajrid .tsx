@@ -20,7 +20,6 @@ import { BookOpenText } from "lucide-react";
 import loadingPdfAnim from "@/public/loading.json";
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
-import { GlobalAudioPlayer } from "./GlobalAudioPlayer";
 
 // Dropbox audio files mapping for Tajrid (1-23)
 const tajridAudios = [
@@ -203,7 +202,6 @@ export const BenefitTajrid = () => {
   const [open, setOpen] = useState(false);
   const [sections, setSections] = useState<PdfSection[]>([]);
   const [loading, setLoading] = useState(false);
-const [currentAudio, setCurrentAudio] = useState<string | null>(null);
 
   useEffect(() => {
     if (open && sections.length === 0) {
@@ -335,12 +333,10 @@ const [currentAudio, setCurrentAudio] = useState<string | null>(null);
                             ))}
                           </div>
 
-                          <Button
-                            onClick={() => setCurrentAudio(audio.url)}
-                            className="bg-primary text-white w-full"
-                          >
-                            پخش این جلسه
-                          </Button>
+                          <audio controls className="w-full">
+                            <source src={audio.url} type="audio/mpeg" />
+                            مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
+                          </audio>
                         </AccordionContent>
                       </AccordionItem>
                     );
@@ -351,7 +347,6 @@ const [currentAudio, setCurrentAudio] = useState<string | null>(null);
           </SheetHeader>
         </SheetContent>
       </Sheet>
-
     </>
   );
 };
