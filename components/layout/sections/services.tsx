@@ -43,14 +43,14 @@ const serviceList: ServiceProps[] = [
     description:
       "در حال احداث",
     pro: 0,
-    link: "پ",
+    link: "#",
   },
     {
     title: " اینستاگرام",
     description:
       "در حال احداث",
     pro: 0,
-    link: "https://t.me/bavarmandanBot",
+    link: "#",
   },
 ];
 
