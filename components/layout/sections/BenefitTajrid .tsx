@@ -272,14 +272,14 @@ export const BenefitTajrid = () => {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                               onClick={() => {
-                            const blob = fetch(section.pdfUrl)
-                              .then((res) => res.blob())
-                              .then((blob) => {
-                                const url = URL.createObjectURL(blob);
-                                window.open(url, "_blank");
-                              });
-                          }}
+                                  onClick={() => {
+                                    const blob = fetch(section.pdfUrl)
+                                      .then((res) => res.blob())
+                                      .then((blob) => {
+                                        const url = URL.createObjectURL(blob);
+                                        window.open(url, "_blank");
+                                      });
+                                  }}
                                 >
                                   نمایش
                                 </Button>
