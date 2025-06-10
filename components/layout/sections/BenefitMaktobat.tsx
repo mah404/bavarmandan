@@ -59,22 +59,48 @@ export const BenefitMaktobat = () => {
           if (!res.ok) throw new Error(await res.text());
           return res.json();
         })
-        .then((data) => {
-          const transformed = data.map((item: any) => {
-            const audioUrl =
-              dropboxAudioMap[item.id]?.replace("&dl=0", "&raw=1") ?? null;
+    .then((data) => {
+  const persianOrderMap: Record<string, number> = {
+    "اول": 1,
+    "دوم": 2,
+    "سوم": 3,
+    "چهارم": 4,
+    "پنجم": 5,
+    "ششم": 6,
+    "هفتم": 7,
+    "هشتم": 8,
+    "نهم": 9,
+    "دهم": 10,
+    "یازدهم": 11,
+    "دوازدهم": 12,
+  };
 
-            return {
-              id: item.id,
-              title: item.title,
-              content: item.content,
-              pdfUrl: item.pdfUrl,
-              audioUrl,
-            };
-          });
+  const extractPersianNumber = (title: string) => {
+    const match = title.match(/مکتوب\s+(\S+)/);
+    return match ? persianOrderMap[match[1]] ?? 999 : 999;
+  };
 
-          setMaktobats(transformed);
-        })
+  const sortedData = [...data].sort((a, b) => {
+    return extractPersianNumber(a.title) - extractPersianNumber(b.title);
+  });
+
+  const transformed = sortedData.map((item: any) => {
+    const audioUrl =
+      dropboxAudioMap[item.id]?.replace("&dl=0", "&raw=1") ?? null;
+
+    return {
+      id: item.id,
+      title: item.title,
+      content: item.content,
+      pdfUrl: item.pdfUrl,
+      audioUrl,
+    };
+  });
+
+  setMaktobats(transformed);
+})
+
+
         .catch((err) => {
           console.error("Failed to fetch maktobats:", err);
         })
