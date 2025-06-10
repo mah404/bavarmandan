@@ -18,6 +18,7 @@ export const BenefitsSection = () => {
           <BenefitTajrid />
           <BenefitAkhlaq />
           <BenefitsCard />
+          
         </div>
       </div>
     </section>

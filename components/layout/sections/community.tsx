@@ -21,7 +21,6 @@ export const CommunitySection = () => {
           >
             <CardHeader>
               <CardTitle className="text-4xl md:text-5xl font-bold flex flex-col items-center">
-                <Scale height={80} width={80} className="mb-4" />
                 <div>
                   <span className=" pl-2 bg-gradient-to-r text-yellow-300 bg-clip-text">
                     تذکرات جلسات مجمع باورمندان کلاب هاوس

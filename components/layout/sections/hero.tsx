@@ -17,7 +17,7 @@ export const HeroSection = () => {
             <span> </span>
           </Badge>
 
-          <div className="max-w-screen-md mx-auto text-center text-4xl md:text-6xl font-thin">
+          <div className="max-w-screen-md mx-auto text-center text-6xl md:text-6xl font-bold">
             <h1>بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ </h1>
           </div>
 
