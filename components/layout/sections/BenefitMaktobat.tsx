@@ -60,10 +60,9 @@ export const BenefitMaktobat = () => {
           return res.json();
         })
         .then((data) => {
-          const transformed = data.map((item: any, index: number) => {
-            const audioKey = `${index + 1}`;
+          const transformed = data.map((item: any) => {
             const audioUrl =
-              dropboxAudioMap[audioKey]?.replace("&dl=0", "&raw=1") ?? null;
+              dropboxAudioMap[item.id]?.replace("&dl=0", "&raw=1") ?? null;
 
             return {
               id: item.id,
@@ -105,7 +104,7 @@ export const BenefitMaktobat = () => {
           <SheetHeader>
             <SheetTitle>برهان امکان و وجوب</SheetTitle>
             <SheetDescription className="mb-4">
-              لیست کامل مکتوبات:
+              لیست کامل مکتوبات
             </SheetDescription>
           </SheetHeader>
 
