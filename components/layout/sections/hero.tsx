@@ -25,7 +25,7 @@ export const HeroSection = () => {
           </div>
 
           <p className="max-w-screen-sm mx-auto text-md text-muted-foreground text-gray-100  flex-col flex" dir="rtl">
-            <span className="text-yellow-500 text-2xl  pr-1" >
+            <span className="text-yellow-300 text-2xl  pr-1" >
               رَبَّنَا إِنَّنَا سَمِعْنَا مُنَادِيًا يُنَادِي لِلْإِيمَانِ أَنْ
               آمِنُوا بِرَبِّكُمْ فَآمَنَّا رَبَّنَا فَاغْفِرْ لَنَا ذُنُوبَنَا
               وَكَفِّرْ عَنَّا سَيِّئَاتِنَا وَتَوَفَّنَا مَعَ الْأَبْرَارِ
@@ -35,14 +35,14 @@ export const HeroSection = () => {
             گناهان ما را بیامرز، و بدی هایمان را از ما محو کن، و ما را در زمره
             نیکوکاران بمیران.
 
-            <span className="text-gray-200 text-xs pt-4">(سوره مبارکه آل عمران آیه شریفه ۱۹۳)</span>
+            <span className="text-muted-foreground text-xs pt-4">(سوره مبارکه آل عمران آیه شریفه ۱۹۳)</span>
           </p>
 
 
-          <hr className="border-secondary w-full   border-yellow-500" />
+          <hr className="border-primary w-full   " />
 
           <p dir="rtl" className="max-w-screen-sm text-gray-100 mx-auto text-xl text-muted-foreground">
-          با عرض سلام و تشکر از حضور شما در  تارنمای             <span className="text-yellow-500 pr-1">
+          با عرض سلام و تشکر از حضور شما در  تارنمای             <span className="text-yellow-300 pr-1">
               مجمع باورمندان کلاب هاوس
             </span>
             ، و آروزی سلامتی و توفیقات روز افزون. این تارنمای به جهت اطلاع رسانی

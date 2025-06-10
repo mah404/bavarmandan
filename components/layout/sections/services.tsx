@@ -57,7 +57,7 @@ export const ServicesSection = () => {
           <Card
             dir="rtl"
             key={title}
-            className="bg-muted/60 dark:bg-card h-full relative"
+            className="bg-card dark:bg-card h-full relative"
           >
               <Link href={link}>
             <CardHeader>
