@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 html {
   scroll-behavior: smooth;
 }
@@ -78,7 +76,7 @@ html {
 /* *=========== Orange theme =========== */
 @layer base {
   :root {
-  --background: 20 14.3% 4.1%;
+    --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
 
     --card: 24 9.8% 8%;
@@ -137,7 +135,6 @@ html {
     --ring: 142.1 76.2% 36.3%;
   }
 }
-
 
 .shadow-light {
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.085);
