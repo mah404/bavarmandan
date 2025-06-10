@@ -13,7 +13,6 @@ export const FooterSection = () => {
                 alt="Logo"
                 className="w-24 h-24 bg-gradient-to-tr from-primary via-primary/70 to-primary rounded-lg border border-secondary"
               />
-              <span className="mt-2">لوگوی سایت</span>
             </Link>
           </div>
 
