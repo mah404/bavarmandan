@@ -20,12 +20,12 @@ export const CommunitySection = () => {
             className="bg-background border-none shadow-none text-center flex flex-col items-center justify-center"
           >
             <CardHeader>
-              <CardTitle className="text-4xl md:text-5xl font-bold flex flex-col items-center">
-                <div className="flex flex-col">
-                  <span className=" pl-2 bg-gradient-to-r text-yellow-300 bg-clip-text">
+              <CardTitle className="text-center font-bold text-2xl sm:text-3xl md:text-4xl lg:text-4xl">
+                <div className="flex flex-col items-center">
+                  <span className="text-yellow-300 bg-gradient-to-r bg-clip-text leading-snug text-center">
                     تذکرات و نکات جلسات «مجمع باورمندان»
                   </span>
-                  <span className=" pl-2 bg-gradient-to-r text-yellow-300 bg-clip-text">
+                  <span className="text-yellow-300 bg-gradient-to-r bg-clip-text leading-snug text-center">
                     در کلاب‌هاوس
                   </span>
                 </div>
