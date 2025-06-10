@@ -17,24 +17,31 @@ export const FooterSection = () => {
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <h3 className="font-bold text-lg">شبکه‌های اجتماعی</h3>
-            <Link href="#" className="opacity-60 hover:opacity-100">
+            <Link href="#services">
+              <h3 className="font-bold text-lg cursor-pointer hover:text-primary transition">
+                شبکه‌های اجتماعی
+              </h3>
+            </Link>{" "}
+            <Link href="https://t.me/bavarmandan110" className="opacity-60 hover:opacity-100">
               تلگرام
             </Link>
-            <Link href="#" className="opacity-60 hover:opacity-100">
+            <Link href="https://www.clubhouse.com/house/%D9%85%D8%AC%D9%85%D8%B9-%D8%A8%D8%A7%D9%88%D8%B1%D9%85%D9%86%D8%AF%D8%A7%D9%86-%DA%A9%D9%84%D8%A7%D8%A8-%D9%87%D8%A7%D9%88%D8%B3?chs=lgAI3r9pbR%3ADrbcc1Vdpax6lhaqJt_P0rUiUeHCPDXTK0QStpjNRXo&utm_medium=ch_house_settings" className="opacity-60 hover:opacity-100">
               کلاب‌هاوس
-            </Link>
-                <Link href="#" className="opacity-60 hover:opacity-100">
-              یوتیوب
-            </Link>
-                <Link href="#" className="opacity-60 hover:opacity-100">
-              اینستاگرام
             </Link>
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <h3 className="font-bold text-lg">  ارتباط مستقیم با ما</h3>
-         
+            <Link href="#services" className="opacity-60 hover:opacity-100">
+              یوتیوب
+            </Link>
+            <Link href="#services" className="opacity-60 hover:opacity-100">
+              اینستاگرام
+            </Link>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Link href="https://t.me/bavarmandanBot">
+              <h3 className="font-bold text-lg"> ارتباط مستقیم با ما</h3>
+            </Link>
           </div>
         </div>
 
