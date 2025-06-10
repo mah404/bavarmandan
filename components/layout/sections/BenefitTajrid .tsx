@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { BookOpenText } from "lucide-react";
 import loadingPdfAnim from "@/public/loadingpdf.json";
 import Lottie from "lottie-react";
-import { Description } from "@radix-ui/react-dialog";
+import { useRouter } from "next/navigation";
 
 // Dropbox audio files mapping for Tajrid (1-23)
 const tajridAudios = [
@@ -193,9 +193,14 @@ const tajridAudios = [
   },
 ];
 
+interface PdfSection {
+  id: string;
+  pdfUrl: string;
+}
 export const BenefitTajrid = () => {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [sections, setSections] = useState([]);
+  const [sections, setSections] = useState<PdfSection[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -245,28 +250,57 @@ export const BenefitTajrid = () => {
                       کتاب شرح تجرید الاعتقاد{" "}
                     </AccordionTrigger>
                     <AccordionContent>
-                      {sections.map((section: any) => (
-                        <div
-                          key={section.id}
-                          className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
-                        >
-                          <span className="text-sm text-muted-foreground">
-                            {section.title}
-                          </span>
-                          <div className="flex gap-2">
-                            <a
-                              href={section.pdfUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Button variant="outline">نمایش</Button>
-                            </a>
-                            <a href={section.pdfUrl} download>
-                              <Button>دانلود</Button>
-                            </a>
+                      {sections.map((section, index) => {
+                        const label = `کتاب کشف المراد جلد  ${index + 1}`; // or for Persian numerals use `کتاب شماره ${convertToPersian(index + 1)}`
+                        const fileName = `${label}.pdf`;
+
+                        return (
+                          <div
+                            key={section.id}
+                            className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+                          >
+                            <span className="text-sm text-muted-foreground">
+                              {label}
+                            </span>
+
+                            <div className="flex gap-2">
+                              <a
+                                href={section.pdfUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                               onClick={() => {
+                            const blob = fetch(section.pdfUrl)
+                              .then((res) => res.blob())
+                              .then((blob) => {
+                                const url = URL.createObjectURL(blob);
+                                window.open(url, "_blank");
+                              });
+                          }}
+                                >
+                                  نمایش
+                                </Button>
+                              </a>
+
+                              <Button
+                                onClick={() => {
+                                  const a = document.createElement("a");
+                                  a.href = section.pdfUrl;
+                                  a.download = fileName;
+                                  document.body.appendChild(a);
+                                  a.click();
+                                  document.body.removeChild(a);
+                                }}
+                              >
+                                دانلود
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </AccordionContent>
                   </AccordionItem>
 

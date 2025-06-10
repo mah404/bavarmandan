@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Sheet,
@@ -44,6 +45,7 @@ const dropboxAudioMap: Record<string, string> = {
 };
 
 export const BenefitMaktobat = () => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [maktobats, setMaktobats] = useState<Maktobat[]>([]);
@@ -74,7 +76,6 @@ export const BenefitMaktobat = () => {
 
           setMaktobats(transformed);
         })
-
         .catch((err) => {
           console.error("Failed to fetch maktobats:", err);
         })
@@ -109,11 +110,11 @@ export const BenefitMaktobat = () => {
           </SheetHeader>
 
           {loading ? (
-             <Lottie
-                  animationData={loadingPdfAnim}
-                  loop
-                  className="text-muted-foreground bg-transparent mt-4"
-                />
+            <Lottie
+              animationData={loadingPdfAnim}
+              loop
+              className="text-muted-foreground bg-transparent mt-4"
+            />
           ) : (
             <Accordion type="single" collapsible className="w-full">
               {maktobats.map((maktobat) => (
@@ -123,15 +124,31 @@ export const BenefitMaktobat = () => {
                     <div className="mb-4 pb-2">
                       <p className="text-sm">{maktobat.content}</p>
                       <div className="flex gap-2 mt-2">
-                        <a href={maktobat.pdfUrl} download>
-                          <Button size="sm" className="mr-2">
-                            PDF
-                          </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const blob = fetch(maktobat.pdfUrl)
+                              .then((res) => res.blob())
+                              .then((blob) => {
+                                const url = URL.createObjectURL(blob);
+                                window.open(url, "_blank");
+                              });
+                          }}
+                        >
+                          مشاهده
+                        </Button>
+
+                        <a
+                          href={maktobat.pdfUrl}
+                          download={`${maktobat.title || "maktobat"}.pdf`}
+                        >
+                          <Button size="sm">دانلود </Button>
                         </a>
                       </div>
-                      <div className=" rounded-xl shadow-md p-4 mt-4  ">
-                        <SheetDescription
-                           className="text-primary text-sm font-semibold mb-2">
+
+                      <div className="rounded-xl shadow-md p-4 mt-4">
+                        <SheetDescription className="text-primary text-sm font-semibold mb-2">
                           🎧 پخش صوت
                         </SheetDescription>
                         {maktobat.audioUrl ? (
