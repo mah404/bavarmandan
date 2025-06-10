@@ -31,6 +31,8 @@ export const CommunitySection = () => {
                   </span>
                 </div>
               </CardTitle>
+                        <hr className="border-primary w-full   " />
+
             </CardHeader>
             <CardContent className="lg:w-[80%] font-semibold text-xl text-muted-foreground leading-relaxed">
               با توجه به اهداف شکل‌گیری جلسات «مجمع باورمندان» در کلاب‌هاوس، که
