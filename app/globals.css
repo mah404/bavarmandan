@@ -97,7 +97,7 @@ html {
   --accent: 60 4.8% 95.9%;               /* ~#f8f8f3 */
   --accent-foreground: 24 9.8% 10%;      /* ~#1a1613 */
 
-  --destructive: 0 84.2% 60.2%;          /* #f25555 */
+  --destructive: 47.3 91.8% 53.3%;          /* #f25555 */
   --destructive-foreground: 60 9.1% 97.8%; /* ~#fefdfb */
 
   --border: 20 5.9% 90%;                 /* ~#e9e8e4 */
@@ -130,7 +130,7 @@ html {
   --accent: 12 6.5% 15.1%;                  /* ~#271f1b */
   --accent-foreground: 60 9.1% 97.8%;       /* ~#fefdfb */
 
-  --destructive: 0 72.2% 50.6%;             /* #e53939 */
+  --destructive: 47.3 91.8% 53.3%;           /* #e53939 */
   --destructive-foreground: 60 9.1% 97.8%;  /* ~#fefdfb */
 
   --border: 12 6.5% 15.1%;                  /* ~#271f1b */

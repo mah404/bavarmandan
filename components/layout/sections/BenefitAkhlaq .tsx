@@ -105,7 +105,7 @@ export const BenefitAkhlaq = () => {
                       </AccordionTrigger>
                       <AccordionContent className="flex flex-col gap-4">
                         {audioFiles.slice(0, 4).map((file, i) => (
-                          <div key={i} className="border rounded-lg p-2">
+                          <div key={i} className="border-b border-muted-foreground p-2">
                             <div className="font-semibold mb-1 text-primary">
                               {file.description}
                             </div>
@@ -123,8 +123,8 @@ export const BenefitAkhlaq = () => {
                       <AccordionTrigger>گفتگوهای قرآنی</AccordionTrigger>
                       <AccordionContent className="flex flex-col gap-4">
                         {audioFiles.slice(4).map((file, i) => (
-                          <div key={i + 4} className="border rounded-lg p-2">
-                            <div className="font-semibold mb-1">
+                          <div key={i + 4} className="border-b border-muted-foreground  p-2">
+                            <div className="font-semibold mb-1 text-primary">
                               {file.description}
                             </div>
                             <audio controls className="w-full">
