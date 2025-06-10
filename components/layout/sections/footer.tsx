@@ -34,21 +34,25 @@ export const FooterSection = () => {
               </Link>
             </div>
             <div className="flex flex-row">
-              <Link href="#services" className="opacity-60 hover:opacity-100 mr-2">
+              <Link
+                href="#services"
+                className="opacity-60 hover:opacity-100 mr-2"
+              >
                 یوتیوب
               </Link>
-              <Link href="#services" className="opacity-60 hover:opacity-100 ml-2">
+              <Link
+                href="#services"
+                className="opacity-60 hover:opacity-100 ml-2"
+              >
                 اینستاگرام
               </Link>
             </div>
-               <div className=" items-center gap-2">
-            <Link href="https://t.me/bavarmandanBot">
-              <h3 className="font-bold text-lg"> ارتباط مستقیم با ما</h3>
-            </Link>
+            <div className=" items-center gap-2 ">
+              <Link href="https://t.me/bavarmandanBot">
+                <h3 className="font-bold text-lg mt-6"> ارتباط مستقیم با ما</h3>
+              </Link>
+            </div>
           </div>
-          </div>
-
-       
         </div>
 
         <Separator className="my-6" />
