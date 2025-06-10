@@ -14,11 +14,10 @@ export const CommunitySection = () => {
     <section id="rules" className="py-12 ">
       <hr className="border-secondary" />
       <div className="container py-20 sm:py-20">
-        <div className="lg:w-[60%] mx-auto" >
+        <div className="lg:w-[60%] mx-auto">
           <Card
             dir="rtl"
-
-className="bg-background border-none shadow-none text-center flex flex-col items-center justify-center"
+            className="bg-background border-none shadow-none text-right flex flex-col items-center justify-center"
           >
             <CardHeader>
               <CardTitle className="text-4xl md:text-5xl font-bold flex flex-col items-center">
@@ -30,7 +29,7 @@ className="bg-background border-none shadow-none text-center flex flex-col items
                 </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="lg:w-[80%] text-xl text-muted-foreground">
+            <CardContent className="lg:w-[80%] text-xl text-muted-foreground leading-relaxed">
               بنا به هدف از تشکیل جلسات مجمع باورمندان کلاب هاوس در تلاش به جهت
               هم افزایی فکر و تبادل نظرات در راستای ایجاد کمک در مهیا نمودن فضای
               گفتگوی سالم در سایه عقل، منطق و ادب و همچنین ایجاد مودت و فضای
@@ -39,7 +38,7 @@ className="bg-background border-none shadow-none text-center flex flex-col items
               رعایت موارد و تذکرات ذیل می‌باشد.
             </CardContent>
             <CardContent className="lg:w-[80%] text-xl text-muted-foreground ">
-              🔸حفظ آرامش، ادب و اخلاق و رعایت کرامت انسانی در رفتار، گفتار و
+              🔸 حفظ آرامش، ادب و اخلاق و رعایت کرامت انسانی در رفتار، گفتار و
               نوشتار.
             </CardContent>
             <CardContent className="lg:w-[80%] text-xl text-muted-foreground">
@@ -75,14 +74,18 @@ className="bg-background border-none shadow-none text-center flex flex-col items
             </CardContent>
 
             <CardContent className="lg:w-[80%] text-xl text-muted-foreground">
-            قابل ذکر است که از حضور کاربرانی که موارد ذکر شده را در جلسه، استیج و یا چت اتاق رعایت ننمایند بنا به صلاحدید مدیران در جلسه در حال اجرا و یا جلسات آتی معذور خواهیم بود. 
-
-همچنین بنا به صلاحدید و نیاز، مجمع باورمندان کلاب هاوس حق هرگونه استفاده از محتوای صوتی، گفتاری و نوشتاری حاضران در جلسات را برای خویش محفوظ میداند. 
-
-از همه دوستان خواستاریم که به جهت بهتر برگزاری جلسات و ارایه مطالب مطلوب و رفع هرگونه ابهام کلیه سوالات، انتقادات و پیشنهادات خود را از طریق پیام رسان تلگرامی مندرج به سمع و نظر مدیران مجمع باورمندان کلاب هاوس رسانده و پیشاپیش از همه عزیزان به خاطر حضور و ارائه نقطه نظرات و صبوری و رعایت تذکرات و حفظ اخلاق حسنه کمال قدردانی و تشکر را داریم.
-
+              قابل ذکر است که از حضور کاربرانی که موارد ذکر شده را در جلسه،
+              استیج و یا چت اتاق رعایت ننمایند بنا به صلاحدید مدیران در جلسه در
+              حال اجرا و یا جلسات آتی معذور خواهیم بود. همچنین بنا به صلاحدید و
+              نیاز، مجمع باورمندان کلاب هاوس حق هرگونه استفاده از محتوای صوتی،
+              گفتاری و نوشتاری حاضران در جلسات را برای خویش محفوظ میداند. از همه
+              دوستان خواستاریم که به جهت بهتر برگزاری جلسات و ارایه مطالب مطلوب
+              و رفع هرگونه ابهام کلیه سوالات، انتقادات و پیشنهادات خود را از
+              طریق پیام رسان تلگرامی مندرج به سمع و نظر مدیران مجمع باورمندان
+              کلاب هاوس رسانده و پیشاپیش از همه عزیزان به خاطر حضور و ارائه نقطه
+              نظرات و صبوری و رعایت تذکرات و حفظ اخلاق حسنه کمال قدردانی و تشکر
+              را داریم.
             </CardContent>
-        
           </Card>
         </div>
       </div>

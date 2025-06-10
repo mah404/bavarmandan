@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import Lottie from "lottie-react";
-import loadingPdfAnim from "@/public/loadingpdf.json";
+import loadingPdfAnim from "@/public/loading.json";
 
 interface Maktobat {
   id: string;

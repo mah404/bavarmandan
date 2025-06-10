@@ -16,6 +16,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Lottie from "lottie-react";
+import loadingPdfAnim from "@/public/loading.json";
 
 export const BenefitAkhlaq = () => {
   const [open, setOpen] = useState(false);
@@ -94,18 +96,23 @@ export const BenefitAkhlaq = () => {
             <SheetTitle>مباحث اعتقادی</SheetTitle>
             <SheetDescription>
               {loading ? (
-                "در حال بارگذاری..."
+                <Lottie
+                  animationData={loadingPdfAnim}
+                  loop
+                  className="text-muted-foreground bg-transparent mt-4"
+                />
               ) : (
                 <div>
                   <Accordion type="single" collapsible className="w-full">
                     {/* First 4 sessions */}
                     <AccordionItem value="group-1">
-                      <AccordionTrigger>
-                         شیعه و میراث فاطمی
-                      </AccordionTrigger>
+                      <AccordionTrigger>شیعه و میراث فاطمی</AccordionTrigger>
                       <AccordionContent className="flex flex-col gap-4">
                         {audioFiles.slice(0, 4).map((file, i) => (
-                          <div key={i} className="border-b border-muted-foreground p-2">
+                          <div
+                            key={i}
+                            className="border-b border-muted-foreground p-2"
+                          >
                             <div className="font-semibold mb-1 text-primary">
                               {file.description}
                             </div>
@@ -123,7 +130,10 @@ export const BenefitAkhlaq = () => {
                       <AccordionTrigger>گفتگوهای قرآنی</AccordionTrigger>
                       <AccordionContent className="flex flex-col gap-4">
                         {audioFiles.slice(4).map((file, i) => (
-                          <div key={i + 4} className="border-b border-muted-foreground  p-2">
+                          <div
+                            key={i + 4}
+                            className="border-b border-muted-foreground  p-2"
+                          >
                             <div className="font-semibold mb-1 text-primary">
                               {file.description}
                             </div>
@@ -131,16 +141,13 @@ export const BenefitAkhlaq = () => {
                               <source src={file.url} type="audio/mpeg" />
                               مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
                             </audio>
-                        
                           </div>
                         ))}
                       </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="group-2">
                       <AccordionTrigger> مباحث متفرقه</AccordionTrigger>
-                      <AccordionContent className="flex flex-col gap-4">
-                   
-                      </AccordionContent>
+                      <AccordionContent className="flex flex-col gap-4"></AccordionContent>
                     </AccordionItem>
                   </Accordion>
                 </div>

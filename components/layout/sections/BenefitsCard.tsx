@@ -16,6 +16,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Lottie from "lottie-react";
+import loadingPdfAnim from "@/public/loading.json";
+
 
 export const BenefitsCard = () => {
   const [open, setOpen] = useState(false);
@@ -194,8 +197,11 @@ export const BenefitsCard = () => {
             <SheetTitle>مباحث اخلاقی</SheetTitle>
             <SheetDescription>
               {loading ? (
-                "در حال بارگذاری..."
-              ) : (
+  <Lottie
+                  animationData={loadingPdfAnim}
+                  loop
+                  className="text-muted-foreground bg-transparent mt-4"
+                />              ) : (
                 <Accordion type="single" collapsible className="w-full">
                   {audioFiles.map((file, index) => (
                     <AccordionItem key={index} value={`item-${index}`}>

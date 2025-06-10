@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { BookOpenText } from "lucide-react";
-import loadingPdfAnim from "@/public/loadingpdf.json";
+import loadingPdfAnim from "@/public/loading.json";
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
 
