@@ -38,17 +38,15 @@ const serviceList: ServiceProps[] = [
     pro: 0,
     link: "https://t.me/bavarmandanBot",
   },
-    {
+  {
     title: " کانال یوتیوب",
-    description:
-      "در حال احداث",
+    description: "در حال احداث",
     pro: 0,
     link: "#",
   },
-    {
+  {
     title: " اینستاگرام",
-    description:
-      "در حال احداث",
+    description: "در حال احداث",
     pro: 0,
     link: "#",
   },
@@ -60,35 +58,92 @@ export const ServicesSection = () => {
       <h2 className="text-lg text-primary text-center mb-2 tracking-wider"></h2>
 
       <h2 className="text-3xl md:text-4xl text-center text-primary font-bold mb-4">
-        *تارنماهای مرتبط{" "}
+        * تارنماهای مرتبط
       </h2>
       <h3 className="md:w-1/2 mx-auto text-xl text-center text-muted-foreground mb-8"></h3>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4 w-full lg:w-[60%] mx-auto">
-        {serviceList.map(({ title, description, pro, link }) => (
-          <Card
-            dir="rtl"
-            key={title}
-            className="bg-card dark:bg-card h-full relative"
-          >
-            <Link href={link}>
-              <CardHeader>
-                <CardTitle>{title}</CardTitle>
-                <CardDescription className="text-yellow-300">
-                  {description}
-                </CardDescription>
-              </CardHeader>
-              <Badge
-                data-pro={ProService.YES === pro}
-                variant="secondary"
-                className="absolute -top-2 -right-3 data-[pro=false]:hidden"
-              >
-                PRO
-              </Badge>
-            </Link>
-          </Card>
-        ))}
+      <div className="flex flex-col items-center gap-4 w-full lg:w-[60%] mx-auto">
+        {/* Top row */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">
+          {serviceList.slice(0, 2).map(({ title, description, pro, link }) => (
+            <Card
+              dir="rtl"
+              key={title}
+              className="bg-card dark:bg-card w-full sm:w-[380px] h-[130px] mx-auto relative"
+            >
+              <Link href={link}>
+                <CardHeader>
+                  <CardTitle>{title}</CardTitle>
+                  <CardDescription className="text-yellow-300">
+                    {description}
+                  </CardDescription>
+                </CardHeader>
+                <Badge
+                  data-pro={ProService.YES === pro}
+                  variant="secondary"
+                  className="absolute -top-2 -right-3 data-[pro=false]:hidden"
+                >
+                  PRO
+                </Badge>
+              </Link>
+            </Card>
+          ))}
+        </div>
+
+        {/* Middle row */}
+        <div className="w-full sm:w-auto flex justify-center">
+          {serviceList.slice(2, 3).map(({ title, description, pro, link }) => (
+            <Card
+              dir="rtl"
+              key={title}
+              className="bg-card dark:bg-card w-full sm:w-[380px] h-[130px] mx-auto relative"
+            >
+              <Link href={link}>
+                <CardHeader>
+                  <CardTitle>{title}</CardTitle>
+                  <CardDescription className="text-yellow-300">
+                    {description}
+                  </CardDescription>
+                </CardHeader>
+                <Badge
+                  data-pro={ProService.YES === pro}
+                  variant="secondary"
+                  className="absolute -top-2 -right-3 data-[pro=false]:hidden"
+                >
+                  PRO
+                </Badge>
+              </Link>
+            </Card>
+          ))}
+        </div>
+
+        {/* Bottom row */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">
+          {serviceList.slice(3, 5).map(({ title, description, pro, link }) => (
+            <Card
+              dir="rtl"
+              key={title}
+              className="bg-card dark:bg-card w-full sm:w-[380px] h-[130px] mx-auto relative"
+            >
+              <Link href={link}>
+                <CardHeader>
+                  <CardTitle>{title}</CardTitle>
+                  <CardDescription className="text-yellow-300">
+                    {description}
+                  </CardDescription>
+                </CardHeader>
+                <Badge
+                  data-pro={ProService.YES === pro}
+                  variant="secondary"
+                  className="absolute -top-2 -right-3 data-[pro=false]:hidden"
+                >
+                  PRO
+                </Badge>
+              </Link>
+            </Card>
+          ))}
+        </div>
       </div>
     </section>
   );

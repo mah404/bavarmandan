@@ -8,12 +8,11 @@ export const FooterSection = () => {
         <div className="flex flex-col xl:flex-row xl:justify-center items-center gap-12 text-center">
           <div className="col-span-full xl:col-span-2 flex justify-center">
             <Link href="#" className="flex flex-col items-center font-bold">
-      <img
-  src="/mainicon.jpg"
-  alt="Logo"
-  className="w-40 h-40 rounded-2xl shadow-lg ring-2 ring-primary bg-gradient-to-tr from-primary via-primary/60 to-primary "
-/>
-
+              <img
+                src="/mainicon.jpg"
+                alt="Logo"
+                className="w-40 h-40 rounded-2xl shadow-lg ring-2 ring-primary bg-gradient-to-tr from-primary via-primary/60 to-primary "
+              />
             </Link>
           </div>
 
@@ -56,7 +55,7 @@ export const FooterSection = () => {
           </div>
         </div>
 
-        <Separator className="my-6" />
+<Separator className="my-6 bg-muted-foreground" />
 
         <section className="w-full text-center">
           <h3 className="text-xs">

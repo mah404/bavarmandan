@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Scale } from "lucide-react";
+import Link from "next/link";
 
 export const CommunitySection = () => {
   return (
@@ -88,19 +89,26 @@ export const CommunitySection = () => {
             <CardContent className="lg:w-[80%] text-xl text-muted-foreground font-semibold">
               از تمامی دوستان عزیز درخواست می‌شود به‌منظور برگزاری بهتر جلسات و
               رفع ابهامات احتمالی، پرسش‌ها، انتقادات و پیشنهادات خود را از طریق
-              پیام‌رسان تلگرام (آدرس مندرج) به اطلاع مدیران برسانند. پیشاپیش از
-              حضور گرم، مشارکت فکری، صبوری و رعایت نکات اخلاقی و آیین گفت‌وگو از
-              سوی تمامی عزیزان صمیمانه سپاسگزاریم.
+              پیام‌رسان تلگرام
+              <Link
+                className="text-yellow-300 pl-1 pr-1"
+                href="https://t.me/bavarmandanBot"
+              >
+                (آدرس مندرج)
+              </Link>
+              به اطلاع مدیران برسانند. پیشاپیش از حضور گرم، مشارکت فکری، صبوری و
+              رعایت نکات اخلاقی و آیین گفت‌وگو از سوی تمامی عزیزان صمیمانه
+              سپاسگزاریم.
             </CardContent>
             <CardContent className="lg:w-[80%] text-md text-muted-foreground font-thin mt-8">
-              *حضور مجمع باورمندان در شبکه های اجتماعی و مجازی تنها به هدف اشتراک
+              <span className="text-xl text-primary-foreground">*</span>
+              حضور مجمع باورمندان در شبکه های اجتماعی و مجازی تنها به هدف اشتراک
               گذاری محتوای اشخاص و صرفاً جنبه آموزشی داشته فلذا مجمع باورمندان
               هیچگونه مسئولیتی در قبال اشخاص، نظرات، مطالب، و محتوای به اشتراک
               گذاشته شده و باز نشر داده شده در هیچ‌یک از شبکه های وابسته به مجمع
               باورمندان را بر عهده نمی‌گیرد.
             </CardContent>
           </Card>
-          
         </div>
       </div>
       <hr className="border-secondary border-yellow-500" />
