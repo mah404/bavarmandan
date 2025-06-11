@@ -84,9 +84,11 @@ export const BenefitMaktobat = () => {
     return extractPersianNumber(a.title) - extractPersianNumber(b.title);
   });
 
-  const transformed = sortedData.map((item: any) => {
-    const audioUrl =
-      dropboxAudioMap[item.id]?.replace("&dl=0", "&raw=1") ?? null;
+const transformed = sortedData.map((item: any) => {
+  const order = extractPersianNumber(item.title).toString();
+  const audioUrl =
+    dropboxAudioMap[order]?.replace("&dl=0", "&raw=1") ?? null;
+
 
     return {
       id: item.id,
