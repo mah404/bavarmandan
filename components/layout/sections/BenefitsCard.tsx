@@ -254,15 +254,26 @@ export const BenefitsCard = () => {
                           <Accordion type="multiple" className="w-full pr-4">
                             {group.files.map((file, fileIndex) => (
                               <AccordionItem
-                              className="border-muted-foreground"
                                 key={fileIndex}
                                 value={`file-${groupIndex}-${fileIndex}`}
+                                className="border-b border-muted-foreground "
                               >
                                 <AccordionTrigger className="text-primary">
                                   {file.title}
                                 </AccordionTrigger>
                                 <AccordionContent>
-                                  <audio controls className="w-full mt-2">
+                                  <audio
+                                    controls
+                                    className="w-full mt-2 border-b-2"
+                                    onPlay={(event) => {
+                                      document
+                                        .querySelectorAll("audio")
+                                        .forEach((audio) => {
+                                          if (audio !== event.currentTarget)
+                                            audio.pause();
+                                        });
+                                    }}
+                                  >
                                     <source src={file.url} type="audio/mpeg" />
                                     مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
                                   </audio>
