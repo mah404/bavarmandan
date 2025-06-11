@@ -198,12 +198,7 @@ export const BenefitMaktobat = () => {
                   </AccordionContent>
                 </AccordionItem>
               ))}
-              <AccordionItem>
-                <AccordionContent>
-
-                </AccordionContent>
-
-              </AccordionItem>
+          
             </Accordion>
           )}
         </SheetContent>
