@@ -100,7 +100,7 @@ export const CommunitySection = () => {
               باورمندان را بر عهده نمی‌گیرد.
             </CardContent>
           </Card>
-          ّ
+          
         </div>
       </div>
       <hr className="border-secondary border-yellow-500" />
