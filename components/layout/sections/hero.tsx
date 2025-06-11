@@ -22,7 +22,7 @@ export const HeroSection = () => {
           </div>
 
           <p
-            className="max-w-screen-sm mx-auto text-md text-muted-foreground text-gray-100  flex-col flex"
+            className="max-w-screen-sm mx-auto text-md text-muted-foreground   flex-col flex"
             dir="rtl"
           >
             <span className="text-yellow-300 text-2xl text-bold pr-1">
