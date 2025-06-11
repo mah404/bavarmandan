@@ -60,7 +60,7 @@ export const BenefitMaktobat = () => {
           return res.json();
         })
         .then((data) => {
-            console.log("Raw response from /api/maktobats:", data); // ✅ Add this line
+          console.log("Raw response from /api/maktobats:", data); // ✅ Add this line
 
           const persianOrderMap: Record<string, number> = {
             اول: 1,
@@ -147,12 +147,16 @@ export const BenefitMaktobat = () => {
           ) : (
             <Accordion type="single" collapsible className="w-full">
               {maktobats.map((maktobat) => (
-                <AccordionItem key={maktobat.id} value={maktobat.id} className="text-center">
+                <AccordionItem
+                  key={maktobat.id}
+                  value={maktobat.id}
+                  className="text-center"
+                >
                   <AccordionTrigger>{maktobat.title}</AccordionTrigger>
                   <AccordionContent>
                     <div className="mb-4 pb-2">
                       <p className="text-sm">{maktobat.content}</p>
-                      <div className="flex gap-2 mt-2 text-center">
+                      <div className="flex justify-center gap-2 mt-2 text-center">
                         <Button
                           size="sm"
                           variant="outline"
@@ -172,7 +176,9 @@ export const BenefitMaktobat = () => {
                           href={maktobat.pdfUrl}
                           download={`${maktobat.title || "maktobat"}.pdf`}
                         >
-                          <Button size="sm">دانلود </Button>
+                          <Button size="sm" className="text-background">
+                            دانلود{" "}
+                          </Button>
                         </a>
                       </div>
 
@@ -198,7 +204,10 @@ export const BenefitMaktobat = () => {
                   </AccordionContent>
                 </AccordionItem>
               ))}
-          
+              <AccordionItem value="group-2">
+                <AccordionTrigger> مباحث متفرقه</AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-4"></AccordionContent>
+              </AccordionItem>
             </Accordion>
           )}
         </SheetContent>

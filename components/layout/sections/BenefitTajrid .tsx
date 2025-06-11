@@ -325,7 +325,7 @@ export const BenefitTajrid = () => {
                         </AccordionTrigger>
                         <AccordionContent className="space-y-2">
                           <div
-                            className="text-sm text-primary leading-relaxed text-right"
+                            className="text-sm text-primary  leading-relaxed text-right"
                             dir="rtl"
                           >
                             {descriptions.map((desc, idx) => (

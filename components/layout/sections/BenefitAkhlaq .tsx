@@ -105,15 +105,17 @@ export const BenefitAkhlaq = () => {
                 <div>
                   <Accordion type="single" collapsible className="w-full">
                     {/* First 4 sessions */}
-                    <AccordionItem value="group-1">
+                                        
+
+                    <AccordionItem value="group-1 ">
                       <AccordionTrigger>شیعه و میراث فاطمی</AccordionTrigger>
-                      <AccordionContent className="flex flex-col gap-4">
+                      <AccordionContent className="flex flex-col gap-4  justify-center  mt-2 text-center">
                         {audioFiles.slice(0, 4).map((file, i) => (
                           <div
                             key={i}
                             className="border-b border-muted-foreground p-2"
                           >
-                            <div className="font-semibold mb-1 text-primary">
+                            <div className="font-semibold mb-3 text-primary">
                               {file.description}
                             </div>
                             <audio controls className="w-full">
@@ -128,13 +130,13 @@ export const BenefitAkhlaq = () => {
                     {/* Last 2 sessions */}
                     <AccordionItem value="group-2">
                       <AccordionTrigger>گفتگوهای قرآنی</AccordionTrigger>
-                      <AccordionContent className="flex flex-col gap-4">
+                      <AccordionContent className="flex flex-col gap-4  justify-center  text-center">
                         {audioFiles.slice(4).map((file, i) => (
                           <div
                             key={i + 4}
                             className="border-b border-muted-foreground  p-2"
                           >
-                            <div className="font-semibold mb-1 text-primary">
+                            <div className="font-semibold mb-3 text-primary">
                               {file.description}
                             </div>
                             <audio controls className="w-full">
