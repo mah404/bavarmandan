@@ -46,8 +46,14 @@ export const HeroSection = () => {
             className="max-w-screen-sm text-gray-100 mx-auto text-xl text-muted-foreground leading-relaxed"
           >
             با سلام و سپاس از حضور شما در تارنمای{" "}
-            <span className="text-yellow-300 inline-block whitespace-nowrap pr-1">
-              «مجمع باورمندان کلاب‌هاوس»
+            <span className=" inline-block whitespace-nowrap pr-1">
+              «
+              <span className="text-yellow-300">
+
+              مجمع باورمندان
+              </span>
+               کلاب‌هاوس
+               »
             </span>
             و با آرزوی سلامتی و توفیقات روزافزون. این تارنما با هدف اطلاع‌رسانی
             و به‌اشتراک‌گذاری مطالبی شکل گرفته است که می‌تواند برای شرکت‌کنندگان

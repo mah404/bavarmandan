@@ -59,49 +59,51 @@ export const BenefitMaktobat = () => {
           if (!res.ok) throw new Error(await res.text());
           return res.json();
         })
-    .then((data) => {
-  const persianOrderMap: Record<string, number> = {
-    "اول": 1,
-    "دوم": 2,
-    "سوم": 3,
-    "چهارم": 4,
-    "پنجم": 5,
-    "ششم": 6,
-    "هفتم": 7,
-    "هشتم": 8,
-    "نهم": 9,
-    "دهم": 10,
-    "یازدهم": 11,
-    "دوازدهم": 12,
-  };
+        .then((data) => {
+            console.log("Raw response from /api/maktobats:", data); // ✅ Add this line
 
-  const extractPersianNumber = (title: string) => {
-    const match = title.match(/مکتوب\s+(\S+)/);
-    return match ? persianOrderMap[match[1]] ?? 999 : 999;
-  };
+          const persianOrderMap: Record<string, number> = {
+            اول: 1,
+            دوم: 2,
+            سوم: 3,
+            چهارم: 4,
+            پنجم: 5,
+            ششم: 6,
+            هفتم: 7,
+            هشتم: 8,
+            نهم: 9,
+            دهم: 10,
+            یازدهم: 11,
+            دوازدهم: 12,
+          };
 
-  const sortedData = [...data].sort((a, b) => {
-    return extractPersianNumber(a.title) - extractPersianNumber(b.title);
-  });
+          const extractPersianNumber = (title: string) => {
+            const match = title.match(/مکتوب\s+(\S+)/);
+            return match ? persianOrderMap[match[1]] ?? 999 : 999;
+          };
 
-const transformed = sortedData.map((item: any) => {
-  const order = extractPersianNumber(item.title).toString();
-  const audioUrl =
-    dropboxAudioMap[order]?.replace("&dl=0", "&raw=1") ?? null;
+          const sortedData = [...data].sort((a, b) => {
+            return (
+              extractPersianNumber(a.title) - extractPersianNumber(b.title)
+            );
+          });
 
+          const transformed = sortedData.map((item: any) => {
+            const order = extractPersianNumber(item.title).toString();
+            const audioUrl =
+              dropboxAudioMap[order]?.replace("&dl=0", "&raw=1") ?? null;
 
-    return {
-      id: item.id,
-      title: item.title,
-      content: item.content,
-      pdfUrl: item.pdfUrl,
-      audioUrl,
-    };
-  });
+            return {
+              id: item.id,
+              title: item.title,
+              content: item.content,
+              pdfUrl: item.pdfUrl,
+              audioUrl,
+            };
+          });
 
-  setMaktobats(transformed);
-})
-
+          setMaktobats(transformed);
+        })
 
         .catch((err) => {
           console.error("Failed to fetch maktobats:", err);
@@ -145,12 +147,12 @@ const transformed = sortedData.map((item: any) => {
           ) : (
             <Accordion type="single" collapsible className="w-full">
               {maktobats.map((maktobat) => (
-                <AccordionItem key={maktobat.id} value={maktobat.id}>
+                <AccordionItem key={maktobat.id} value={maktobat.id} className="text-center">
                   <AccordionTrigger>{maktobat.title}</AccordionTrigger>
                   <AccordionContent>
                     <div className="mb-4 pb-2">
                       <p className="text-sm">{maktobat.content}</p>
-                      <div className="flex gap-2 mt-2">
+                      <div className="flex gap-2 mt-2 text-center">
                         <Button
                           size="sm"
                           variant="outline"
@@ -196,6 +198,12 @@ const transformed = sortedData.map((item: any) => {
                   </AccordionContent>
                 </AccordionItem>
               ))}
+              <AccordionItem>
+                <AccordionContent>
+
+                </AccordionContent>
+
+              </AccordionItem>
             </Accordion>
           )}
         </SheetContent>

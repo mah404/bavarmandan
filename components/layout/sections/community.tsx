@@ -23,16 +23,14 @@ export const CommunitySection = () => {
               <CardTitle className="text-center font-bold text-xl sm:text-3xl md:text-4xl lg:text-4xl">
                 <div className="flex flex-col items-center">
                   <span className="text-yellow-300 bg-gradient-to-r bg-clip-text leading-snug text-center">
-                    تذکرات و نکات جلسات 
-                    «مجمع باورمندان»
+                    تذکرات و نکات جلسات «مجمع باورمندان»
                   </span>
                   <span className="text-yellow-300 bg-gradient-to-r bg-clip-text leading-snug text-center">
                     در کلاب‌هاوس
                   </span>
                 </div>
               </CardTitle>
-                        <hr className="border-primary w-full   " />
-
+              <hr className="border-primary w-full   " />
             </CardHeader>
             <CardContent className="lg:w-[80%] font-semibold text-xl text-muted-foreground leading-relaxed">
               با توجه به اهداف شکل‌گیری جلسات «مجمع باورمندان» در کلاب‌هاوس، که
@@ -75,7 +73,7 @@ export const CommunitySection = () => {
               صلاحدید مدیران جلسه تعیین می‌شود. لطفاً از مداخله در گفت‌وگوی
               دیگران خارج از زمان مشخص‌شده پرهیز نمایید.
             </CardContent>
-<CardContent className="lg:w-[80%] text-xl text-muted-foreground font-semibold ">
+            <CardContent className="lg:w-[80%] text-xl text-muted-foreground font-semibold ">
               بدیهی است در صورت عدم رعایت موارد فوق در جلسه، استیج یا بخش چت،
               مدیران جلسات بنا به صلاحدید خود می‌توانند از ادامه حضور افراد در
               همان جلسه یا جلسات آینده جلوگیری نمایند.
@@ -83,7 +81,7 @@ export const CommunitySection = () => {
 
             <CardContent className="lg:w-[80%] text-xl text-muted-foreground font-semibold">
               همچنین «مجمع باورمندان کلاب‌هاوس» بنابر نیاز و مصالح مجموعه، حق
-              استفاده از محتوای صوتی، گفتاری و نوشتاری ارائه‌شده در جلسات را
+              استفاده از محتوای صوتی، گفتاری و نوشتاری ارائه‌ شده در جلسات را
               برای خود محفوظ می‌داند.
             </CardContent>
 
@@ -94,7 +92,15 @@ export const CommunitySection = () => {
               حضور گرم، مشارکت فکری، صبوری و رعایت نکات اخلاقی و آیین گفت‌وگو از
               سوی تمامی عزیزان صمیمانه سپاسگزاریم.
             </CardContent>
+            <CardContent className="lg:w-[80%] text-md text-muted-foreground font-thin mt-8">
+              حضور مجمع باورمندان در شبکه های اجتماعی و مجازی تنها به هدف اشتراک*
+              گذاری محتوای اشخاص و صرفاً جنبه آموزشی داشته فلذا مجمع باورمندان
+              هیچگونه مسئولیتی در قبال اشخاص، نظرات، مطالب، و محتوای به اشتراک
+              گذاشته شده و باز نشر داده شده در هیچ‌یک از شبکه های وابسته به مجمع
+              باورمندان را بر عهده نمی‌گیرد.
+            </CardContent>
           </Card>
+          ّ
         </div>
       </div>
       <hr className="border-secondary border-yellow-500" />

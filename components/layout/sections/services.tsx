@@ -60,7 +60,7 @@ export const ServicesSection = () => {
       <h2 className="text-lg text-primary text-center mb-2 tracking-wider"></h2>
 
       <h2 className="text-3xl md:text-4xl text-center text-yellow-300 font-bold mb-4">
-        تارنماهای مرتبط{" "}
+        *تارنماهای مرتبط{" "}
       </h2>
       <h3 className="md:w-1/2 mx-auto text-xl text-center text-muted-foreground mb-8"></h3>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
