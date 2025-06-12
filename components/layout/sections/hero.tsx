@@ -66,7 +66,7 @@ export const HeroSection = () => {
             >
               <Link
                 className="flex"
-                href="https://www.clubhouse.com/house/%D9%85%D8%AC%D9%85%D8%B9-%D8%A8%D8%A7%D9%88%D8%B1%D9%85%D9%86%D8%AF%D8%A7%D9%86-%DA%A9%D9%84%D8%A7%D8%A8-%D9%87%D8%A7%D9%88%D8%B3?chs=lgAI3r9pbR%3ADrbcc1Vdpax6lhaqJt_P0rUiUeHCPDXTK0QStpjNRXo&utm_medium=ch_house_settings"
+                href="https://www.clubhouse.com/house/%D9%85%D8%AC%D9%85%D8%B9-%D8%A8%D8%A7%D9%88%D8%B1%D9%85%D9%86%D8%AF%D8%A7%D9%86?chs=vgJIag5VYG%3AHJqbfkIoYRlofbeOY8p06RDKoa8xs1iz8W4cLx6HAlA&utm_medium=ch_house_settings"
               >
                 کلاب هاوس
                 <img
