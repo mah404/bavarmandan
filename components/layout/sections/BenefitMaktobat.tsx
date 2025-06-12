@@ -44,6 +44,10 @@ const dropboxAudioMap: Record<string, string> = {
   "12": "",
 };
 
+const goftegooha: Record<string, string> = {
+  "1": "https://www.dropbox.com/scl/fi/iq2w7txicij0oy5ycqc54/goftegoo.mp3?rlkey=h20ywqwgf4gkpqshvcx6a3fi1&st=61dregoe&dl=1",
+};
+
 export const BenefitMaktobat = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -205,8 +209,21 @@ export const BenefitMaktobat = () => {
                 </AccordionItem>
               ))}
               <AccordionItem value="group-2">
-                <AccordionTrigger> مباحث متفرقه</AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-4"></AccordionContent>
+                <AccordionTrigger>مباحث متفرقه</AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-4">
+                  <div className="rounded-xl shadow-md p-4">
+                    <SheetDescription className="text-primary text-sm font-semibold mb-2">
+                      🎧 گفتمان
+                    </SheetDescription>
+                    <audio
+                      controls
+                      className="w-full rounded-md outline-none focus:ring-2 focus:ring-primary"
+                    >
+                      <source src={goftegooha["1"]} type="audio/mpeg" />
+                      مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
+                    </audio>
+                  </div>
+                </AccordionContent>
               </AccordionItem>
             </Accordion>
           )}
