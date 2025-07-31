@@ -336,6 +336,7 @@ export const BenefitTajrid = () => {
                           <audio controls className="w-full">
                             <source src={audio.url} type="audio/mpeg" />
                             مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
+                            
                           </audio>
                         </AccordionContent>
                       </AccordionItem>
