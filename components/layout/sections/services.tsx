@@ -54,7 +54,7 @@ const serviceList: ServiceProps[] = [
 
 export const ServicesSection = () => {
   return (
-    <section id="services" className="container py-24 sm:py-32">
+    <section id="tarnama" className="container py-24 sm:py-32">
       <h2 className="text-lg text-primary text-center mb-2 tracking-wider"></h2>
 
       <h2 className="text-3xl md:text-4xl text-center text-primary font-bold mb-4">
@@ -80,7 +80,7 @@ export const ServicesSection = () => {
                     {description}
                   </CardDescription>
                 </CardHeader>
-                
+
                 <Badge
                   data-pro={ProService.YES === pro}
                   variant="secondary"

@@ -4,7 +4,7 @@ import { BenefitTajrid } from "./BenefitTajrid ";
 import { BenefitsCard } from "./BenefitsCard";
 export const BenefitsSection = () => {
   return (
-    <section className="container py-24 sm:py-32">
+    <section id="mohtava" className="container py-24 sm:py-32">
       <div className="grid lg:grid-cols-2 place-items-center lg:gap-24">
         <div>
           <h2 className="text-3xl font-bold mb-4 text-primary">
