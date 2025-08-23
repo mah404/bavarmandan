@@ -29,7 +29,10 @@ export const FooterSection = () => {
               >
                 تلگرام
               </Link>
-              <Link href="https://www.clubhouse.com/house/%D9%85%D8%AC%D9%85%D8%B9-%D8%A8%D8%A7%D9%88%D8%B1%D9%85%D9%86%D8%AF%D8%A7%D9%86?chs=vgJIag5VYG%3AHJqbfkIoYRlofbeOY8p06RDKoa8xs1iz8W4cLx6HAlA&utm_medium=ch_house_settings" className="opacity-60 hover:opacity-100 ml-2">
+              <Link
+                href="https://www.clubhouse.com/house/%D9%85%D8%AC%D9%85%D8%B9-%D8%A8%D8%A7%D9%88%D8%B1%D9%85%D9%86%D8%AF%D8%A7%D9%86?chs=vgJIag5VYG%3AHJqbfkIoYRlofbeOY8p06RDKoa8xs1iz8W4cLx6HAlA&utm_medium=ch_house_settings"
+                className="opacity-60 hover:opacity-100 ml-2"
+              >
                 کلاب‌هاوس
               </Link>
             </div>
@@ -55,11 +58,11 @@ export const FooterSection = () => {
           </div>
         </div>
 
-<Separator className="my-6 bg-muted-foreground" />
+        <Separator className="my-6 bg-muted-foreground" />
 
         <section className="w-full text-center">
           <h3 className="text-xs">
-            &copy; 2025 طراحی و توسعه توسط
+            &copy; 1404 طراحی و توسعه توسط
             <Link
               target="_blank"
               href="#"

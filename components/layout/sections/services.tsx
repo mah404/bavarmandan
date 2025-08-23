@@ -6,6 +6,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 
 enum ProService {
   YES = 1,
@@ -42,36 +47,38 @@ const serviceList: ServiceProps[] = [
     title: " کانال یوتیوب",
     description: "در حال احداث",
     pro: 0,
-    link: "#",
+    link: "https://www.youtube.com/@bavarmandan",
   },
   {
     title: " اینستاگرام",
     description: "در حال احداث",
     pro: 0,
-    link: "#",
+    link: "https://www.instagram.com/bavarmandan110/",
+  },
+  {
+    title: "سایر منابع مفید",
+    description: "....",
+    pro: 0,
+    link: "https://www.instagram.com/bavarmandan110/",
   },
 ];
 
 export const ServicesSection = () => {
   return (
     <section id="tarnama" className="container py-24 sm:py-32">
-      <h2 className="text-lg text-primary text-center mb-2 tracking-wider"></h2>
-
       <h2 className="text-3xl md:text-4xl text-center text-primary font-bold mb-4">
         <span className="text-sm align-super ">*</span>
         تارنماهای مرتبط
       </h2>
-      <h3 className="md:w-1/2 mx-auto text-xl text-center text-muted-foreground mb-8"></h3>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
-      <div className="flex flex-col items-center gap-4 w-full lg:w-[60%] mx-auto">
-        {/* Top row */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">
+      <div className="flex flex-col items-center gap-6 w-full lg:w-[70%] mx-auto">
+        {/* Row 1 */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
           {serviceList.slice(0, 2).map(({ title, description, pro, link }) => (
             <Card
               dir="rtl"
               key={title}
-              className="bg-card dark:bg-card w-full sm:w-[380px] h-[130px] mx-auto relative"
+              className="bg-card dark:bg-card w-full sm:w-[480px] h-[130px] mx-auto relative"
             >
               <Link href={link}>
                 <CardHeader>
@@ -80,7 +87,6 @@ export const ServicesSection = () => {
                     {description}
                   </CardDescription>
                 </CardHeader>
-
                 <Badge
                   data-pro={ProService.YES === pro}
                   variant="secondary"
@@ -93,13 +99,13 @@ export const ServicesSection = () => {
           ))}
         </div>
 
-        {/* Middle row */}
-        <div className="w-full sm:w-auto flex justify-center">
-          {serviceList.slice(2, 3).map(({ title, description, pro, link }) => (
+        {/* Row 2 */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
+          {serviceList.slice(2, 4).map(({ title, description, pro, link }) => (
             <Card
               dir="rtl"
               key={title}
-              className="bg-card dark:bg-card w-full sm:w-[380px] h-[130px] mx-auto relative"
+              className="bg-card dark:bg-card w-full sm:w-[480px] h-[130px] mx-auto relative"
             >
               <Link href={link}>
                 <CardHeader>
@@ -120,31 +126,97 @@ export const ServicesSection = () => {
           ))}
         </div>
 
-        {/* Bottom row */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">
-          {serviceList.slice(3, 5).map(({ title, description, pro, link }) => (
-            <Card
-              dir="rtl"
-              key={title}
-              className="bg-card dark:bg-card w-full sm:w-[380px] h-[130px] mx-auto relative"
-            >
-              <Link href={link}>
-                <CardHeader>
-                  <CardTitle>{title}</CardTitle>
-                  <CardDescription className="text-yellow-300">
-                    {description}
-                  </CardDescription>
-                </CardHeader>
-                <Badge
-                  data-pro={ProService.YES === pro}
-                  variant="secondary"
-                  className="absolute -top-2 -right-3 data-[pro=false]:hidden"
-                >
-                  PRO
-                </Badge>
-              </Link>
-            </Card>
-          ))}
+        {/* Row 3 */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
+          {serviceList.slice(4, 6).map(({ title, description, pro, link }) => {
+            const isExtra = title.trim() === "سایر منابع مفید";
+            if (isExtra) {
+              return (
+                <Popover key={title}>
+                  <PopoverTrigger asChild>
+                    {/* کارت به‌عنوان تریگر؛ لینک نیست تا جابجا نشود */}
+                    <div
+                      dir="rtl"
+                      role="button"
+                      tabIndex={0}
+                      className="bg-card dark:bg-card w-full sm:w-[480px] h-[130px] mx-auto relative rounded-xl border hover:shadow cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                      <Card className="bg-transparent border-0 shadow-none h-full">
+                        <CardHeader>
+                          <CardTitle>{title}</CardTitle>
+                          <CardDescription className="text-yellow-300">
+                            {description}
+                          </CardDescription>
+                        </CardHeader>
+                        <Badge
+                          data-pro={ProService.YES === pro}
+                          variant="secondary"
+                          className="absolute -top-2 -right-3 data-[pro=false]:hidden"
+                        >
+                          منابع
+                        </Badge>
+                      </Card>
+                    </div>
+                  </PopoverTrigger>
+
+                  <PopoverContent align="center" side="bottom" className="w-80">
+                    <div dir="rtl" className="space-y-2">
+                      <p className="text-sm text-primary">
+                        منابع مفید:
+                      </p>
+                      <ul className="list-disc pr-4 space-y-1">
+                        <li>
+                          <Link
+                            className="underline underline-offset-4"
+                            href="https://www.valiasr-aj.tv/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            سایت ولی عصر
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            className="underline underline-offset-4"
+                            href="https://javadi.esra.ir/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            دفتر مرجعیت آیت الله العظمی جوادی آملی
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              );
+            }
+
+            // حالت کارت‌های عادی (بدون پاپ‌اور)
+            return (
+              <Card
+                dir="rtl"
+                key={title}
+                className="bg-card dark:bg-card w-full sm:w-[480px] h-[130px] mx-auto relative"
+              >
+                <Link href={link}>
+                  <CardHeader>
+                    <CardTitle>{title}</CardTitle>
+                    <CardDescription className="text-yellow-300">
+                      {description}
+                    </CardDescription>
+                  </CardHeader>
+                  <Badge
+                    data-pro={ProService.YES === pro}
+                    variant="secondary"
+                    className="absolute -top-2 -right-3 data-[pro=false]:hidden"
+                  >
+                    PRO
+                  </Badge>
+                </Link>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </section>
