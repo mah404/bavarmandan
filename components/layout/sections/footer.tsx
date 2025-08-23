@@ -35,13 +35,13 @@ export const FooterSection = () => {
             </div>
             <div className="flex flex-row">
               <Link
-                href="#services"
+                href="https://www.youtube.com/@bavarmandan"
                 className="opacity-60 hover:opacity-100 mr-2"
               >
                 یوتیوب
               </Link>
               <Link
-                href="#services"
+                href="https://www.instagram.com/bavarmandan110/"
                 className="opacity-60 hover:opacity-100 ml-2"
               >
                 اینستاگرام
