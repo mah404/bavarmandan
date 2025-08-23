@@ -76,7 +76,7 @@ html {
 /* *=========== Orange theme =========== */
 @layer base {
  :root {
-  --background: 174 98.5% 43.9%;         /* #02dbd0 */
+--background: 174 85.9% 73.9%;       /* #02dbd0 */
   --foreground: 20 14.3% 4.1%;           /* ~#0a0807 */
 
   --card: 176 97.3% 34.5%;        /* #ffffff */

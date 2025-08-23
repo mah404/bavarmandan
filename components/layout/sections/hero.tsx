@@ -25,7 +25,7 @@ export const HeroSection = () => {
             className="max-w-screen-sm mx-auto text-md text-muted-foreground   flex-col flex"
             dir="rtl"
           >
-            <span className="text-yellow-300 text-2xl text-bold pr-1">
+            <span className="text-primary text-2xl text-bold pr-1">
               رَبَّنَا إِنَّنَا سَمِعْنَا مُنَادِيًا يُنَادِي لِلْإِيمَانِ أَنْ
               آمِنُوا بِرَبِّكُمْ فَآمَنَّا رَبَّنَا فَاغْفِرْ لَنَا ذُنُوبَنَا
               وَكَفِّرْ عَنَّا سَيِّئَاتِنَا وَتَوَفَّنَا مَعَ الْأَبْرَارِ
@@ -46,7 +46,7 @@ export const HeroSection = () => {
             className="max-w-screen-sm text-gray-100 mx-auto text-xl text-muted-foreground leading-relaxed"
           >
             با سلام و سپاس از حضور شما در تارنمای{" "}
-            <span className=" inline-block whitespace-nowrap text-yellow-300 pl-1  pr-1">
+            <span className=" inline-block whitespace-nowrap text-primary pl-1  pr-1">
                 « مجمع باورمندان »
             </span>
               کلاب‌هاوس

@@ -76,10 +76,11 @@ export const ServicesSection = () => {
               <Link href={link}>
                 <CardHeader>
                   <CardTitle>{title}</CardTitle>
-                  <CardDescription className="text-yellow-300">
+                  <CardDescription className="text-primary">
                     {description}
                   </CardDescription>
                 </CardHeader>
+                
                 <Badge
                   data-pro={ProService.YES === pro}
                   variant="secondary"
