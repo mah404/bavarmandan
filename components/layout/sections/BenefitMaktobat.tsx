@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Sheet,
@@ -26,7 +25,7 @@ interface Maktobat {
   title: string;
   content: string;
   pdfUrl: string;
-  audioUrl?: string;
+  audioUrl?: string | null;
 }
 
 const dropboxAudioMap: Record<string, string> = {
@@ -48,71 +47,117 @@ const goftegooha: Record<string, string> = {
   "1": "https://www.dropbox.com/scl/fi/iq2w7txicij0oy5ycqc54/goftegoo.mp3?rlkey=h20ywqwgf4gkpqshvcx6a3fi1&st=61dregoe&dl=1",
 };
 
+const CACHE_KEY = "maktobats_cache_v1";
+type CacheShape = { ts: number; items: Maktobat[] };
+
 export const BenefitMaktobat = () => {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [maktobats, setMaktobats] = useState<Maktobat[]>([]);
 
+  // ---------- Cache helpers ----------
+  const readCache = (): Maktobat[] | null => {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as CacheShape;
+      if (!parsed?.items?.length) return null;
+      return parsed.items;
+    } catch {
+      return null;
+    }
+  };
+
+  const writeCache = (items: Maktobat[]) => {
+    try {
+      const payload: CacheShape = { ts: Date.now(), items };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
+    } catch {
+      // ignore quota errors
+    }
+  };
+
+  // ---------- Transform & sort ----------
+  const transformAndSort = (data: any[]): Maktobat[] => {
+    const persianOrderMap: Record<string, number> = {
+      اول: 1,
+      دوم: 2,
+      سوم: 3,
+      چهارم: 4,
+      پنجم: 5,
+      ششم: 6,
+      هفتم: 7,
+      هشتم: 8,
+      نهم: 9,
+      دهم: 10,
+      یازدهم: 11,
+      دوازدهم: 12,
+    };
+    const extractPersianNumber = (title: string) => {
+      const match = title?.match(/مکتوب\s+(\S+)/);
+      return match ? persianOrderMap[match[1]] ?? 999 : 999;
+    };
+
+    const sortedData = [...data].sort(
+      (a, b) => extractPersianNumber(a.title) - extractPersianNumber(b.title)
+    );
+
+    return sortedData.map((item: any) => {
+      const order = String(extractPersianNumber(item.title));
+      const audioUrl = dropboxAudioMap[order]
+        ? dropboxAudioMap[order].replace("&dl=0", "&raw=1")
+        : null;
+
+      return {
+        id: item.id,
+        title: item.title,
+        content: item.content,
+        pdfUrl: item.pdfUrl,
+        audioUrl,
+      } as Maktobat;
+    });
+  };
+
+  // ---------- Fetch + cache ----------
+  const fetchAndCache = async (showSpinner: boolean) => {
+    if (showSpinner) setLoading(true);
+    try {
+      const res = await fetch("/api/maktobats", { cache: "no-store" });
+      if (!res.ok) throw new Error(await res.text());
+      const raw = await res.json();
+      const items = transformAndSort(raw);
+      setMaktobats(items);
+      writeCache(items);
+    } catch (err) {
+      console.error("Failed to fetch maktobats:", err);
+    } finally {
+      if (showSpinner) setLoading(false);
+    }
+  };
+
+  // ---------- Prefetch on mount (SWR style) ----------
+  useEffect(() => {
+    const cached = readCache();
+    if (cached) {
+      setMaktobats(cached);      // instant
+      fetchAndCache(false);      // background refresh
+    } else {
+      fetchAndCache(false);      // prefetch in background
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ---------- Open handler uses cache first ----------
   const handleOpen = (value: boolean) => {
     setOpen(value);
     if (value && maktobats.length === 0) {
-      setLoading(true);
-      fetch("/api/maktobats")
-        .then(async (res) => {
-          if (!res.ok) throw new Error(await res.text());
-          return res.json();
-        })
-        .then((data) => {
-          console.log("Raw response from /api/maktobats:", data); // ✅ Add this line
-
-          const persianOrderMap: Record<string, number> = {
-            اول: 1,
-            دوم: 2,
-            سوم: 3,
-            چهارم: 4,
-            پنجم: 5,
-            ششم: 6,
-            هفتم: 7,
-            هشتم: 8,
-            نهم: 9,
-            دهم: 10,
-            یازدهم: 11,
-            دوازدهم: 12,
-          };
-
-          const extractPersianNumber = (title: string) => {
-            const match = title.match(/مکتوب\s+(\S+)/);
-            return match ? persianOrderMap[match[1]] ?? 999 : 999;
-          };
-
-          const sortedData = [...data].sort((a, b) => {
-            return (
-              extractPersianNumber(a.title) - extractPersianNumber(b.title)
-            );
-          });
-
-          const transformed = sortedData.map((item: any) => {
-            const order = extractPersianNumber(item.title).toString();
-            const audioUrl =
-              dropboxAudioMap[order]?.replace("&dl=0", "&raw=1") ?? null;
-
-            return {
-              id: item.id,
-              title: item.title,
-              content: item.content,
-              pdfUrl: item.pdfUrl,
-              audioUrl,
-            };
-          });
-
-          setMaktobats(transformed);
-        })
-
-        .catch((err) => {
-          console.error("Failed to fetch maktobats:", err);
-        })
-        .finally(() => setLoading(false));
+      const cached = readCache();
+      if (cached) {
+        setMaktobats(cached);
+        fetchAndCache(false); // optional background refresh
+      } else {
+        fetchAndCache(true); // show spinner if nothing cached
+      }
     }
   };
 
