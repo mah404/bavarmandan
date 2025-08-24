@@ -22,7 +22,7 @@ export const CommunitySection = () => {
           >
             <CardHeader>
          <CardTitle className="text-center font-bold text-xl sm:text-3xl md:text-4xl lg:text-4xl">
-  <div className="flex flex-col items-center">
+  <div className="flex flex-col items-center text-primary text-2xl font-bold bg-card p-2 border-secondary border dark:border-none rounded-2xl dark:bg-transparent dark:rounded-none dark:p-0">
     <span className="text-yellow-300 bg-gradient-to-r bg-clip-text leading-snug text-center whitespace-nowrap">
       تذکرات و نکات جلسات «مجمع باورمندان»
     </span>

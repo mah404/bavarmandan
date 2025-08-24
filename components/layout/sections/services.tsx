@@ -66,10 +66,11 @@ const serviceList: ServiceProps[] = [
 export const ServicesSection = () => {
   return (
     <section id="tarnama" className="container py-24 sm:py-32">
-      <h2 className="text-3xl md:text-4xl text-center text-primary font-bold mb-4">
-        <span className="text-sm align-super ">*</span>
-        تارنماهای مرتبط
-      </h2>
+    <h2 className="w-fit mx-auto text-3xl md:text-4xl text-center p-2  text-primary font-bold mb-4 bg-card border-secondary border dark:border-none rounded-2xl dark:bg-transparent dark:rounded-none dark:p-0">
+  <span className="text-sm align-super ">*</span>
+  تارنماهای مرتبط
+</h2>
+
 
       <div className="flex flex-col items-center gap-6 w-full lg:w-[70%] mx-auto">
         {/* Row 1 */}
@@ -110,7 +111,7 @@ export const ServicesSection = () => {
               <Link href={link}>
                 <CardHeader>
                   <CardTitle>{title}</CardTitle>
-                  <CardDescription className="text-yellow-300">
+                  <CardDescription className="text-primary">
                     {description}
                   </CardDescription>
                 </CardHeader>
@@ -200,7 +201,7 @@ export const ServicesSection = () => {
                 <Link href={link}>
                   <CardHeader>
                     <CardTitle>{title}</CardTitle>
-                    <CardDescription className="text-yellow-300">
+                    <CardDescription className="text-primary">
                       {description}
                     </CardDescription>
                   </CardHeader>

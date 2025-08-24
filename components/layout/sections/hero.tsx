@@ -12,20 +12,20 @@ export const HeroSection = () => {
   return (
     <section className="container w-full">
       <div className="grid place-items-center lg:max-w-screen-xl gap-8 mx-auto py-20 md:py-32">
-        <div className="text-center space-y-8">
+        <div className="text-center  space-y-8 ">
           <Badge variant="outline" className="border-none text-md py-2">
             <span> </span>
           </Badge>
 
-          <div className="max-w-screen-md mx-auto text-center text-4xl md:text-6xl font-thin">
-            <h1>بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ </h1>
+          <div className="max-w-screen-md  mx-auto text-center text-4xl md:text-6xl font-thin">
+            <h1 className="">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ </h1>
           </div>
 
           <p
             className="max-w-screen-sm mx-auto text-md text-muted-foreground   flex-col flex"
             dir="rtl"
           >
-            <span className="text-primary text-2xl text-bold pr-1">
+            <span className="text-primary text-2xl font-bold bg-card p-1 border-secondary border dark:border-none rounded-2xl dark:bg-transparent dark:rounded-none dark:p-0">
               رَبَّنَا إِنَّنَا سَمِعْنَا مُنَادِيًا يُنَادِي لِلْإِيمَانِ أَنْ
               آمِنُوا بِرَبِّكُمْ فَآمَنَّا رَبَّنَا فَاغْفِرْ لَنَا ذُنُوبَنَا
               وَكَفِّرْ عَنَّا سَيِّئَاتِنَا وَتَوَفَّنَا مَعَ الْأَبْرَارِ
@@ -47,16 +47,15 @@ export const HeroSection = () => {
           >
             با سلام و سپاس از حضور شما در تارنمای{" "}
             <span className=" inline-block whitespace-nowrap text-primary pl-1  pr-1">
-                « مجمع باورمندان »
+              « مجمع باورمندان »
             </span>
-              کلاب‌هاوس
-            و با آرزوی سلامتی و توفیقات روزافزون. این تارنما با هدف اطلاع‌ رسانی
-            و به‌اشتراک‌گذاری مطالبی شکل گرفته است که می‌تواند برای شرکت‌کنندگان
-            در جلسات و اتاق‌های مجمع باورمندان مفید واقع شود. امیدواریم تلاش
-            اساتید و همراهان ما در فضای مجازی کلاب‌هاوس، همراه با مطالب
-            ارائه‌شده در این تارنما، زمینه‌ساز دسترسی بهتر و ارتباط مؤثرتر میان
-            دوستان و اعضای مجمع باشد. از حضور، مشارکت، دیدگاه‌ها، پیشنهادها و
-            انتقادات سازنده‌ی شما صمیمانه استقبال می‌کنیم.
+            کلاب‌هاوس و با آرزوی سلامتی و توفیقات روزافزون. این تارنما با هدف
+            اطلاع‌ رسانی و به‌اشتراک‌گذاری مطالبی شکل گرفته است که می‌تواند برای
+            شرکت‌کنندگان در جلسات و اتاق‌های مجمع باورمندان مفید واقع شود.
+            امیدواریم تلاش اساتید و همراهان ما در فضای مجازی کلاب‌هاوس، همراه با
+            مطالب ارائه‌شده در این تارنما، زمینه‌ساز دسترسی بهتر و ارتباط مؤثرتر
+            میان دوستان و اعضای مجمع باشد. از حضور، مشارکت، دیدگاه‌ها، پیشنهادها
+            و انتقادات سازنده‌ی شما صمیمانه استقبال می‌کنیم.
           </p>
 
           <div className="space-y-4 md:space-y-0 md:space-x-4">

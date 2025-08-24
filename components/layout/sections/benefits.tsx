@@ -6,8 +6,8 @@ export const BenefitsSection = () => {
   return (
     <section id="mohtava" className="container py-24 sm:py-32">
       <div className="grid lg:grid-cols-2 place-items-center lg:gap-24">
-        <div>
-          <h2 className="text-3xl font-bold mb-4 text-primary">
+        <div className="">
+          <h2 className="text-3xl  mb-4 text-primary  font-bold bg-card p-2 border-secondary border dark:border-none rounded-2xl dark:bg-transparent dark:rounded-none dark:p-0">
             <span className="text-sm align-super ">*</span>
             محتوای صوتی و نوشتاری
           </h2>
