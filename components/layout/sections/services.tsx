@@ -24,12 +24,6 @@ interface ServiceProps {
 }
 const serviceList: ServiceProps[] = [
   {
-    title: "کانال تلگرامی خلق اول ",
-    description: "شبکه اطلاع رسانی تشکیل جلسات و اشتراک مطالب",
-    pro: 0,
-    link: "https://t.me/firstcreation1",
-  },
-  {
     title: "تلگرام مجمع باورمندان کلاب هاوس ",
     description:
       "کانال تلگرامی مجمع باورمندان کلاب هاوس (جهت اطلاع رسانی از برنامه ها)",
@@ -54,6 +48,12 @@ const serviceList: ServiceProps[] = [
     description: "در حال احداث",
     pro: 0,
     link: "https://www.instagram.com/bavarmandan110/",
+  },
+  {
+    title: "کانال تلگرامی خلق اول ",
+    description: "شبکه اطلاع رسانی تشکیل جلسات و اشتراک مطالب",
+    pro: 0,
+    link: "https://t.me/firstcreation1",
   },
   {
     title: "سایر منابع مفید",
@@ -161,9 +161,7 @@ export const ServicesSection = () => {
 
                   <PopoverContent align="center" side="bottom" className="w-80">
                     <div dir="rtl" className="space-y-2">
-                      <p className="text-sm text-primary">
-                        منابع مفید:
-                      </p>
+                      <p className="text-sm text-primary">منابع مفید:</p>
                       <ul className="list-disc pr-4 space-y-1">
                         <li>
                           <Link
@@ -172,7 +170,8 @@ export const ServicesSection = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-شبکه جهانی حضرت ولی عصر (عج)                          </Link>
+                            شبکه جهانی حضرت ولی عصر (عج){" "}
+                          </Link>
                         </li>
                         <li>
                           <Link
@@ -181,7 +180,8 @@ export const ServicesSection = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-بنیاد بین المللی علوم وحیانی اسراء                          </Link>
+                            بنیاد بین المللی علوم وحیانی اسراء{" "}
+                          </Link>
                         </li>
                       </ul>
                     </div>
