@@ -68,8 +68,7 @@ export const FooterSection = () => {
               href="#"
               className="text-yellow-300 transition-all border-yellow-600 hover:border-b-2 ml-1 mr-2"
             >
-              باورمندان
-            </Link>
+فرزندان امیرالمومنین (ع)       </Link>
           </h3>
         </section>
       </div>

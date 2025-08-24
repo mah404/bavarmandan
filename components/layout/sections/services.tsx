@@ -172,8 +172,7 @@ export const ServicesSection = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            سایت ولی عصر
-                          </Link>
+شبکه جهانی حضرت ولی عصر (عج)                          </Link>
                         </li>
                         <li>
                           <Link
@@ -182,8 +181,7 @@ export const ServicesSection = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            دفتر مرجعیت آیت الله العظمی جوادی آملی
-                          </Link>
+بنیاد بین المللی علوم وحیانی اسراء                          </Link>
                         </li>
                       </ul>
                     </div>
