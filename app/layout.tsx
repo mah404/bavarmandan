@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br" className="dark" suppressHydrationWarning>
+<html lang="pt-br" className="dark overflow-x-hidden" suppressHydrationWarning>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@100..800&display=swap"
@@ -27,7 +27,7 @@ export default function RootLayout({
         />
       </head>
 
-      <body className={cn("min-h-screen bg-background", inter.className)}>
+  <body className={cn("min-h-screen bg-background overflow-x-hidden", inter.className)}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
