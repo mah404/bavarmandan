@@ -20,6 +20,7 @@ import { BookOpenText } from "lucide-react";
 import loadingPdfAnim from "@/public/loading.json";
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
+import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 
 // Dropbox audio files mapping for Tajrid (1-23)
 const tajridAudios = [
@@ -193,6 +194,14 @@ const tajridAudios = [
   },
 ];
 
+
+const toStreamable = (u: string) => {
+  if (!u) return u;
+  if (!u.includes("dropbox.com")) return u;
+  // remove any existing dl/raw param and force raw=1
+  const noParam = u.replace(/([?&])(dl|raw)=[01]/g, "").replace(/[?&]$/, "");
+  return noParam + (noParam.includes("?") ? "&raw=1" : "?raw=1");
+};
 interface PdfSection {
   id: string;
   pdfUrl: string;
@@ -202,6 +211,7 @@ export const BenefitTajrid = () => {
   const [open, setOpen] = useState(false);
   const [sections, setSections] = useState<PdfSection[]>([]);
   const [loading, setLoading] = useState(false);
+  const { play } = useAudioPlayer(); // ← use the global player
 
   useEffect(() => {
     if (open && sections.length === 0) {
@@ -216,16 +226,11 @@ export const BenefitTajrid = () => {
 
   return (
     <>
-      <Card
-        onClick={() => setOpen(true)}
-        className="cursor-pointer hover:bg-background transition"
-      >
+      <Card onClick={() => setOpen(true)} className="cursor-pointer hover:bg-background transition">
         <CardHeader>
           <div className="flex justify-between">
             <BookOpenText size={32} color="hsl(var(--primary))" />
-            <span className="text-5xl text-muted-foreground/15 font-medium">
-              02
-            </span>
+            <span className="text-5xl text-muted-foreground/15 font-medium">02</span>
           </div>
           <CardTitle>دروس شرح کتاب تجرید الاعتقاد</CardTitle>
         </CardHeader>
@@ -237,55 +242,25 @@ export const BenefitTajrid = () => {
             <SheetTitle>دروس شرح کتاب تجرید الاعتقاد</SheetTitle>
             <SheetDescription>
               {loading ? (
-                <Lottie
-                  animationData={loadingPdfAnim}
-                  loop
-                  className="text-muted-foreground bg-transparent mt-4"
-                />
+                <Lottie animationData={loadingPdfAnim} loop className="text-muted-foreground bg-transparent mt-4" />
               ) : (
                 <Accordion type="single" collapsible className="w-full mt-4">
-                  {/* PDFs in one item */}
+                  {/* PDFs */}
                   <AccordionItem value="tajrid-pdfs">
-                    <AccordionTrigger>
-                      کتاب شرح تجرید الاعتقاد{" "}
-                    </AccordionTrigger>
+                    <AccordionTrigger>کتاب شرح تجرید الاعتقاد</AccordionTrigger>
                     <AccordionContent>
                       {sections.map((section, index) => {
-                        const label = `کتاب کشف المراد جلد  ${index + 1}`; // or for Persian numerals use `کتاب شماره ${convertToPersian(index + 1)}`
+                        const label = `کتاب کشف المراد جلد  ${index + 1}`;
                         const fileName = `${label}.pdf`;
-
                         return (
-                          <div
-                            key={section.id}
-                            className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
-                          >
-                            <span className="text-sm text-muted-foreground">
-                              {label}
-                            </span>
-
+                          <div key={section.id} className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                            <span className="text-sm text-muted-foreground">{label}</span>
                             <div className="flex gap-2">
-                              <a
-                                href={section.pdfUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => {
-                                    const blob = fetch(section.pdfUrl)
-                                      .then((res) => res.blob())
-                                      .then((blob) => {
-                                        const url = URL.createObjectURL(blob);
-                                        window.open(url, "_blank");
-                                      });
-                                  }}
-                                >
-                                  نمایش
-                                </Button>
-                              </a>
-
+                              <Button size="sm" variant="outline" onClick={() => window.open(section.pdfUrl, "_blank")}>
+                                نمایش
+                              </Button>
                               <Button
+                                size="sm"
                                 onClick={() => {
                                   const a = document.createElement("a");
                                   a.href = section.pdfUrl;
@@ -304,40 +279,46 @@ export const BenefitTajrid = () => {
                     </AccordionContent>
                   </AccordionItem>
 
-                  {[...tajridAudios].reverse().map((audio, i) => {
-                    const sessionNumber = tajridAudios.length - i;
+                  {/* Audios */}
+                  {[...tajridAudios].reverse().map((audio, i, arr) => {
+                    const sessionNumber = arr.length - i;
                     const descriptions = [
                       audio.DescriptionOne,
                       audio.DescriptionTwo,
                       audio.DescriptionThree,
                       audio.DescriptionFour,
-                      audio.DescriptionFive,
-                      audio.DescriptionSix,
-                    ].filter((d) => d && d.trim() !== "");
+                      (audio as any).DescriptionFive,
+                      (audio as any).DescriptionSix,
+                    ].filter((d) => d && String(d).trim() !== "") as string[];
+
+                    const url = toStreamable(audio.url); // <- build the streamable URL
 
                     return (
-                      <AccordionItem
-                        key={`audio-${sessionNumber}`}
-                        value={`audio-${sessionNumber}`}
-                      >
-                        <AccordionTrigger>
-                          جلسه {sessionNumber}
-                        </AccordionTrigger>
+                      <AccordionItem key={`audio-${sessionNumber}`} value={`audio-${sessionNumber}`}>
+                        <AccordionTrigger>جلسه {sessionNumber}</AccordionTrigger>
                         <AccordionContent className="space-y-2">
-                          <div
-                            className="text-sm text-primary  leading-relaxed text-right"
-                            dir="rtl"
-                          >
-                            {descriptions.map((desc, idx) => (
-                              <p key={idx}>{desc}</p>
-                            ))}
-                          </div>
+                          {descriptions.length > 0 && (
+                            <div className="text-sm text-primary leading-relaxed text-right" dir="rtl">
+                              {descriptions.map((desc, idx) => <p key={idx}>{desc}</p>)}
+                            </div>
+                          )}
 
-                          <audio controls className="w-full">
-                            <source src={audio.url} type="audio/mpeg" />
-                            مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
-                            
-                          </audio>
+                          <Button
+                            className="w-full text-card"
+                            onClick={() => {
+                              if (!url) {
+                                console.error("No URL for session", sessionNumber, audio);
+                                return;
+                              }
+                              play({
+                                title: `جلسه ${sessionNumber}`,
+                                url, // MUST be a direct/streamable URL
+                                description: descriptions.length ? descriptions.join(" | ") : undefined,
+                              });
+                            }}
+                          >
+                            پخش
+                          </Button>
                         </AccordionContent>
                       </AccordionItem>
                     );

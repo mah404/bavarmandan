@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
-
+import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 interface Maktobat {
   id: string;
   title: string;
@@ -54,6 +54,7 @@ export const BenefitMaktobat = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [maktobats, setMaktobats] = useState<Maktobat[]>([]);
+  const { play } = useAudioPlayer(); // ← use the global player
 
   // ---------- Cache helpers ----------
   const readCache = (): Maktobat[] | null => {
@@ -236,13 +237,18 @@ export const BenefitMaktobat = () => {
                           🎧 پخش صوت
                         </SheetDescription>
                         {maktobat.audioUrl ? (
-                          <audio
-                            controls
-                            className="w-full rounded-md outline-none focus:ring-2 focus:ring-primary"
+                             <Button
+                            onClick={() =>
+                              play({
+                                title: maktobat.title,
+                                url: maktobat.audioUrl!, // Track.url required
+                                description: maktobat.content,
+                              })
+                            }
+                            className="w-full text-card"
                           >
-                            <source src={maktobat.audioUrl} type="audio/mpeg" />
-                            مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
-                          </audio>
+                            پخش
+                          </Button>
                         ) : (
                           <p className="text-gray-500 text-sm">
                             فایل صوتی موجود نیست

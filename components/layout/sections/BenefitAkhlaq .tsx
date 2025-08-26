@@ -18,20 +18,23 @@ import {
 } from "@/components/ui/accordion";
 import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
+import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
+import { Button } from "@/components/ui/button";
+
+
 
 export const BenefitAkhlaq = () => {
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const { play } = useAudioPlayer(); // ← use the global player
+
 
   const fetchDescription = async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/benefit?id=akhlagh");
-      const data = await res.json();
-      setDescription(data.description);
-    } catch {
-      setDescription("خطا در دریافت اطلاعات.");
+      await res.json();
     } finally {
       setLoading(false);
     }
@@ -115,13 +118,13 @@ export const BenefitAkhlaq = () => {
                             key={i}
                             className="border-b border-muted-foreground p-2"
                           >
-                            <div className="font-semibold mb-3 text-primary">
-                              {file.description}
-                            </div>
-                            <audio controls className="w-full">
-                              <source src={file.url} type="audio/mpeg" />
-                              مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
-                            </audio>
+                           <div className="font-semibold mb-2 text-muted-foreground">{file.description}</div>
+                            <Button
+                              onClick={() => play({ title: file.title, url: file.url, description: file.description })}
+                              className="w-full text-card"
+                            >
+                              پخش
+                            </Button>
                           </div>
                         ))}
                       </AccordionContent>
@@ -136,13 +139,13 @@ export const BenefitAkhlaq = () => {
                             key={i + 4}
                             className="border-b border-muted-foreground  p-2"
                           >
-                            <div className="font-semibold mb-3 text-primary">
-                              {file.description}
-                            </div>
-                            <audio controls className="w-full">
-                              <source src={file.url} type="audio/mpeg" />
-                              مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
-                            </audio>
+                             <div className="font-semibold mb-2 text-primary">{file.description}</div>
+                            <Button
+                              onClick={() => play({ title: file.title, url: file.url, description: file.description })}
+                              className="w-full text-card"
+                            >
+                              پخش
+                            </Button>
                           </div>
                         ))}
                       </AccordionContent>

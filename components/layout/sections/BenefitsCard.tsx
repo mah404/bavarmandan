@@ -18,11 +18,17 @@ import {
 } from "@/components/ui/accordion";
 import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
+import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
+import { Button } from "@/components/ui/button";
+
+
+
 
 export const BenefitsCard = () => {
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const { play } = useAudioPlayer(); // ← use the global player
 
   const fetchDescription = async () => {
     setLoading(true);
@@ -262,18 +268,12 @@ export const BenefitsCard = () => {
                         <div className="font-semibold mb-3 text-primary">
                           {file.title}
                         </div>
-                        <audio
-                          controls
-                          className="w-full mb-2"
-                          onPlay={(event) => {
-                            document.querySelectorAll("audio").forEach((audio) => {
-                              if (audio !== event.currentTarget) audio.pause();
-                            });
-                          }}
-                        >
-                          <source src={file.url} type="audio/mpeg" />
-                          مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
-                        </audio>
+                         <Button
+                              onClick={() => play({ title: file.title, url: file.url })}
+                              className="w-full text-card"
+                            >
+                              پخش
+                            </Button>
                       </div>
                     ))}
                   </AccordionContent>
