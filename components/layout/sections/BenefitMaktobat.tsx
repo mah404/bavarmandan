@@ -43,6 +43,7 @@ const dropboxAudioMap: Record<string, string> = {
   "12": "",
 };
 
+
 const goftegooha: Record<string, string> = {
   "1": "https://www.dropbox.com/scl/fi/iq2w7txicij0oy5ycqc54/goftegoo.mp3?rlkey=h20ywqwgf4gkpqshvcx6a3fi1&st=61dregoe&dl=1",
 };
@@ -55,6 +56,11 @@ export const BenefitMaktobat = () => {
   const [open, setOpen] = useState(false);
   const [maktobats, setMaktobats] = useState<Maktobat[]>([]);
   const { play } = useAudioPlayer(); // ← use the global player
+
+
+
+  const toDownloadUrl = (u: string) =>
+  u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
 
   // ---------- Cache helpers ----------
   const readCache = (): Maktobat[] | null => {
@@ -69,6 +75,9 @@ export const BenefitMaktobat = () => {
     }
   };
 
+
+
+  
   const writeCache = (items: Maktobat[]) => {
     try {
       const payload: CacheShape = { ts: Date.now(), items };
@@ -94,6 +103,7 @@ export const BenefitMaktobat = () => {
       یازدهم: 11,
       دوازدهم: 12,
     };
+
     const extractPersianNumber = (title: string) => {
       const match = title?.match(/مکتوب\s+(\S+)/);
       return match ? persianOrderMap[match[1]] ?? 999 : 999;
@@ -140,10 +150,10 @@ export const BenefitMaktobat = () => {
   useEffect(() => {
     const cached = readCache();
     if (cached) {
-      setMaktobats(cached);      // instant
-      fetchAndCache(false);      // background refresh
+      setMaktobats(cached); // instant
+      fetchAndCache(false); // background refresh
     } else {
-      fetchAndCache(false);      // prefetch in background
+      fetchAndCache(false); // prefetch in background
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -237,18 +247,35 @@ export const BenefitMaktobat = () => {
                           🎧 پخش صوت
                         </SheetDescription>
                         {maktobat.audioUrl ? (
-                             <Button
-                            onClick={() =>
-                              play({
-                                title: maktobat.title,
-                                url: maktobat.audioUrl!, // Track.url required
-                                description: maktobat.content,
-                              })
-                            }
-                            className="w-full text-card"
-                          >
-                            پخش
-                          </Button>
+                          <div className="flex gap-2 justify-center">
+                            {/* Play */}
+                            <Button
+                              onClick={() =>
+                                play({
+                                  title: maktobat.title,
+                                  url: maktobat.audioUrl!, // streamable: ...raw=1
+                                  description: maktobat.content,
+                                })
+                              }
+                              className="sm:w-auto w-full text-card "
+                              
+                            >
+                              پخش
+                            </Button>
+
+                            {/* Download */}
+                            <a
+                              href={toDownloadUrl(maktobat.audioUrl!)} // downloadable: ...dl=1
+                              download={`${maktobat.title || "audio"}.mp3`}
+                            >
+                              <Button
+                                variant="outline"
+                                className="sm:w-auto w-full"
+                              >
+                                دانلود صوت
+                              </Button>
+                            </a>
+                          </div>
                         ) : (
                           <p className="text-gray-500 text-sm">
                             فایل صوتی موجود نیست

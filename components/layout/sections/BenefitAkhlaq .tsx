@@ -20,8 +20,7 @@ import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
-
-
+import { title } from "process";
 
 export const BenefitAkhlaq = () => {
   const [open, setOpen] = useState(false);
@@ -29,6 +28,8 @@ export const BenefitAkhlaq = () => {
   const [loading, setLoading] = useState(false);
   const { play } = useAudioPlayer(); // ← use the global player
 
+  const toDownloadUrl = (u: string) =>
+    u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
 
   const fetchDescription = async () => {
     setLoading(true);
@@ -108,7 +109,6 @@ export const BenefitAkhlaq = () => {
                 <div>
                   <Accordion type="single" collapsible className="w-full">
                     {/* First 4 sessions */}
-                                        
 
                     <AccordionItem value="group-1 ">
                       <AccordionTrigger>شیعه و میراث فاطمی</AccordionTrigger>
@@ -116,15 +116,42 @@ export const BenefitAkhlaq = () => {
                         {audioFiles.slice(0, 4).map((file, i) => (
                           <div
                             key={i}
-                            className="border-b border-muted-foreground p-2"
+                            className="border-b border-muted-foreground/30 p-3"
                           >
-                           <div className="font-semibold mb-2 text-muted-foreground">{file.description}</div>
-                            <Button
-                              onClick={() => play({ title: file.title, url: file.url, description: file.description })}
-                              className="w-full text-card"
-                            >
-                              پخش
-                            </Button>
+                            <div className="font-semibold mb-2 text-muted-foreground">
+                              {file.description}
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                              {/* Play */}
+                              <Button
+                                onClick={() =>
+                                  play({
+                                    title: file.title,
+                                    url: file.url, // assumes streamable URL
+                                    description: file.description,
+                                  })
+                                }
+                                className="w-full sm:w-auto text-card"
+                              >
+                                پخش
+                              </Button>
+
+                              {/* Download */}
+                              <Button
+                                asChild
+                                variant="outline"
+                                className="w-full sm:w-auto"
+                              >
+                                <a
+                                  href={toDownloadUrl(file.url)}
+                                  download={`${file.title || "audio"}.mp3`}
+                                  rel="noopener noreferrer"
+                                >
+                                  دانلود صوت
+                                </a>
+                              </Button>
+                            </div>
                           </div>
                         ))}
                       </AccordionContent>
@@ -134,20 +161,44 @@ export const BenefitAkhlaq = () => {
                     <AccordionItem value="group-2">
                       <AccordionTrigger>گفتگوهای قرآنی</AccordionTrigger>
                       <AccordionContent className="flex flex-col gap-4  justify-center  text-center">
-                        {audioFiles.slice(4).map((file, i) => (
-                          <div
-                            key={i + 4}
-                            className="border-b border-muted-foreground  p-2"
-                          >
-                             <div className="font-semibold mb-2 text-primary">{file.description}</div>
-                            <Button
-                              onClick={() => play({ title: file.title, url: file.url, description: file.description })}
-                              className="w-full text-card"
-                            >
-                              پخش
-                            </Button>
-                          </div>
-                        ))}
+                  {audioFiles.slice(4).map((file, i) => (
+  <div
+    key={i + 4}
+    className="border-b border-muted-foreground/30 p-3"
+  >
+    <div className="font-semibold mb-2 text-primary">
+      {file.description}
+    </div>
+
+    <div className="flex flex-col sm:flex-row gap-2 justify-center">
+      {/* Play */}
+      <Button
+        onClick={() =>
+          play({
+            title: file.title,
+            url: file.url,
+            description: file.description,
+          })
+        }
+        className="w-full sm:w-auto text-card"
+      >
+        پخش
+      </Button>
+
+      {/* Download */}
+      <Button asChild variant="outline" className="w-full sm:w-auto">
+        <a
+          href={toDownloadUrl(file.url)}
+          download={`${file.title || "audio"}.mp3`}
+          rel="noopener noreferrer"
+        >
+          دانلود صوت
+        </a>
+      </Button>
+    </div>
+  </div>
+))}
+
                       </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="group-2">

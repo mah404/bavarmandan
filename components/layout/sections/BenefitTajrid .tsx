@@ -213,6 +213,13 @@ export const BenefitTajrid = () => {
   const [loading, setLoading] = useState(false);
   const { play } = useAudioPlayer(); // ← use the global player
 
+
+  // Converts Dropbox (or any) stream URL to a download link
+const toDownloadUrl = (u: string) =>
+  u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
+
+
+
   useEffect(() => {
     if (open && sections.length === 0) {
       setLoading(true);
@@ -280,49 +287,74 @@ export const BenefitTajrid = () => {
                   </AccordionItem>
 
                   {/* Audios */}
-                  {[...tajridAudios].reverse().map((audio, i, arr) => {
-                    const sessionNumber = arr.length - i;
-                    const descriptions = [
-                      audio.DescriptionOne,
-                      audio.DescriptionTwo,
-                      audio.DescriptionThree,
-                      audio.DescriptionFour,
-                      (audio as any).DescriptionFive,
-                      (audio as any).DescriptionSix,
-                    ].filter((d) => d && String(d).trim() !== "") as string[];
+            {[...tajridAudios].reverse().map((audio, i, arr) => {
+  const sessionNumber = arr.length - i;
+  const descriptions = [
+    audio.DescriptionOne,
+    audio.DescriptionTwo,
+    audio.DescriptionThree,
+    audio.DescriptionFour,
+    (audio as any).DescriptionFive,
+    (audio as any).DescriptionSix,
+  ].filter((d) => d && String(d).trim() !== "") as string[];
 
-                    const url = toStreamable(audio.url); // <- build the streamable URL
+  const url = toStreamable(audio.url); // <- build the streamable URL
 
-                    return (
-                      <AccordionItem key={`audio-${sessionNumber}`} value={`audio-${sessionNumber}`}>
-                        <AccordionTrigger>جلسه {sessionNumber}</AccordionTrigger>
-                        <AccordionContent className="space-y-2">
-                          {descriptions.length > 0 && (
-                            <div className="text-sm text-primary leading-relaxed text-right" dir="rtl">
-                              {descriptions.map((desc, idx) => <p key={idx}>{desc}</p>)}
-                            </div>
-                          )}
+  return (
+    <AccordionItem
+      key={`audio-${sessionNumber}`}
+      value={`audio-${sessionNumber}`}
+    >
+      <AccordionTrigger>جلسه {sessionNumber}</AccordionTrigger>
+      <AccordionContent className="space-y-2">
+        {descriptions.length > 0 && (
+          <div
+            className="text-sm text-primary leading-relaxed text-right"
+            dir="rtl"
+          >
+            {descriptions.map((desc, idx) => (
+              <p key={idx}>{desc}</p>
+            ))}
+          </div>
+        )}
 
-                          <Button
-                            className="w-full text-card"
-                            onClick={() => {
-                              if (!url) {
-                                console.error("No URL for session", sessionNumber, audio);
-                                return;
-                              }
-                              play({
-                                title: `جلسه ${sessionNumber}`,
-                                url, // MUST be a direct/streamable URL
-                                description: descriptions.length ? descriptions.join(" | ") : undefined,
-                              });
-                            }}
-                          >
-                            پخش
-                          </Button>
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })}
+        <div className="flex flex-col sm:flex-row gap-2 justify-center">
+          {/* Play button */}
+          <Button
+            className="w-full sm:w-auto text-card"
+            onClick={() => {
+              if (!url) {
+                console.error("No URL for session", sessionNumber, audio);
+                return;
+              }
+              play({
+                title: `جلسه ${sessionNumber}`,
+                url, // MUST be a direct/streamable URL
+                description: descriptions.length
+                  ? descriptions.join(" | ")
+                  : undefined,
+              });
+            }}
+          >
+            پخش
+          </Button>
+
+          {/* Download button */}
+          <Button asChild variant="outline" className="w-full sm:w-auto">
+            <a
+              href={toDownloadUrl(url)}
+              download={`جلسه-${sessionNumber}.mp3`}
+              rel="noopener noreferrer"
+            >
+              دانلود صوت
+            </a>
+          </Button>
+        </div>
+      </AccordionContent>
+    </AccordionItem>
+  );
+})}
+
                 </Accordion>
               )}
             </SheetDescription>
