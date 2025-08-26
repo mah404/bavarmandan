@@ -59,6 +59,15 @@ export const BenefitMaktobat = () => {
 
 
 
+  // Make Dropbox URLs streamable (inline) for the player
+const toStreamable = (u: string) => {
+  if (!u) return u;
+  // strip any existing dl/raw flags, then force raw=1
+  const noParam = u.replace(/([?&])(dl|raw)=[01]/g, "").replace(/[?&]$/, "");
+  return noParam + (noParam.includes("?") ? "&raw=1" : "?raw=1");
+};
+
+
   const toDownloadUrl = (u: string) =>
   u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
 
@@ -242,7 +251,7 @@ export const BenefitMaktobat = () => {
                         </a>
                       </div>
 
-                      <div className="rounded-xl shadow-md p-4 mt-4">
+                      <div className="rounded-xl shadow-md p-4 ">
                         <SheetDescription className="text-primary text-sm font-semibold mb-2">
                           🎧 پخش صوت
                         </SheetDescription>
@@ -286,23 +295,43 @@ export const BenefitMaktobat = () => {
                   </AccordionContent>
                 </AccordionItem>
               ))}
-              <AccordionItem value="group-2">
-                <AccordionTrigger>مباحث متفرقه</AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-4">
-                  <div className="rounded-xl shadow-md p-4">
-                    <SheetDescription className="text-primary text-sm font-semibold mb-2">
-                      🎧 گفتمان
-                    </SheetDescription>
-                    <audio
-                      controls
-                      className="w-full rounded-md outline-none focus:ring-2 focus:ring-primary"
-                    >
-                      <source src={goftegooha["1"]} type="audio/mpeg" />
-                      مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
-                    </audio>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+         <AccordionItem value="group-2">
+  <AccordionTrigger>مباحث متفرقه</AccordionTrigger>
+  <AccordionContent className="flex flex-col gap-4">
+    <div className="rounded-xl shadow-md p-4">
+      <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
+        🎧 گفتمان
+      </SheetDescription>
+
+      <div className="flex gap-2 justify-center">
+        {/* Play (same global player as بالا) */}
+        <Button
+          onClick={() =>
+            play({
+              title: "گفتمان",
+              url: toStreamable(goftegooha["1"]), // streamable: ...raw=1
+              description: "مباحث متفرقه",
+            })
+          }
+          className="sm:w-auto w-full text-card"
+        >
+          پخش
+        </Button>
+
+        {/* Download (matching the first section’s style) */}
+        <a
+          href={toDownloadUrl(goftegooha["1"])} // downloadable: ...dl=1
+          download="گفتمان.mp3"
+        >
+          <Button variant="outline" className="sm:w-auto w-full">
+            دانلود صوت
+          </Button>
+        </a>
+      </div>
+    </div>
+  </AccordionContent>
+</AccordionItem>
+
             </Accordion>
           )}
         </SheetContent>
