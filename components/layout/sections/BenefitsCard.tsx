@@ -48,15 +48,15 @@ export const BenefitsCard = () => {
       subject: "تاملاتی در من",
       files: [
         {
-          title: "تاملاتی در من",
+          title: " جلسه 1  ",
           url: "https://www.dropbox.com/scl/fi/yn7lczizzy1taskripz60/1.mp3?rlkey=kvcoqgwwxrii8m3x6ug4svfym&st=687lourl&dl=1",
         },
         {
-          title: "تاملاتی در من 2",
+          title: " جلسه 2  ",
           url: "https://www.dropbox.com/scl/fi/2zonbna26yv96j76kl2j8/2.mp4?rlkey=x3on1ift7os4ezkricz0tr78l&st=8vgmg0q4&dl=1",
         },
         {
-          title: "تاملاتی در من 3",
+          title: " جلسه 3  ",
           url: "https://www.dropbox.com/scl/fi/qy7x1laa91sutvz8xmlze/3.mp4?rlkey=6iiv42id1e2q46l2jgaqhi5f8&st=23k53iup&dl=1",
         },
       ],

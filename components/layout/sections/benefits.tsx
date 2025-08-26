@@ -12,7 +12,7 @@ export const BenefitsSection = () => {
             محتوای صوتی و نوشتاری
           </h2>
           <p className="text-lg text-muted-foreground mb-8 whitespace-nowrap overflow-hidden text-ellipsis text-center">
-            مجموعه ی صوتی کامل و تدوین نشده ی جلسات
+        مجموعهی صوتی کامل و تدوین نشده ی جلسات
           </p>
         </div>
 
