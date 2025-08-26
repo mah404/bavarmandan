@@ -16,7 +16,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     url: "https://www.bavarmandan.com/",
-    title: "Landing Page",
+    title:"مجمع باورمندان",
     description: "تارنما مجمع باورمندان کلاب هاوس",
     images: [
       {
