@@ -6,7 +6,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
-import SmoothScroll from "@/components/layout/sections/SmoothScroll";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -38,7 +37,6 @@ export default function RootLayout({
           inter.className
         )}
       >
-        <SmoothScroll>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -51,7 +49,6 @@ export default function RootLayout({
             </AudioPlayerProvider>
           </ThemeProvider>
           <Analytics />
-        </SmoothScroll>
       </body>
     </html>
   );
