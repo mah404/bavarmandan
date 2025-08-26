@@ -10,8 +10,8 @@ import SmoothScroll from "@/components/layout/sections/SmoothScroll";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "majmae bavarmandan",
-  description: "majmae bavarmandan",
+  title: "مجمع باورمندان",
+  description: "مجمع باورمندان کلاب هاوس",
 };
 
 export default function RootLayout({
