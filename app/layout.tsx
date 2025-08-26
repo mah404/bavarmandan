@@ -9,7 +9,6 @@ import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
 import SmoothScroll from "@/components/layout/sections/SmoothScroll";
 const inter = Inter({ subsets: ["latin"] });
 
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "مجمع باورمندان",
