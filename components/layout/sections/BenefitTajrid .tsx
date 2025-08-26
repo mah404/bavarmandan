@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Sheet,
@@ -22,7 +22,10 @@ import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 
-// Dropbox audio files mapping for Tajrid (1-23)
+// PDF config
+const TOTAL_PDFS = 2; 
+const BASE_PATH = ""; 
+
 const tajridAudios = [
   {
     url: "https://www.dropbox.com/scl/fi/wa5vq9ddmzwebablt1br4/tajrid1.mp3?rlkey=az1c5ef2zzhe8v3ycui85zbaw&st=dvsslaaa&dl=1",
@@ -194,11 +197,9 @@ const tajridAudios = [
   },
 ];
 
-
 const toStreamable = (u: string) => {
   if (!u) return u;
   if (!u.includes("dropbox.com")) return u;
-  // remove any existing dl/raw param and force raw=1
   const noParam = u.replace(/([?&])(dl|raw)=[01]/g, "").replace(/[?&]$/, "");
   return noParam + (noParam.includes("?") ? "&raw=1" : "?raw=1");
 };
@@ -209,35 +210,31 @@ interface PdfSection {
 export const BenefitTajrid = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [sections, setSections] = useState<PdfSection[]>([]);
   const [loading, setLoading] = useState(false);
-  const { play } = useAudioPlayer(); // ← use the global player
+  const { play } = useAudioPlayer(); 
 
+  const sections: PdfSection[] = useMemo(() => {
+    return Array.from({ length: TOTAL_PDFS }, (_, i) => {
+      const n = i + 1;
+      const path = `${BASE_PATH}/${n}.pdf`.replace("//", "/");
+      return { id: `v${n}`, pdfUrl: path };
+    });
+  }, []);
 
-  // Converts Dropbox (or any) stream URL to a download link
-const toDownloadUrl = (u: string) =>
-  u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
-
-
-
-  useEffect(() => {
-    if (open && sections.length === 0) {
-      setLoading(true);
-      fetch("/api/tajrid")
-        .then((res) => res.json())
-        .then((data) => setSections(data))
-        .catch(() => console.error("❌ Error loading PDFs"))
-        .finally(() => setLoading(false));
-    }
-  }, [open]);
+  const toDownloadUrl = (u: string) => u; 
 
   return (
     <>
-      <Card onClick={() => setOpen(true)} className="cursor-pointer hover:bg-background transition">
+      <Card
+        onClick={() => setOpen(true)}
+        className="cursor-pointer hover:bg-background transition"
+      >
         <CardHeader>
           <div className="flex justify-between">
             <BookOpenText size={32} color="hsl(var(--primary))" />
-            <span className="text-5xl text-muted-foreground/15 font-medium">02</span>
+            <span className="text-5xl text-muted-foreground/15 font-medium">
+              02
+            </span>
           </div>
           <CardTitle>دروس شرح کتاب تجرید الاعتقاد</CardTitle>
         </CardHeader>
@@ -249,7 +246,11 @@ const toDownloadUrl = (u: string) =>
             <SheetTitle>دروس شرح کتاب تجرید الاعتقاد</SheetTitle>
             <SheetDescription>
               {loading ? (
-                <Lottie animationData={loadingPdfAnim} loop className="text-muted-foreground bg-transparent mt-4" />
+                <Lottie
+                  animationData={loadingPdfAnim}
+                  loop
+                  className="text-muted-foreground bg-transparent mt-4"
+                />
               ) : (
                 <Accordion type="single" collapsible className="w-full mt-4">
                   {/* PDFs */}
@@ -257,21 +258,34 @@ const toDownloadUrl = (u: string) =>
                     <AccordionTrigger>کتاب شرح تجرید الاعتقاد</AccordionTrigger>
                     <AccordionContent>
                       {sections.map((section, index) => {
-                        const label = `کتاب کشف المراد جلد  ${index + 1}`;
+                        const vol = index + 1;
+                        const label = `کتاب کشف المراد جلد ${vol}`;
                         const fileName = `${label}.pdf`;
                         return (
-                          <div key={section.id} className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                            <span className="text-sm text-muted-foreground">{label}</span>
+                          <div
+                            key={section.id}
+                            className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+                          >
+                            <span className="text-sm text-muted-foreground">
+                              {label}
+                            </span>
                             <div className="flex gap-2">
-                              <Button size="sm" variant="outline" onClick={() => window.open(section.pdfUrl, "_blank")}>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  window.open(section.pdfUrl, "_blank")
+                                }
+                              >
                                 نمایش
                               </Button>
                               <Button
+                                className="text-card"
                                 size="sm"
                                 onClick={() => {
                                   const a = document.createElement("a");
                                   a.href = section.pdfUrl;
-                                  a.download = fileName;
+                                  a.download = fileName; // browsers may honor this for same-origin
                                   document.body.appendChild(a);
                                   a.click();
                                   document.body.removeChild(a);
@@ -287,74 +301,83 @@ const toDownloadUrl = (u: string) =>
                   </AccordionItem>
 
                   {/* Audios */}
-            {[...tajridAudios].reverse().map((audio, i, arr) => {
-  const sessionNumber = arr.length - i;
-  const descriptions = [
-    audio.DescriptionOne,
-    audio.DescriptionTwo,
-    audio.DescriptionThree,
-    audio.DescriptionFour,
-    (audio as any).DescriptionFive,
-    (audio as any).DescriptionSix,
-  ].filter((d) => d && String(d).trim() !== "") as string[];
+                  {[...tajridAudios].reverse().map((audio, i, arr) => {
+                    const sessionNumber = arr.length - i;
+                    const descriptions = [
+                      audio.DescriptionOne,
+                      audio.DescriptionTwo,
+                      audio.DescriptionThree,
+                      audio.DescriptionFour,
+                      (audio as any).DescriptionFive,
+                      (audio as any).DescriptionSix,
+                    ].filter((d) => d && String(d).trim() !== "") as string[];
 
-  const url = toStreamable(audio.url); // <- build the streamable URL
+                    const url = toStreamable(audio.url); 
 
-  return (
-    <AccordionItem
-      key={`audio-${sessionNumber}`}
-      value={`audio-${sessionNumber}`}
-    >
-      <AccordionTrigger>جلسه {sessionNumber}</AccordionTrigger>
-      <AccordionContent className="space-y-2">
-        {descriptions.length > 0 && (
-          <div
-            className="text-sm text-primary leading-relaxed text-right"
-            dir="rtl"
-          >
-            {descriptions.map((desc, idx) => (
-              <p key={idx}>{desc}</p>
-            ))}
-          </div>
-        )}
+                    return (
+                      <AccordionItem
+                        key={`audio-${sessionNumber}`}
+                        value={`audio-${sessionNumber}`}
+                      >
+                        <AccordionTrigger>
+                          جلسه {sessionNumber}
+                        </AccordionTrigger>
+                        <AccordionContent className="space-y-2">
+                          {descriptions.length > 0 && (
+                            <div
+                              className="text-sm text-primary leading-relaxed text-right"
+                              dir="rtl"
+                            >
+                              {descriptions.map((desc, idx) => (
+                                <p key={idx}>{desc}</p>
+                              ))}
+                            </div>
+                          )}
 
-        <div className="flex flex-col sm:flex-row gap-2 justify-center">
-          {/* Play button */}
-          <Button
-            className="w-full sm:w-auto text-card"
-            onClick={() => {
-              if (!url) {
-                console.error("No URL for session", sessionNumber, audio);
-                return;
-              }
-              play({
-                title: `جلسه ${sessionNumber}`,
-                url, // MUST be a direct/streamable URL
-                description: descriptions.length
-                  ? descriptions.join(" | ")
-                  : undefined,
-              });
-            }}
-          >
-            پخش
-          </Button>
+                          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                            {/* Play button */}
+                            <Button
+                              className="w-full sm:w-auto text-card"
+                              onClick={() => {
+                                if (!url) {
+                                  console.error(
+                                    "No URL for session",
+                                    sessionNumber,
+                                    audio
+                                  );
+                                  return;
+                                }
+                                play({
+                                  title: `جلسه ${sessionNumber}`,
+                                  url, 
+                                  description: descriptions.length
+                                    ? descriptions.join(" | ")
+                                    : undefined,
+                                });
+                              }}
+                            >
+                              پخش
+                            </Button>
 
-          {/* Download button */}
-          <Button asChild variant="outline" className="w-full sm:w-auto">
-            <a
-              href={toDownloadUrl(url)}
-              download={`جلسه-${sessionNumber}.mp3`}
-              rel="noopener noreferrer"
-            >
-              دانلود صوت
-            </a>
-          </Button>
-        </div>
-      </AccordionContent>
-    </AccordionItem>
-  );
-})}
-
+                            {/* Download button */}
+                            <Button
+                              asChild
+                              variant="outline"
+                              className="w-full sm:w-auto"
+                            >
+                              <a
+                                href={toDownloadUrl(url)}
+                                download={`جلسه-${sessionNumber}.mp3`}
+                                rel="noopener noreferrer"
+                              >
+                                دانلود صوت
+                              </a>
+                            </Button>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
                 </Accordion>
               )}
             </SheetDescription>

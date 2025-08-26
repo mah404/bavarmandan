@@ -11,8 +11,9 @@ export const BenefitsSection = () => {
             <span className="text-sm align-super ">*</span>
             محتوای صوتی و نوشتاری
           </h2>
+
           <p className="text-lg text-muted-foreground mb-8 whitespace-nowrap overflow-hidden text-ellipsis text-center">
-        مجموعه صوتی کامل و تدوین نشده ی جلسات
+            مجموعه صوتی کامل و تدوین نشده ی جلسات
           </p>
         </div>
 
