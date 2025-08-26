@@ -55,7 +55,11 @@ export const useAudioPlayer = () => {
 
 const STORAGE_KEY = "globalAudioState_v1";
 
-export const AudioPlayerProvider = ({ children }: { children: React.ReactNode }) => {
+export const AudioPlayerProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [current, setCurrent] = useState<Track | null>(null);
@@ -185,7 +189,7 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
       await audioRef.current.play();
       setIsPlaying(true);
       setIsPlayerVisible(true); // show docked bar
-      setIsMinimized(false);    // ensure expanded on new play
+      setIsMinimized(false); // ensure expanded on new play
     } catch (e) {
       console.error("Audio play failed:", e);
     }
@@ -250,8 +254,12 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
 
   const fmt = (s: number) => {
     if (!isFinite(s)) return "00:00";
-    const m = Math.floor(s / 60).toString().padStart(2, "0");
-    const ss = Math.floor(s % 60).toString().padStart(2, "0");
+    const m = Math.floor(s / 60)
+      .toString()
+      .padStart(2, "0");
+    const ss = Math.floor(s % 60)
+      .toString()
+      .padStart(2, "0");
     return `${m}:${ss}`;
   };
 
@@ -261,7 +269,9 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
       className={`
         fixed inset-x-0 bottom-0 z-[10000]
         transition-transform duration-300
-        ${isPlayerVisible && !isMinimized ? "translate-y-0" : "translate-y-full"}
+        ${
+          isPlayerVisible && !isMinimized ? "translate-y-0" : "translate-y-full"
+        }
         backdrop-blur supports-[backdrop-filter]:bg-background/70
         border-t bg-card text-card-foreground
       `}
@@ -271,54 +281,54 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
     >
       <div className="mx-auto max-w-screen-lg px-3 py-2">
         {/* header */}
-    {/* header */}
-<div className="grid grid-cols-[auto_1fr] items-center gap-2">
-  {/* Left: controls */}
-  <div className="flex items-center gap-1 justify-start">
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => setIsMinimized(true)}
-      aria-label="Minimize"
-      className="h-8 w-8"
-      title="Minimize"
-    >
-      <Minus className="h-4 w-4" />
-    </Button>
+        {/* header */}
+        <div className="grid grid-cols-[auto_1fr] items-center gap-2">
+          {/* Left: controls */}
+          <div className="flex items-center gap-1 justify-start">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMinimized(true)}
+              aria-label="Minimize"
+              className="h-8 w-8"
+              title="Minimize"
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
 
-    {isPlaying ? (
-      <Button size="sm" onClick={pause} aria-label="Pause">
-        <Pause className="h-4 w-4 mr-1 text-card" />
-      </Button>
-    ) : (
-      <Button size="sm" onClick={resume} aria-label="Resume">
-        <Play className="h-4 w-4 mr-1 text-card" />
-      </Button>
-    )}
+            {isPlaying ? (
+              <Button size="sm" onClick={pause} aria-label="Pause">
+                <Pause className="h-4 w-4 text-card" />
+              </Button>
+            ) : (
+              <Button size="sm" onClick={resume} aria-label="Resume">
+                <Play className="h-4 w-4 text-card" />
+              </Button>
+            )}
 
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={close}
-      aria-label="Close"
-      className="h-8 w-8"
-    >
-      <X className="h-4 w-4" />
-    </Button>
-  </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={close}
+              aria-label="Close"
+              className="h-8 w-8"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
 
-  {/* Right: title + description */}
-  <div className="min-w-0 text-right justify-self-end">
-    <div className="text-sm font-medium truncate max-w-[60vw] md:max-w-[480px]">
-      {current.title}
-    </div>
-    {current.description && (
-      <div className="text-xs text-muted-foreground truncate max-w-[65vw] md:max-w-[520px]">
-        {current.description}
-      </div>
-    )}
-  </div>
-</div>
+          {/* Right: title + description */}
+          <div className="min-w-0 text-right justify-self-end">
+            <div className="text-sm font-medium truncate max-w-[60vw] md:max-w-[480px]">
+              {current.title}
+            </div>
+            {current.description && (
+              <div className="text-xs text-muted-foreground truncate max-w-[65vw] md:max-w-[520px]">
+                {current.description}
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* progress + volume */}
         <div className="mt-2 space-y-2">
@@ -332,7 +342,10 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
               min={0}
               max={duration || 0}
               step={1}
-              value={Math.min(isScrubbing ? scrubValue : progress, duration || 0)}
+              value={Math.min(
+                isScrubbing ? scrubValue : progress,
+                duration || 0
+              )}
               onPointerDown={() => setIsScrubbing(true)}
               onChange={(e) => setScrubValue(Number(e.target.value))}
               onPointerUp={() => {
@@ -380,17 +393,23 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
       <button
         className={`
           fixed bottom-4 right-4 z-[10001]
-          h-12 w-12 rounded-lg border bg-card text-card-foreground
+          h-12 w-12 rounded-lg border bg-primary text-card-foreground
           shadow-lg flex items-center justify-center
           transition-transform duration-200 active:scale-95
         `}
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0)" }}
         aria-label="Expand audio player"
-        title={isPlaying ? "Playing… (tap to expand)" : "Paused (tap to expand)"}
+        title={
+          isPlaying ? "Playing… (tap to expand)" : "Paused (tap to expand)"
+        }
         onClick={() => setIsMinimized(false)}
       >
         {/* little status: play/pause icon */}
-        {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+        {isPlaying ? (
+          <Pause className="h-5 w-5 text-card" />
+        ) : (
+          <Play className="h-5 w-5 text-card" />
+        )}
       </button>
     ) : null;
 
@@ -403,7 +422,7 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
       >
         <Button
           size="sm"
-           aria-label="Resume"
+          aria-label="Resume"
           onClick={async () => {
             const saved = savedStateRef.current!;
             setVolumeState(saved.volume);
@@ -418,7 +437,10 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
                 const target = Math.max(0, Math.min(saved.progress, d));
                 audioRef.current!.currentTime = target;
                 audioRef.current!.play().catch(() => {});
-                audioRef.current!.removeEventListener("loadedmetadata", onLoaded);
+                audioRef.current!.removeEventListener(
+                  "loadedmetadata",
+                  onLoaded
+                );
               };
               audioRef.current.addEventListener("loadedmetadata", onLoaded);
             }
@@ -427,12 +449,14 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
             setShowResumePrompt(false);
           }}
         >
-                  <Play className="h-4 w-4 mr-1 text-card" />
-
+          <Play className="h-4 w-4 text-card" />
         </Button>
-        <Button size="sm" variant="ghost" onClick={() => setShowResumePrompt(false)}>
-                <X className="h-4 w-4" />
-
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => setShowResumePrompt(false)}
+        >
+          <X className="h-4 w-4" />
         </Button>
       </div>
     ) : null;
@@ -441,7 +465,9 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
     <AudioPlayerContext.Provider value={ctxValue}>
       {children}
       {mounted && playerNode ? createPortal(playerNode, document.body) : null}
-      {mounted && minimizedNode ? createPortal(minimizedNode, document.body) : null}
+      {mounted && minimizedNode
+        ? createPortal(minimizedNode, document.body)
+        : null}
       {mounted && resumeBar ? createPortal(resumeBar, document.body) : null}
     </AudioPlayerContext.Provider>
   );
