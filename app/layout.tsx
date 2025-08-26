@@ -9,10 +9,25 @@ import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
 import SmoothScroll from "@/components/layout/sections/SmoothScroll";
 const inter = Inter({ subsets: ["latin"] });
 
+import type { Metadata } from "next";
+
 export const metadata: Metadata = {
   title: "مجمع باورمندان",
   description: "مجمع باورمندان کلاب هاوس",
+  openGraph: {
+    title: "مجمع باورمندان",
+    description: "مجمع باورمندان کلاب هاوس",
+    images: [
+      {
+        url: "https://www.bavarmandan.com/mainicon.jpg", // put the file in /public
+        width: 1200,
+        height: 630,
+        alt: "مجمع باورمندان",
+      },
+    ],
+  },
 };
+
 
 export default function RootLayout({
   children,
