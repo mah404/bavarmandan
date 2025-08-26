@@ -61,17 +61,16 @@ export const FooterSection = () => {
         <Separator className="my-6 bg-muted-foreground" />
 
         <section className="w-full text-center">
-     <h3 className="text-xs">
-  &copy; 1404 طراحی و توسعه توسط{" "}
-  <Link
-    target="_blank"
-    href="#"
-    className="text-yellow-300 transition-all border-yellow-600 hover:border-b-2 ml-1 mr-2"
-  >
-    فرزندان امیرالمومنین (ع){" "}
-  </Link>
-</h3>
-
+          <h3 className="text-xs">
+            &copy; 1404 طراحی و توسعه توسط{" "}
+            <Link
+              target="_blank"
+              href="#"
+              className="text-yellow-300 transition-all border-yellow-200 hover:border-b-2 ml-1 mr-2"
+            >
+              فرزندان امیرالمومنین (ع){" "}
+            </Link>
+          </h3>
         </section>
       </div>
     </footer>
