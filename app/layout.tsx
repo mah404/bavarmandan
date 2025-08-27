@@ -11,25 +11,29 @@ const inter = Inter({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
-  title: "مجمع باورمندان",
-  description: "مجمع باورمندان کلاب هاوس",
+  title: "مجمع باورمندان | کلاب هاوس",
+  description: "وبسایت رسمی مجمع باورمندان کلاب هاوس؛ معرفی جلسات، گفتگوها و محتوای مرتبط.",
+  keywords: ["مجمع باورمندان", "کلاب هاوس", "گفتگو", "ایران", "فلسفه", "باورمندان"],
   openGraph: {
     title: "مجمع باورمندان",
-    description: "مجمع باورمندان کلاب هاوس",
+    description: "معرفی جلسات و گفتگوهای مجمع باورمندان در کلاب هاوس",
+    url: "https://www.bavarmandan.com",
+    siteName: "مجمع باورمندان",
     images: [
       {
-        url: "https://www.bavarmandan.com/mainicon.jpg", // put the file in /public
+        url: "https://www.bavarmandan.com/mainicon.jpg",
         width: 1200,
         height: 630,
         alt: "مجمع باورمندان",
       },
     ],
+    locale: "fa_IR",
+    type: "website",
   },
-    verification: {
-    google: "4cbe7fbb3092c5fd", // <-- paste the code from GSC (without quotes around meta tag)
+  verification: {
+    google: "4cbe7fbb3092c5fd",
   },
 };
-
 
 export default function RootLayout({
   children,
@@ -47,6 +51,13 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@100..800&display=swap"
           rel="stylesheet"
         />
+             {/* Instagram profile */}
+        <meta property="og:see_also" content="https://www.instagram.com/bavarmandan110/" />
+        <meta name="instagram:site" content="https://www.instagram.com/bavarmandan110/" />
+
+        {/* YouTube channel */}
+        <meta property="og:see_also" content="https://www.youtube.com/@bavarmandan" />
+        <meta name="youtube:channel" content="https://www.youtube.com/@bavarmandan" />
       </head>
 
       <body
