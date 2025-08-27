@@ -25,13 +25,13 @@ export const FooterSection = () => {
             <div className="flex flex-row">
               <Link
                 href="https://t.me/bavarmandan110"
-                className="opacity-60 hover:opacity-100 mr-2"
+                className="opacity-60 hover:opacity-100 mr-2 transition duration-300   hover:text-primary"
               >
                 تلگرام
               </Link>
               <Link
                 href="https://www.clubhouse.com/house/%D9%85%D8%AC%D9%85%D8%B9-%D8%A8%D8%A7%D9%88%D8%B1%D9%85%D9%86%D8%AF%D8%A7%D9%86?chs=vgJIag5VYG%3AHJqbfkIoYRlofbeOY8p06RDKoa8xs1iz8W4cLx6HAlA&utm_medium=ch_house_settings"
-                className="opacity-60 hover:opacity-100 ml-2"
+                className="opacity-60 hover:opacity-100 ml-2 transition duration-300   hover:text-primary"
               >
                 کلاب‌هاوس
               </Link>
@@ -39,20 +39,20 @@ export const FooterSection = () => {
             <div className="flex flex-row">
               <Link
                 href="https://www.youtube.com/@bavarmandan"
-                className="opacity-60 hover:opacity-100 mr-2"
+                className="opacity-60 hover:opacity-100 mr-2 transition duration-300   hover:text-primary"
               >
                 یوتیوب
               </Link>
               <Link
                 href="https://www.instagram.com/bavarmandan110/"
-                className="opacity-60 hover:opacity-100 ml-2"
+                className="opacity-60 hover:opacity-100 ml-2 transition duration-300   hover:text-primary"
               >
                 اینستاگرام
               </Link>
             </div>
             <div className=" items-center gap-2 ">
               <Link href="https://t.me/bavarmandanBot">
-                <h3 className="font-bold text-lg mt-6"> ارتباط مستقیم با ما</h3>
+                <h3 className="font-bold text-lg mt-6 transition duration-300  hover:text-primary"> ارتباط مستقیم با ما</h3>
               </Link>
             </div>
           </div>

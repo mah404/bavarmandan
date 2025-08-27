@@ -1,13 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html {
-    scroll-behavior: smooth;
-}
-
-
-/* *=========== Orange theme =========== */
-
 @layer base {
      :root {
         --background: 174 85.9% 73.9%;
@@ -106,4 +99,8 @@ html {
     body {
         @apply bg-background text-foreground;
     }
+}
+
+html {
+    scroll-behavior: smooth;
 }

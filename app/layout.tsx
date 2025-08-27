@@ -6,7 +6,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
-import SmoothScroll from "@/components/layout/sections/SmoothScroll";
 const inter = Inter({ subsets: ["latin"] });
 
 
@@ -58,6 +57,7 @@ export default function RootLayout({
         {/* YouTube channel */}
         <meta property="og:see_also" content="https://www.youtube.com/@bavarmandan" />
         <meta name="youtube:channel" content="https://www.youtube.com/@bavarmandan" />
+        
       </head>
 
       <body
@@ -66,7 +66,6 @@ export default function RootLayout({
           inter.className
         )}
       >
-        <SmoothScroll>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -79,7 +78,6 @@ export default function RootLayout({
             </AudioPlayerProvider>
           </ThemeProvider>
           <Analytics />
-        </SmoothScroll>
       </body>
     </html>
   );

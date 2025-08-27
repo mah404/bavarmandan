@@ -112,7 +112,7 @@ export const BenefitAkhlaq = () => {
 
                     <AccordionItem value="group-1 ">
                       <AccordionTrigger>شیعه و میراث فاطمی</AccordionTrigger>
-                      <AccordionContent className="flex flex-col gap-4  justify-center  mt-2 text-center">
+                      <AccordionContent className="flex flex-col gap-2  justify-center  mt-2 text-center">
                         {audioFiles.slice(0, 4).map((file, i) => (
                           <div
                             key={i}
@@ -161,44 +161,47 @@ export const BenefitAkhlaq = () => {
                     <AccordionItem value="group-2">
                       <AccordionTrigger>گفتگوهای قرآنی</AccordionTrigger>
                       <AccordionContent className="flex flex-col gap-4  justify-center  text-center">
-                  {audioFiles.slice(4).map((file, i) => (
-  <div
-    key={i + 4}
-    className="border-b border-muted-foreground/30 p-3"
-  >
-    <div className="font-semibold mb-2 text-primary">
-      {file.description}
-    </div>
+                        {audioFiles.slice(4).map((file, i) => (
+                          <div
+                            key={i + 4}
+                            className="border-b border-muted-foreground/30 p-3"
+                          >
+                            <div className="font-semibold mb-2 text-primary">
+                              {file.description}
+                            </div>
 
-    <div className="flex flex-col sm:flex-row gap-2 justify-center">
-      {/* Play */}
-      <Button
-        onClick={() =>
-          play({
-            title: file.title,
-            url: file.url,
-            description: file.description,
-          })
-        }
-        className="w-full sm:w-auto text-card"
-      >
-        پخش
-      </Button>
+                            <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                              {/* Play */}
+                              <Button
+                                onClick={() =>
+                                  play({
+                                    title: file.title,
+                                    url: file.url,
+                                    description: file.description,
+                                  })
+                                }
+                                className="w-full sm:w-auto text-card"
+                              >
+                                پخش
+                              </Button>
 
-      {/* Download */}
-      <Button asChild variant="outline" className="w-full sm:w-auto">
-        <a
-          href={toDownloadUrl(file.url)}
-          download={`${file.title || "audio"}.mp3`}
-          rel="noopener noreferrer"
-        >
-          دانلود صوت
-        </a>
-      </Button>
-    </div>
-  </div>
-))}
-
+                              {/* Download */}
+                              <Button
+                                asChild
+                                variant="outline"
+                                className="w-full sm:w-auto"
+                              >
+                                <a
+                                  href={toDownloadUrl(file.url)}
+                                  download={`${file.title || "audio"}.mp3`}
+                                  rel="noopener noreferrer"
+                                >
+                                  دانلود صوت
+                                </a>
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
                       </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="group-2">

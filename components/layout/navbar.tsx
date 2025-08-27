@@ -101,9 +101,13 @@ export const Navbar = () => {
                     onClick={() => setIsOpen(false)}
                     asChild
                     variant="ghost"
-                    className="justify-center text-base"
+                    className="justify-center text-base hover:text-primary transition"
                   >
-                    <Link href={href} dir="rtl">
+                    <Link href={href} dir="rtl" 
+                    
+                    
+                    
+                    >
                       {label}
                     </Link>
                   </Button>
@@ -155,7 +159,7 @@ export const Navbar = () => {
           <NavigationMenuItem>
             {routeList.map(({ href, label }) => (
               <NavigationMenuLink key={href} asChild>
-                <Link dir="rtl" href={href} className="text-base px-2">
+                <Link dir="rtl" href={href} className="text-base px-2 hover:text-primary transition duration-300">
                   {label}
                 </Link>
               </NavigationMenuLink>
