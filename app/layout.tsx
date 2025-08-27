@@ -25,6 +25,9 @@ export const metadata: Metadata = {
       },
     ],
   },
+    verification: {
+    google: "4cbe7fbb3092c5fd", // <-- paste the code from GSC (without quotes around meta tag)
+  },
 };
 
 
