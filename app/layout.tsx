@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
-  title: "مجمع باورمندان | کلاب هاوس",
+  title: "مجمع باورمندان ",
   description: "وبسایت رسمی مجمع باورمندان کلاب هاوس؛ معرفی جلسات، گفتگوها و محتوای مرتبط.",
   keywords: ["مجمع باورمندان", "کلاب هاوس", "گفتگو", "ایران", "فلسفه", "باورمندان"],
   openGraph: {
