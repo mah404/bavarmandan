@@ -16,7 +16,6 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "../ui/navigation-menu";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -103,11 +102,7 @@ export const Navbar = () => {
                     variant="ghost"
                     className="justify-center text-base hover:text-primary transition"
                   >
-                    <Link href={href} dir="rtl" 
-                    
-                    
-                    
-                    >
+                    <Link href={href} dir="rtl">
                       {label}
                     </Link>
                   </Button>
