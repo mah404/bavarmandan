@@ -28,7 +28,7 @@ export const BenefitsCard = () => {
   const { play } = useAudioPlayer(); // ← use the global player
 
   const toDownloadUrl = (u: string) =>
-  u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
+    u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
 
   const fetchDescription = async () => {
     setLoading(true);
@@ -243,10 +243,12 @@ export const BenefitsCard = () => {
       </Card>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="overflow-y-auto">
+        <SheetContent className="overflow-y-auto ">
           <SheetHeader>
             <SheetTitle>مباحث اخلاقی</SheetTitle>
-            <SheetDescription>
+            <SheetDescription className="mb-4">
+                          </SheetDescription>
+          </SheetHeader>
               {loading ? (
                 <Lottie
                   animationData={loadingPdfAnim}
@@ -264,52 +266,50 @@ export const BenefitsCard = () => {
                         {group.subject}
                       </AccordionTrigger>
                       <AccordionContent className="flex flex-col gap-4 justify-center mt-2 text-center">
-                   {group.files.map((file, fileIndex) => (
-  <div
-    key={fileIndex}
-    className="border-b border-muted-foreground p-2"
-  >
-    <div className="font-semibold mb-3 text-primary">
-      {file.title}
-    </div>
+                        {group.files.map((file, fileIndex) => (
+                          <div
+                            key={fileIndex}
+                            className="border-b border-muted-foreground p-2"
+                          >
+                            <div className="font-semibold mb-3 text-primary">
+                              {file.title}
+                            </div>
 
-    <div className="flex gap-2 justify-center">
-      {/* Play */}
-      <Button
-        onClick={() =>
-          play({
-            title: file.title,
-            url: file.url, // assumes already streamable
-          })
-        }
-        className="w-full sm:w-auto text-card"
-      >
-        پخش
-      </Button>
+                            <div className="flex gap-2 justify-center">
+                              {/* Play */}
+                              <Button
+                                onClick={() =>
+                                  play({
+                                    title: file.title,
+                                    url: file.url, // assumes already streamable
+                                  })
+                                }
+                                className="w-full sm:w-auto text-card"
+                              >
+                                پخش
+                              </Button>
 
-      {/* Download */}
-      <a
-        href={file.url.replace(/([?&])raw=1/, "$1dl=1")} // convert raw link to dl=1
-        download={`${file.title || "audio"}.mp3`}
-      >
-        <Button
-          variant="outline"
-          className="w-full sm:w-auto"
-        >
-          دانلود
-        </Button>
-      </a>
-    </div>
-  </div>
-))}
-
+                              {/* Download */}
+                              <a
+                                href={file.url.replace(/([?&])raw=1/, "$1dl=1")} // convert raw link to dl=1
+                                download={`${file.title || "audio"}.mp3`}
+                              >
+                                <Button
+                                  variant="outline"
+                                  className="w-full sm:w-auto"
+                                >
+                                  دانلود
+                                </Button>
+                              </a>
+                            </div>
+                          </div>
+                        ))}
                       </AccordionContent>
                     </AccordionItem>
                   ))}
                 </Accordion>
               )}
-            </SheetDescription>
-          </SheetHeader>
+
         </SheetContent>
       </Sheet>
     </>
