@@ -40,9 +40,8 @@ const dropboxAudioMap: Record<string, string> = {
   "9": "https://www.dropbox.com/scl/fi/qovtqj58e1k52ojbjsun0/9.mp3?rlkey=7kzh50tk2apfqdwy1rbj13g0e&st=76y08k74&dl=0",
   "10": "https://www.dropbox.com/scl/fi/chiylb7qh7wqibwjo3hxx/10.mp3?rlkey=8z7f341hnnmjwmpcsb7eusd6k&st=0gl4f9dn&dl=0",
   "11": "https://www.dropbox.com/scl/fi/3hnudo5bjmrcnvpin6kqe/11.mp3?rlkey=yf7h04r0ymojdxwrl2dl4sdm8&st=y14fd9au&dl=0",
-  "12": "",
+  "12": "https://www.dropbox.com/scl/fi/590vjsjglis3hdzz44muz/12.mp3?rlkey=fku64vt2189kit8ttmjtgtb2s&st=gq3lyzzq&dl=0",
 };
-
 
 const goftegooha: Record<string, string> = {
   "1": "https://www.dropbox.com/scl/fi/iq2w7txicij0oy5ycqc54/goftegoo.mp3?rlkey=h20ywqwgf4gkpqshvcx6a3fi1&st=61dregoe&dl=1",
@@ -57,19 +56,16 @@ export const BenefitMaktobat = () => {
   const [maktobats, setMaktobats] = useState<Maktobat[]>([]);
   const { play } = useAudioPlayer(); // ← use the global player
 
-
-
   // Make Dropbox URLs streamable (inline) for the player
-const toStreamable = (u: string) => {
-  if (!u) return u;
-  // strip any existing dl/raw flags, then force raw=1
-  const noParam = u.replace(/([?&])(dl|raw)=[01]/g, "").replace(/[?&]$/, "");
-  return noParam + (noParam.includes("?") ? "&raw=1" : "?raw=1");
-};
-
+  const toStreamable = (u: string) => {
+    if (!u) return u;
+    // strip any existing dl/raw flags, then force raw=1
+    const noParam = u.replace(/([?&])(dl|raw)=[01]/g, "").replace(/[?&]$/, "");
+    return noParam + (noParam.includes("?") ? "&raw=1" : "?raw=1");
+  };
 
   const toDownloadUrl = (u: string) =>
-  u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
+    u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
 
   // ---------- Cache helpers ----------
   const readCache = (): Maktobat[] | null => {
@@ -84,9 +80,6 @@ const toStreamable = (u: string) => {
     }
   };
 
-
-
-  
   const writeCache = (items: Maktobat[]) => {
     try {
       const payload: CacheShape = { ts: Date.now(), items };
@@ -221,10 +214,10 @@ const toStreamable = (u: string) => {
                   value={maktobat.id}
                   className="text-center"
                 >
-                  <AccordionTrigger>{maktobat.title}</AccordionTrigger>
+                  <AccordionTrigger  className="text-muted-foreground">{maktobat.title}</AccordionTrigger>
                   <AccordionContent>
                     <div className="mb-4 pb-2">
-                      <p className="text-sm">{maktobat.content}</p>
+                      <p className="text-sm text-primary"> {maktobat.content}</p>
                       <div className="flex justify-center gap-2 mt-2 text-center">
                         <Button
                           size="sm"
@@ -267,7 +260,6 @@ const toStreamable = (u: string) => {
                                 })
                               }
                               className="sm:w-auto w-full text-card "
-                              
                             >
                               پخش
                             </Button>
@@ -295,43 +287,42 @@ const toStreamable = (u: string) => {
                   </AccordionContent>
                 </AccordionItem>
               ))}
-         <AccordionItem value="group-2">
-  <AccordionTrigger>مباحث متفرقه</AccordionTrigger>
-  <AccordionContent className="flex flex-col gap-4">
-    <div className="rounded-xl shadow-md p-4">
-      <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
-        🎧 گفتمان
-      </SheetDescription>
+              <AccordionItem value="group-2">
+                <AccordionTrigger className="text-muted-foreground">مباحث متفرقه</AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-4">
+                  <div className="rounded-xl shadow-md p-4">
+                    <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
+                      🎧 گفتمان
+                    </SheetDescription>
 
-      <div className="flex gap-2 justify-center">
-        {/* Play (same global player as بالا) */}
-        <Button
-          onClick={() =>
-            play({
-              title: "گفتمان",
-              url: toStreamable(goftegooha["1"]), // streamable: ...raw=1
-              description: "مباحث متفرقه",
-            })
-          }
-          className="sm:w-auto w-full text-card"
-        >
-          پخش
-        </Button>
+                    <div className="flex gap-2 justify-center">
+                      {/* Play (same global player as بالا) */}
+                      <Button
+                        onClick={() =>
+                          play({
+                            title: "گفتمان",
+                            url: toStreamable(goftegooha["1"]), // streamable: ...raw=1
+                            description: "مباحث متفرقه",
+                          })
+                        }
+                        className="sm:w-auto w-full text-card"
+                      >
+                        پخش
+                      </Button>
 
-        {/* Download (matching the first section’s style) */}
-        <a
-          href={toDownloadUrl(goftegooha["1"])} // downloadable: ...dl=1
-          download="گفتمان.mp3"
-        >
-          <Button variant="outline" className="sm:w-auto w-full">
-            دانلود صوت
-          </Button>
-        </a>
-      </div>
-    </div>
-  </AccordionContent>
-</AccordionItem>
-
+                      {/* Download (matching the first section’s style) */}
+                      <a
+                        href={toDownloadUrl(goftegooha["1"])} // downloadable: ...dl=1
+                        download="گفتمان.mp3"
+                      >
+                        <Button variant="outline" className="sm:w-auto w-full">
+                          دانلود صوت
+                        </Button>
+                      </a>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
             </Accordion>
           )}
         </SheetContent>

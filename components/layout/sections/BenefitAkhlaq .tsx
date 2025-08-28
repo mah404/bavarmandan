@@ -111,15 +111,15 @@ export const BenefitAkhlaq = () => {
                     {/* First 4 sessions */}
 
                     <AccordionItem value="group-1 ">
-                      <AccordionTrigger>شیعه و میراث فاطمی</AccordionTrigger>
+                      <AccordionTrigger className="">شیعه و میراث فاطمی</AccordionTrigger>
                       <AccordionContent className="flex flex-col gap-2  justify-center  mt-2 text-center">
                         {audioFiles.slice(0, 4).map((file, i) => (
                           <div
                             key={i}
                             className="border-b border-muted-foreground/30 p-3"
                           >
-                            <div className="font-semibold mb-2 text-muted-foreground">
-                              {file.description}
+                            <div className="font-semibold mb-2 text-primary">
+                              {file.description} 
                             </div>
 
                             <div className="flex flex-col sm:flex-row gap-2 justify-center">
