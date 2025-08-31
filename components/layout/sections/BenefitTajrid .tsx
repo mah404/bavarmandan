@@ -195,6 +195,13 @@ const tajridAudios = [
     DescriptionThree: "",
     DescriptionFour: "",
   },
+    {
+    url: "https://www.dropbox.com/scl/fi/byui4lu2gd7859awilqcm/24.mp3?rlkey=v1bilhwfmf5t4dpnn6o6ay0vs&st=yzuzl696&dl=1",
+    DescriptionOne: "۱-مروری بر مباحث گذشته",
+    DescriptionTwo: "(یازده مساله)",
+    DescriptionThree: "",
+    DescriptionFour: "",
+  },
 ];
 
 const toStreamable = (u: string) => {
