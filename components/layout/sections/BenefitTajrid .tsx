@@ -202,6 +202,14 @@ const tajridAudios = [
     DescriptionThree: "",
     DescriptionFour: "",
   },
+     {
+    url: "  https://www.dropbox.com/scl/fi/9e4boex7ses06upea919o/25.mp3?rlkey=sdicc04fq7hvxkp5nevyems2b&st=kxb7xkb3&dl=1",
+    DescriptionOne: "",
+    DescriptionTwo: "",
+    DescriptionThree: "",
+    DescriptionFour: "",
+  },
+
 ];
 
 const toStreamable = (u: string) => {
