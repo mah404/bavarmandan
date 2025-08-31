@@ -204,9 +204,9 @@ const tajridAudios = [
   },
      {
     url: "  https://www.dropbox.com/scl/fi/9e4boex7ses06upea919o/25.mp3?rlkey=sdicc04fq7hvxkp5nevyems2b&st=kxb7xkb3&dl=1",
-    DescriptionOne: "",
-    DescriptionTwo: "",
-    DescriptionThree: "",
+    DescriptionOne: "صوت جلسه ۲۵ شرح کتاب تجرید الاعتقاد",
+    DescriptionTwo: "۱-تبیین نظریه حال",
+    DescriptionThree: "۲-نقد اولین دلیل قائلین به نظریه حال",
     DescriptionFour: "",
   },
 
