@@ -11,6 +11,8 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
 
 enum ProService {
   YES = 1,
@@ -159,34 +161,56 @@ export const ServicesSection = () => {
                       </Card>
                     </div>
                   </PopoverTrigger>
+<PopoverContent align="center" side="bottom" className="w-[420px]">
+  <Tabs defaultValue="sites" className="w-full" dir="rtl">
+    <TabsList className="grid grid-cols-2 w-full">
+      <TabsTrigger value="sites">تارنماهای مفید</TabsTrigger>
+      <TabsTrigger value="books">کتب مفید</TabsTrigger>
+    </TabsList>
 
-                  <PopoverContent align="center" side="bottom" className="w-80">
-                    <div dir="rtl" className="space-y-2">
-                      <p className="text-sm text-primary">منابع مفید:</p>
-                      <ul className="list-disc pr-4 space-y-1">
-                        <li>
-                          <Link
-                            className="underline underline-offset-4"
-                            href="https://www.valiasr-aj.tv/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            شبکه جهانی حضرت ولی عصر (عج){" "}
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            className="underline underline-offset-4"
-                            href="https://javadi.esra.ir/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            بنیاد بین المللی علوم وحیانی اسراء{" "}
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </PopoverContent>
+    {/* تارنماهای مفید */}
+    <TabsContent value="sites" className="mt-3">
+      <div className="space-y-2">
+        <p className="text-sm text-primary">لینک‌ها:</p>
+        <ul className="list-disc pr-4 space-y-1">
+          <li>
+            <Link
+              className="underline underline-offset-4"
+              href="https://www.valiasr-aj.tv/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              شبکه جهانی حضرت ولی عصر (عج)
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="underline underline-offset-4"
+              href="https://javadi.esra.ir/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              بنیاد بین‌المللی علوم وحیانی اسراء
+            </Link>
+          </li>
+          {/* هر لینک دیگری را اینجا اضافه کنید */}
+        </ul>
+      </div>
+    </TabsContent>
+
+    {/* کتب مفید */}
+    <TabsContent value="books" className="mt-3">
+      <div className="space-y-2">
+        <p className="text-sm text-primary">کتب مفید:</p>
+        {/* خالی می‌ماند تا فایل‌ها را بعداً اضافه کنید */}
+        <div className="text-sm text-muted-foreground">
+به‌زودی کتب مفید در این بخش قرار خواهند گرفت   
+     </div>
+      </div>
+    </TabsContent>
+  </Tabs>
+</PopoverContent>
+
                 </Popover>
               );
             }
