@@ -209,7 +209,7 @@ export const ServicesSection = () => {
         rel="noopener noreferrer"
         className="underline text-white underline-offset-4 text-primary"
       >
-قویم شیعه – عبدالحسین نیشابوری (PDF)
+قویم شیعه – عبدالحسین بندانی نیشابوری (PDF)
   </Link>
     </div>
   </div>
