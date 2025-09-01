@@ -59,7 +59,7 @@ const serviceList: ServiceProps[] = [
   },
   {
     title: "سایر منابع مفید",
-    description: "....",
+    description: "تارنماها و کتب مفید",
     pro: 0,
     link: "https://www.instagram.com/bavarmandan110/",
   },
