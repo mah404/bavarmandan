@@ -199,15 +199,22 @@ export const ServicesSection = () => {
     </TabsContent>
 
     {/* کتب مفید */}
-    <TabsContent value="books" className="mt-3">
-      <div className="space-y-2">
-        <p className="text-sm text-primary">کتب مفید:</p>
-        {/* خالی می‌ماند تا فایل‌ها را بعداً اضافه کنید */}
-        <div className="text-sm text-muted-foreground">
-به‌زودی کتب مفید در این بخش قرار خواهند گرفت   
-     </div>
-      </div>
-    </TabsContent>
+<TabsContent value="books" className="mt-3">
+  <div className="space-y-2">
+    <p className="text-sm text-primary">کتب مفید:</p>
+    <div className="text-sm text-muted-foreground">
+      <Link
+        href="/taghvim-shia.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline text-white underline-offset-4 text-primary"
+      >
+قویم شیعه – عبدالحسین نیشابوری (PDF)
+  </Link>
+    </div>
+  </div>
+</TabsContent>
+
   </Tabs>
 </PopoverContent>
 
