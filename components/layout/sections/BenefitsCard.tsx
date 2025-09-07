@@ -58,9 +58,14 @@ export const BenefitsCard = () => {
         {
           title: " جلسه 3  ",
           url: "https://www.dropbox.com/scl/fi/qy7x1laa91sutvz8xmlze/3.mp4?rlkey=6iiv42id1e2q46l2jgaqhi5f8&st=23k53iup&dl=1",
-        },    {
+        },
+        {
           title: " جلسه 4  ",
           url: "https://www.dropbox.com/scl/fi/9svv432ck9lf9utlqfgxw/4.mp4?rlkey=s495rv0o0z84twqm5mkpope5i&st=q4vbubng&dl=1",
+        },
+          {
+          title: " جلسه 5  ",
+          url: "https://www.dropbox.com/scl/fi/pphkrq94n1lizs7t885io/5.mp3?rlkey=lgjrbznk945o3u1ac82b6f3vt&st=kocgt4yh&dl=1",
         },
       ],
     },
@@ -249,70 +254,65 @@ export const BenefitsCard = () => {
         <SheetContent className="overflow-y-auto ">
           <SheetHeader>
             <SheetTitle>مباحث اخلاقی</SheetTitle>
-            <SheetDescription className="mb-4">
-                          </SheetDescription>
+            <SheetDescription className="mb-4"></SheetDescription>
           </SheetHeader>
-              {loading ? (
-                <Lottie
-                  animationData={loadingPdfAnim}
-                  loop
-                  className="text-muted-foreground bg-transparent mt-4"
-                />
-              ) : (
-                <Accordion type="multiple" className="w-full">
-                  {audioGroups.map((group, groupIndex) => (
-                    <AccordionItem
-                      key={groupIndex}
-                      value={`group-${groupIndex}`}
-                    >
-                      <AccordionTrigger className="text-right">
-                        {group.subject}
-                      </AccordionTrigger>
-                      <AccordionContent className="flex flex-col gap-4 justify-center mt-2 text-center">
-                        {group.files.map((file, fileIndex) => (
-                          <div
-                            key={fileIndex}
-                            className="border-b border-muted-foreground p-2"
+          {loading ? (
+            <Lottie
+              animationData={loadingPdfAnim}
+              loop
+              className="text-muted-foreground bg-transparent mt-4"
+            />
+          ) : (
+            <Accordion type="multiple" className="w-full">
+              {audioGroups.map((group, groupIndex) => (
+                <AccordionItem key={groupIndex} value={`group-${groupIndex}`}>
+                  <AccordionTrigger className="text-right">
+                    {group.subject}
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-col gap-4 justify-center mt-2 text-center">
+                    {group.files.map((file, fileIndex) => (
+                      <div
+                        key={fileIndex}
+                        className="border-b border-muted-foreground p-2"
+                      >
+                        <div className="font-semibold mb-3 text-primary">
+                          {file.title}
+                        </div>
+
+                        <div className="flex gap-2 justify-center">
+                          {/* Play */}
+                          <Button
+                            onClick={() =>
+                              play({
+                                title: file.title,
+                                url: file.url, // assumes already streamable
+                              })
+                            }
+                            className="w-full sm:w-auto text-card"
                           >
-                            <div className="font-semibold mb-3 text-primary">
-                              {file.title}
-                            </div>
+                            پخش
+                          </Button>
 
-                            <div className="flex gap-2 justify-center">
-                              {/* Play */}
-                              <Button
-                                onClick={() =>
-                                  play({
-                                    title: file.title,
-                                    url: file.url, // assumes already streamable
-                                  })
-                                }
-                                className="w-full sm:w-auto text-card"
-                              >
-                                پخش
-                              </Button>
-
-                              {/* Download */}
-                              <a
-                                href={file.url.replace(/([?&])raw=1/, "$1dl=1")} // convert raw link to dl=1
-                                download={`${file.title || "audio"}.mp3`}
-                              >
-                                <Button
-                                  variant="outline"
-                                  className="w-full sm:w-auto"
-                                >
-                                  دانلود
-                                </Button>
-                              </a>
-                            </div>
-                          </div>
-                        ))}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              )}
-
+                          {/* Download */}
+                          <a
+                            href={file.url.replace(/([?&])raw=1/, "$1dl=1")} // convert raw link to dl=1
+                            download={`${file.title || "audio"}.mp3`}
+                          >
+                            <Button
+                              variant="outline"
+                              className="w-full sm:w-auto"
+                            >
+                              دانلود
+                            </Button>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
         </SheetContent>
       </Sheet>
     </>
