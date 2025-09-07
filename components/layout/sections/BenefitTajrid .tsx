@@ -209,6 +209,13 @@ const tajridAudios = [
     DescriptionThree: "۲-نقد اولین دلیل قائلین به نظریه حال",
     DescriptionFour: "",
   },
+       {
+    url: "https://www.dropbox.com/scl/fi/lqrm25e0w6pgdi9u5vwdo/26.mp3?rlkey=3trrrn70gi8shl94ijpeb7zli&st=khjd2wl0&dl=1",
+    DescriptionOne: "صوت جلسه ۲۶ شرح کتاب تجرید الاعتقاد",
+    DescriptionTwo: "۱-تبیین دوم دلیل قائلین به نظریه حال و رد آن",
+    DescriptionThree: "۲-اشکال به اصل استدلال های قائلین به نظریه حال",
+    DescriptionFour: "",
+  },
 
 ];
 
