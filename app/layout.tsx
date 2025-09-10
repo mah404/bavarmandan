@@ -66,6 +66,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
+    
       lang="pt-br"
       className="dark overflow-x-hidden"
       suppressHydrationWarning

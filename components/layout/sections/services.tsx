@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-
 enum ProService {
   YES = 1,
   NO = 0,
@@ -68,11 +67,10 @@ const serviceList: ServiceProps[] = [
 export const ServicesSection = () => {
   return (
     <section id="tarnama" className="container py-24 sm:py-32">
-    <h2 className="w-fit mx-auto text-3xl md:text-4xl text-center p-2  text-primary font-bold mb-4 bg-card border-secondary border dark:border-none rounded-2xl dark:bg-transparent dark:rounded-none dark:p-0">
-  <span className="text-sm align-super ">*</span>
-  تارنماهای مرتبط
-</h2>
-
+      <h2 className="w-fit mx-auto text-3xl md:text-4xl text-center p-2  text-primary font-bold mb-4 bg-card border-secondary border dark:border-none rounded-2xl dark:bg-transparent dark:rounded-none dark:p-0">
+        <span className="text-sm align-super ">*</span>
+        تارنماهای مرتبط
+      </h2>
 
       <div className="flex flex-col items-center gap-6 w-full lg:w-[70%] mx-auto">
         {/* Row 1 */}
@@ -161,63 +159,66 @@ export const ServicesSection = () => {
                       </Card>
                     </div>
                   </PopoverTrigger>
-<PopoverContent align="center" side="bottom" className="w-[420px]">
-  <Tabs defaultValue="sites" className="w-full" dir="rtl">
-    <TabsList className="grid grid-cols-2 w-full">
-      <TabsTrigger value="sites">تارنماهای مفید</TabsTrigger>
-      <TabsTrigger value="books">کتب مفید</TabsTrigger>
-    </TabsList>
+                  <PopoverContent
+                    align="center"
+                    side="bottom"
+                    className="w-[420px]"
+                  >
+                    <Tabs defaultValue="sites" className="w-full" dir="rtl">
+                      <TabsList className="grid grid-cols-2 w-full">
+                        <TabsTrigger value="sites">تارنماهای مفید</TabsTrigger>
+                        <TabsTrigger value="books">کتب مفید</TabsTrigger>
+                      </TabsList>
 
-    {/* تارنماهای مفید */}
-    <TabsContent value="sites" className="mt-3">
-      <div className="space-y-2">
-        <p className="text-sm text-primary">لینک‌ها:</p>
-        <ul className="list-disc pr-4 space-y-1">
-          <li>
-            <Link
-              className="underline underline-offset-4"
-              href="https://www.valiasr-aj.tv/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              شبکه جهانی حضرت ولی عصر (عج)
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="underline underline-offset-4"
-              href="https://javadi.esra.ir/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              بنیاد بین‌المللی علوم وحیانی اسراء
-            </Link>
-          </li>
-          {/* هر لینک دیگری را اینجا اضافه کنید */}
-        </ul>
-      </div>
-    </TabsContent>
+                      {/* تارنماهای مفید */}
+                      <TabsContent value="sites" className="mt-3">
+                        <div className="space-y-2">
+                          <p className="text-sm text-primary">لینک‌ها:</p>
+                          <ul className="list-disc pr-4 space-y-1">
+                            <li>
+                              <Link
+                                className="underline underline-offset-4"
+                                href="https://www.valiasr-aj.tv/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                شبکه جهانی حضرت ولی عصر (عج)
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                className="underline underline-offset-4"
+                                href="https://javadi.esra.ir/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                بنیاد بین‌المللی علوم وحیانی اسراء
+                              </Link>
+                            </li>
+                            {/* هر لینک دیگری را اینجا اضافه کنید */}
+                          </ul>
+                        </div>
+                      </TabsContent>
 
-    {/* کتب مفید */}
-<TabsContent value="books" className="mt-3">
-  <div className="space-y-2">
-    <p className="text-sm text-primary">کتب مفید:</p>
-    <div className="text-sm text-muted-foreground">
-      <Link
-        href="/taghvim-shia.pdf"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="underline text-white underline-offset-4 text-primary"
-      >
-تقویم شیعه – عبدالحسین بندانی نیشابوری (PDF)
-  </Link>
-    </div>
-  </div>
-</TabsContent>
-
-  </Tabs>
-</PopoverContent>
-
+                      {/* کتب مفید */}
+                      <TabsContent value="books" className="mt-3">
+                        <div className="space-y-2">
+                          <p className="text-sm text-primary">کتب مفید:</p>
+                          <div className="text-sm text-muted-foreground">
+                            <Link
+                              dir="rtl"
+                              href="/taghvim-shia.pdf"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="underline text-white underline-offset-4 text-primary"
+                            >
+                              تقویم شیعه – عبدالحسین بندانی نیشابوری (PDF)
+                            </Link>
+                          </div>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </PopoverContent>
                 </Popover>
               );
             }
