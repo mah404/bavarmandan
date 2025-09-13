@@ -21,6 +21,10 @@ module.exports = {
   		}
   	},
   	extend: {
+		  fontFamily: {
+        // font-sans will use our variables from next/font
+        sans: ["var(--font-arabic)", "var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
   		colors: {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',

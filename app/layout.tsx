@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Vazirmatn } from "next/font/google"; // add Arabic-capable font
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
-const inter = Inter({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
@@ -59,6 +58,9 @@ export const metadata: Metadata = {
   },
 };
 
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const vazir = Vazirmatn({ subsets: ["arabic"], variable: "--font-arabic", display: "swap" });
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -68,7 +70,7 @@ export default function RootLayout({
     <html
     
       lang="pt-br"
-      className="dark overflow-x-hidden"
+      className={cn("dark overflow-x-hidden", inter.variable, vazir.variable)}
       suppressHydrationWarning
     >
       <head>
