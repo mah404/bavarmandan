@@ -23,8 +23,8 @@ import { useRouter } from "next/navigation";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 
 // PDF config
-const TOTAL_PDFS = 2; 
-const BASE_PATH = ""; 
+const TOTAL_PDFS = 2;
+const BASE_PATH = "";
 
 const tajridAudios = [
   {
@@ -195,28 +195,34 @@ const tajridAudios = [
     DescriptionThree: "",
     DescriptionFour: "",
   },
-    {
+  {
     url: "https://www.dropbox.com/scl/fi/byui4lu2gd7859awilqcm/24.mp3?rlkey=v1bilhwfmf5t4dpnn6o6ay0vs&st=yzuzl696&dl=1",
     DescriptionOne: "۱-مروری بر مباحث گذشته",
     DescriptionTwo: "(یازده مساله)",
     DescriptionThree: "",
     DescriptionFour: "",
   },
-     {
+  {
     url: "  https://www.dropbox.com/scl/fi/9e4boex7ses06upea919o/25.mp3?rlkey=sdicc04fq7hvxkp5nevyems2b&st=kxb7xkb3&dl=1",
     DescriptionOne: "صوت جلسه ۲۵ شرح کتاب تجرید الاعتقاد",
     DescriptionTwo: "۱-تبیین نظریه حال",
     DescriptionThree: "۲-نقد اولین دلیل قائلین به نظریه حال",
     DescriptionFour: "",
   },
-       {
+  {
     url: "https://www.dropbox.com/scl/fi/lqrm25e0w6pgdi9u5vwdo/26.mp3?rlkey=3trrrn70gi8shl94ijpeb7zli&st=khjd2wl0&dl=1",
     DescriptionOne: "صوت جلسه ۲۶ شرح کتاب تجرید الاعتقاد",
     DescriptionTwo: "۱-تبیین دوم دلیل قائلین به نظریه حال و رد آن",
     DescriptionThree: "۲-اشکال به اصل استدلال های قائلین به نظریه حال",
     DescriptionFour: "",
   },
-
+    {
+    url: "https://www.dropbox.com/scl/fi/bvnm8jgu0i9iawnujtmyu/27.mp3?rlkey=q5xkz8vib0x64itn2a7wumf59&st=mceq7vhb&dl=1",
+    DescriptionOne: "صوت جلسه ۲۷ شرح کتاب تجرید الاعتقاد",
+    DescriptionTwo: "۱-بررسی و نقد پاسخ قائلین به حال نسبت به اشکالات وارد بر نظریه حال",
+    DescriptionThree: "۲-بررسی نقد برخی از معاصرین نسبت به  موجود بودن وجود",
+    DescriptionFour: "",
+  },
 ];
 
 const toStreamable = (u: string) => {
@@ -233,7 +239,7 @@ export const BenefitTajrid = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { play } = useAudioPlayer(); 
+  const { play } = useAudioPlayer();
 
   const sections: PdfSection[] = useMemo(() => {
     return Array.from({ length: TOTAL_PDFS }, (_, i) => {
@@ -243,7 +249,7 @@ export const BenefitTajrid = () => {
     });
   }, []);
 
-  const toDownloadUrl = (u: string) => u; 
+  const toDownloadUrl = (u: string) => u;
 
   return (
     <>
@@ -334,7 +340,7 @@ export const BenefitTajrid = () => {
                       (audio as any).DescriptionSix,
                     ].filter((d) => d && String(d).trim() !== "") as string[];
 
-                    const url = toStreamable(audio.url); 
+                    const url = toStreamable(audio.url);
 
                     return (
                       <AccordionItem
@@ -371,7 +377,7 @@ export const BenefitTajrid = () => {
                                 }
                                 play({
                                   title: `جلسه ${sessionNumber}`,
-                                  url, 
+                                  url,
                                   description: descriptions.length
                                     ? descriptions.join(" | ")
                                     : undefined,
