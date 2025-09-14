@@ -32,7 +32,7 @@ const serviceList: ServiceProps[] = [
     link: "https://t.me/bavarmandan110",
   },
   {
-    title: "بات تلگرام",
+    title: "بات تلگرامی ارتباط مستقیم با مجمع باورمندان",
     description:
       "پیام رسان ارتباطی(جهت ارسال سوالات، انتقادات، پیشنهادات و نقطه نظرات)",
     pro: 0,
