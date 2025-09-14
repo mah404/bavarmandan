@@ -62,7 +62,7 @@ export const FooterSection = () => {
 
         <section className="w-full text-center">
           <h3 className="text-xs">
-© 1404 مالکیت، طراحی و توسعه
+© 1404 مالکیت، طراحی و توسعه{" "}
             <Link
               target="_blank"
               href="#"
