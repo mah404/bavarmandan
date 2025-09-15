@@ -128,127 +128,108 @@ export const ServicesSection = () => {
         </div>
 
         {/* Row 3 */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
-          {serviceList.slice(4, 6).map(({ title, description, pro, link }) => {
-            const isExtra = title.trim() === "سایر منابع مفید";
-            if (isExtra) {
-              return (
-                <Popover key={title}>
-                  <PopoverTrigger asChild>
-                    {/* کارت به‌عنوان تریگر؛ لینک نیست تا جابجا نشود */}
-                    <div
-                      dir="rtl"
-                      role="button"
-                      tabIndex={0}
-                      className="bg-card dark:bg-card w-full sm:w-[480px] h-[130px] mx-auto relative rounded-xl border hover:shadow cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
-                    >
-                      <Card className="bg-transparent border-0 shadow-none h-full">
-                        <CardHeader>
-                          <CardTitle>{title}</CardTitle>
-                          <CardDescription className="text-yellow-300">
-                            {description}
-                          </CardDescription>
-                        </CardHeader>
-                        <Badge
-                          data-pro={ProService.YES === pro}
-                          variant="secondary"
-                          className="absolute -top-2 -right-3 data-[pro=false]:hidden"
-                        >
-                          منابع
-                        </Badge>
-                      </Card>
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    align="center"
-                    side="bottom"
-                    className="w-[420px]"
+        {/* Row 3 (only "سایر منابع مفید" centered) */}
+        <div className="flex justify-center w-full">
+          {serviceList
+            .filter(({ title }) => title.trim() === "سایر منابع مفید")
+            .map(({ title, description, pro }) => (
+              <Popover key={title}>
+                <PopoverTrigger asChild>
+                  <div
+                    dir="rtl"
+                    role="button"
+                    tabIndex={0}
+                    className="bg-card dark:bg-card w-full sm:w-[480px] h-[130px] mx-auto relative rounded-xl border hover:shadow cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
                   >
-                    <Tabs defaultValue="sites" className="w-full" dir="rtl">
-                      <TabsList className="grid grid-cols-2 w-full">
-                        <TabsTrigger value="sites">تارنماهای مفید</TabsTrigger>
-                        <TabsTrigger value="books">کتب مفید</TabsTrigger>
-                      </TabsList>
+                    <Card className="bg-transparent border-0 shadow-none h-full">
+                      <CardHeader>
+                        <CardTitle>{title}</CardTitle>
+                        <CardDescription className="text-yellow-300">
+                          {description}
+                        </CardDescription>
+                      </CardHeader>
+                      <Badge
+                        data-pro={ProService.YES === pro}
+                        variant="secondary"
+                        className="absolute -top-2 -right-3 data-[pro=false]:hidden"
+                      >
+                        منابع
+                      </Badge>
+                    </Card>
+                  </div>
+                </PopoverTrigger>
 
-                      {/* تارنماهای مفید */}
-                      <TabsContent value="sites" className="mt-3">
-                        <div className="space-y-2">
-                          <p className="text-sm text-primary">لینک‌ها:</p>
-                          <ul className="list-disc pr-4 space-y-1">
-                            <li>
-                              <Link
-                                className="underline underline-offset-4"
-                                href="https://www.valiasr-aj.tv/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                شبکه جهانی حضرت ولی عصر (عج)
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                className="underline underline-offset-4"
-                                href="https://javadi.esra.ir/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                بنیاد بین‌المللی علوم وحیانی اسراء
-                              </Link>
-                            </li>
-                            {/* هر لینک دیگری را اینجا اضافه کنید */}
-                          </ul>
-                        </div>
-                      </TabsContent>
+                {/* same PopoverContent / Tabs as before */}
+                <PopoverContent
+                  align="center"
+                  side="bottom"
+                  className="w-[420px]"
+                >
+                  <Tabs defaultValue="sites" className="w-full" dir="rtl">
+                    <TabsList className="grid grid-cols-2 w-full">
+                      <TabsTrigger value="sites">تارنماهای مفید</TabsTrigger>
+                      <TabsTrigger value="books">کتب مفید</TabsTrigger>
+                    </TabsList>
 
-                      {/* کتب مفید */}
-                      <TabsContent value="books" className="mt-3">
-                        <div className="space-y-2">
-                          <p className="text-sm text-primary">کتب مفید:</p>
-                          <div className="text-sm text-muted-foreground">
+                    <TabsContent value="sites" className="mt-3">
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary">لینک‌ها:</p>
+                        <ul className="list-disc pr-4 space-y-1">
+                          <li>
                             <Link
-                              dir="rtl"
-                              href="/taghvim-shia.pdf"
+                              className="underline underline-offset-4"
+                              href="https://t.me/firstcreation1"
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="underline text-white underline-offset-4 text-primary"
                             >
-                              
-                              تقویم شیعه – عبدالحسین بندانی نیشابوری (PDF)
+                              (کانال تلگرامی خلق اول ) شبکه اطلاع رسانی تشکیل
+                              جلسات و اشتراک مطالب
                             </Link>
-                          </div>
-                        </div>
-                      </TabsContent>
-                    </Tabs>
-                  </PopoverContent>
-                </Popover>
-              );
-            }
+                          </li>
+                          <li>
+                            <Link
+                              className="underline underline-offset-4"
+                              href="https://www.valiasr-aj.tv/"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              شبکه جهانی حضرت ولی عصر (عج)
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              className="underline underline-offset-4"
+                              href="https://javadi.esra.ir/"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              بنیاد بین‌المللی علوم وحیانی اسراء
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    </TabsContent>
 
-            // حالت کارت‌های عادی (بدون پاپ‌اور)
-            return (
-              <Card
-                dir="rtl"
-                key={title}
-                className="bg-card dark:bg-card w-full sm:w-[480px] h-[130px] mx-auto relative"
-              >
-                <Link href={link}>
-                  <CardHeader>
-                    <CardTitle>{title}</CardTitle>
-                    <CardDescription className="text-primary">
-                      {description}
-                    </CardDescription>
-                  </CardHeader>
-                  <Badge
-                    data-pro={ProService.YES === pro}
-                    variant="secondary"
-                    className="absolute -top-2 -right-3 data-[pro=false]:hidden"
-                  >
-                    PRO
-                  </Badge>
-                </Link>
-              </Card>
-            );
-          })}
+                    <TabsContent value="books" className="mt-3">
+                      <div className="space-y-2">
+                        <p className="text-sm text-primary">کتب مفید:</p>
+                        <div className="text-sm text-muted-foreground">
+                          <Link
+                            dir="rtl"
+                            href="/taghvim-shia.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline text-white underline-offset-4 text-primary"
+                          >
+                            تقویم شیعه – عبدالحسین بندانی نیشابوری (PDF)
+                          </Link>
+                        </div>
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                </PopoverContent>
+              </Popover>
+            ))}
         </div>
       </div>
     </section>
