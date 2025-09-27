@@ -77,7 +77,7 @@ export const BenefitAkhlaq = () => {
   const miscFiles = [
     {
       title: "عصمت پیامبر",
-      description: "استاد مهران بهرامی",
+      description: "جناب آقای مهران بهرامی",
       url: "https://www.dropbox.com/scl/fi/v3g3mjmvcuf6ak2jk3hll/anbia.mp3?rlkey=kafvptungppcirv7drh3nidtm&st=fe00razi&dl=1", // لینک جدیدت رو بگذار
     },
     // هر تعداد فایل جدید خواستی، مثل بالا اضافه کن
