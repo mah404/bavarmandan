@@ -75,6 +75,11 @@ export const BenefitAkhlaq = () => {
   ];
 
   const miscFiles = [
+       {
+      title: "مناظره با یک خداناباور ",
+      description: "مناظره استاد علی شریفی با زئوس",
+      url: "https://www.dropbox.com/scl/fi/zldwb9ip49avm4a9j1wkw/zeus.mp3?rlkey=jdwm0mvq4mviges1mx318q5al&st=861izmwb&dl=1", 
+    },
     {
       title: "عصمت پیامبر",
       description: "جناب آقای مهران بهرامی",
