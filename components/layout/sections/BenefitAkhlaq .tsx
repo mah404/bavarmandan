@@ -75,10 +75,15 @@ export const BenefitAkhlaq = () => {
   ];
 
   const miscFiles = [
-       {
+     {
+      title: "گفتاری در باب بساطت",
+      description: "",
+      url: "https://www.dropbox.com/scl/fi/llm05ddbwijppfhu535a7/besatat-motefaregheh.mp3?rlkey=esvj2qpmqvnxpretc0ge2cob9&st=mrv05luj&dl=1",
+    },
+    {
       title: "مناظره با یک خداناباور ",
       description: "مناظره استاد علی شریفی با زئوس",
-      url: "https://www.dropbox.com/scl/fi/zldwb9ip49avm4a9j1wkw/zeus.mp3?rlkey=jdwm0mvq4mviges1mx318q5al&st=861izmwb&dl=1", 
+      url: "https://www.dropbox.com/scl/fi/zldwb9ip49avm4a9j1wkw/zeus.mp3?rlkey=jdwm0mvq4mviges1mx318q5al&st=861izmwb&dl=1",
     },
     {
       title: "عصمت پیامبر",
@@ -234,7 +239,6 @@ export const BenefitAkhlaq = () => {
                         key={`misc-${idx}`}
                         className="border-b border-muted-foreground/30 p-3"
                       >
-                  
                         <div className="font-semibold mb-2 text-primary">
                           {file.title}
                         </div>
