@@ -6,11 +6,12 @@ import { Analytics } from "@vercel/analytics/next";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
-
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "مجمع باورمندان ",
-  description: "وبسایت رسمی مجمع باورمندان ؛ معرفی جلسات، گفتگوها و محتوای مرتبط.",
+  description:
+    "وبسایت رسمی مجمع باورمندان ؛ معرفی جلسات، گفتگوها و محتوای مرتبط.",
   keywords: [
     "مجمع باورمندان",
     "کلاب هاوس",
@@ -37,9 +38,11 @@ export const metadata: Metadata = {
     "بحث دینی",
     "فلسفه دین",
     "الهیات",
-  ],  openGraph: {
+  ],
+  openGraph: {
     title: "مجمع باورمندان",
-    description: "  معرفی جلسات و گفتگوهای مجمع باورمندان در کلاب هاوس و سایر پلتفرم ها",
+    description:
+      "  معرفی جلسات و گفتگوهای مجمع باورمندان در کلاب هاوس و سایر پلتفرم ها",
     url: "https://www.bavarmandan.com",
     siteName: "مجمع باورمندان",
     images: [
@@ -58,8 +61,16 @@ export const metadata: Metadata = {
   },
 };
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const vazir = Vazirmatn({ subsets: ["arabic"], variable: "--font-arabic", display: "swap" });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+const vazir = Vazirmatn({
+  subsets: ["arabic"],
+  variable: "--font-arabic",
+  display: "swap",
+});
 
 export default function RootLayout({
   children,
@@ -68,7 +79,6 @@ export default function RootLayout({
 }>) {
   return (
     <html
-    
       lang="pt-br"
       className={cn("dark overflow-x-hidden", inter.variable, vazir.variable)}
       suppressHydrationWarning
@@ -78,14 +88,42 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@100..800&display=swap"
           rel="stylesheet"
         />
-             {/* Instagram profile */}
-        <meta property="og:see_also" content="https://www.instagram.com/bavarmandan110/" />
-        <meta name="instagram:site" content="https://www.instagram.com/bavarmandan110/" />
+        {/* Instagram profile */}
+        <meta
+          property="og:see_also"
+          content="https://www.instagram.com/bavarmandan110/"
+        />
+        <meta
+          name="instagram:site"
+          content="https://www.instagram.com/bavarmandan110/"
+        />
 
         {/* YouTube channel */}
-        <meta property="og:see_also" content="https://www.youtube.com/@bavarmandan" />
-        <meta name="youtube:channel" content="https://www.youtube.com/@bavarmandan" />
-        
+        <meta
+          property="og:see_also"
+          content="https://www.youtube.com/@bavarmandan"
+        />
+        <meta
+          name="youtube:channel"
+          content="https://www.youtube.com/@bavarmandan"
+        />
+        <Script
+          id="organization-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "مجمع باورمندان",
+              url: "https://www.bavarmandan.com",
+              logo: "https://www.bavarmandan.com/mainicon.jpg", // use a square ≥112px
+              sameAs: [
+                "https://www.instagram.com/bavarmandan110/",
+                "https://www.youtube.com/@bavarmandan",
+              ],
+            }),
+          }}
+        />
       </head>
 
       <body
@@ -94,18 +132,18 @@ export default function RootLayout({
           inter.className
         )}
       >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem={false}
-            disableTransitionOnChange
-          >
-            <AudioPlayerProvider>
-              <Navbar />
-              {children}
-            </AudioPlayerProvider>
-          </ThemeProvider>
-          <Analytics />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <AudioPlayerProvider>
+            <Navbar />
+            {children}
+          </AudioPlayerProvider>
+        </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
