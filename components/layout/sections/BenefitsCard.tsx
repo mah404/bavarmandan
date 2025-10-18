@@ -79,9 +79,13 @@ export const BenefitsCard = () => {
           title: " جلسه 8  ",
           url: "https://www.dropbox.com/scl/fi/dqvpst8j719a4ltnp5qnb/8.mp4?rlkey=86ylhbvw5veekeu0tdb425gix&st=dib4x47d&dl=1",
         },
-          {
+        {
           title: " جلسه 9  ",
           url: "https://www.dropbox.com/scl/fi/hb5k5rsjniibs3hxls4sj/9.mp3?rlkey=js5h2lytqg9qn9zabd5890by1&st=vkjiyhug&dl=1",
+        },
+           {
+          title: " جلسه 10  ",
+          url: "https://www.dropbox.com/scl/fi/e7cq7v9u73fzowpoyjwl5/10.mp3?rlkey=agpnh03ws69t7hvrjtmpyehjq&st=3s99v7lt&dl=1",
         },
       ],
     },
