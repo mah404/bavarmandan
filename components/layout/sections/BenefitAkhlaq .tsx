@@ -76,9 +76,9 @@ export const BenefitAkhlaq = () => {
 
   const miscFiles = [
      {
-      title: "گفتاری در باب بساطت",
+      title: "اثبات خداوند فایده ای هم دارد؟",
       description: "",
-      url: "https://www.dropbox.com/scl/fi/llm05ddbwijppfhu535a7/besatat-motefaregheh.mp3?rlkey=esvj2qpmqvnxpretc0ge2cob9&st=mrv05luj&dl=1",
+      url: "https://www.dropbox.com/scl/fi/rcf8x7b79deftie0572hv/esbatekhodafaedeihamdarad.mp4?rlkey=hq29jbh7s5rxquaa4ktjojzug&st=so3yhkk8&dl=1",
     },
     {
       title: "مناظره با یک خداناباور ",

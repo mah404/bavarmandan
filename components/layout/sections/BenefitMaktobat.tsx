@@ -45,6 +45,7 @@ const dropboxAudioMap: Record<string, string> = {
 
 const goftegooha: Record<string, string> = {
   "1": "https://www.dropbox.com/scl/fi/iq2w7txicij0oy5ycqc54/goftegoo.mp3?rlkey=h20ywqwgf4gkpqshvcx6a3fi1&st=61dregoe&dl=1",
+  "2": "https://www.dropbox.com/scl/fi/rcf8x7b79deftie0572hv/esbatekhodafaedeihamdarad.mp4?rlkey=hq29jbh7s5rxquaa4ktjojzug&st=kllaw6zx&dl=1",
 };
 
 const CACHE_KEY = "maktobats_cache_v1";
@@ -214,10 +215,15 @@ export const BenefitMaktobat = () => {
                   value={maktobat.id}
                   className="text-center"
                 >
-                  <AccordionTrigger  className="text-muted-foreground">{maktobat.title}</AccordionTrigger>
+                  <AccordionTrigger className="text-muted-foreground">
+                    {maktobat.title}
+                  </AccordionTrigger>
                   <AccordionContent>
                     <div className="mb-4 pb-2">
-                      <p className="text-sm text-primary"> {maktobat.content}</p>
+                      <p className="text-sm text-primary">
+                        {" "}
+                        {maktobat.content}
+                      </p>
                       <div className="flex justify-center gap-2 mt-2 text-center">
                         <Button
                           size="sm"
@@ -288,7 +294,9 @@ export const BenefitMaktobat = () => {
                 </AccordionItem>
               ))}
               <AccordionItem value="group-2">
-                <AccordionTrigger className="text-muted-foreground">مباحث متفرقه</AccordionTrigger>
+                <AccordionTrigger className="text-muted-foreground">
+                  مباحث متفرقه
+                </AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-4">
                   <div className="rounded-xl shadow-md p-4">
                     <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
@@ -313,6 +321,37 @@ export const BenefitMaktobat = () => {
                       {/* Download (matching the first section’s style) */}
                       <a
                         href={toDownloadUrl(goftegooha["1"])} // downloadable: ...dl=1
+                        download="گفتمان.mp3"
+                      >
+                        <Button variant="outline" className="sm:w-auto w-full">
+                          دانلود صوت
+                        </Button>
+                      </a>
+                    </div>
+                  </div>
+                  <div className="rounded-xl shadow-md p-4">
+                    <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
+                      🎧 گفتاری در باب بساطت
+                    </SheetDescription>
+
+                    <div className="flex gap-2 justify-center">
+                      {/* Play (same global player as بالا) */}
+                      <Button
+                        onClick={() =>
+                          play({
+                            title: "گفتاری در باب بساطت",
+                            url: toStreamable(goftegooha["2"]), // streamable: ...raw=1
+                            description: "مباحث متفرقه",
+                          })
+                        }
+                        className="sm:w-auto w-full text-card"
+                      >
+                        پخش
+                      </Button>
+
+                      {/* Download (matching the first section’s style) */}
+                      <a
+                        href={toDownloadUrl(goftegooha["2"])} // downloadable: ...dl=1
                         download="گفتمان.mp3"
                       >
                         <Button variant="outline" className="sm:w-auto w-full">
