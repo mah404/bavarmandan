@@ -75,6 +75,11 @@ export const BenefitAkhlaq = () => {
   ];
 
   const miscFiles = [
+       {
+      title: "فاطمیه فراتر از شبهات",
+      description: "",
+      url: "https://www.dropbox.com/scl/fi/uxcrokjho3bt5wzlqs7p5/fatemiyeh.mp3?rlkey=gqjshgsxh1o0vbcm7nvc23xhs&st=2jnxc4rs&dl=0",
+    },
      {
       title: "اثبات خداوند فایده ای هم دارد؟",
       description: "",
