@@ -41,6 +41,17 @@ export const BenefitAkhlaq = () => {
     }
   };
 
+  const audioFilesnew = [
+    {
+      title: "دین؛ اثبات یا عملگرایی؟ ",
+      description: "دین؛ اثبات یا عملگرایی؟",
+      url: "https://www.dropbox.com/scl/fi/soe83iie6x0cc9dbkxwk1/dinesbatyaamalgaraei.mp3?rlkey=balmqrgf3nr700d7ymytdhkde&st=1074ne4v&dl=1",
+    },
+  
+  ];
+
+
+
   const audioFiles = [
     {
       title: "جلسه اول مجموعه شیعه و میراث فاطمی ",
@@ -133,6 +144,54 @@ export const BenefitAkhlaq = () => {
             />
           ) : (
             <Accordion type="single" collapsible className="w-full">
+                 <AccordionItem value="group-1 ">
+                <AccordionTrigger className="">
+                  کنکاش در عقاید
+                </AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-2  justify-center  mt-2 text-center">
+                  {audioFilesnew.slice(0, 4).map((file, i) => (
+                    <div
+                      key={i}
+                      className="border-b border-muted-foreground/30 p-3"
+                    >
+                      <div className="font-semibold mb-2 text-primary">
+                        {file.description}
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                        {/* Play */}
+                        <Button
+                          onClick={() =>
+                            play({
+                              title: file.title,
+                              url: file.url, // assumes streamable URL
+                              description: file.description,
+                            })
+                          }
+                          className="w-full sm:w-auto text-card"
+                        >
+                          پخش
+                        </Button>
+
+                        {/* Download */}
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="w-full sm:w-auto"
+                        >
+                          <a
+                            href={toDownloadUrl(file.url)}
+                            download={`${file.title || "audio"}.mp3`}
+                            rel="noopener noreferrer"
+                          >
+                            دانلود صوت
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
               {/* First 4 sessions */}
 
               <AccordionItem value="group-1 ">
