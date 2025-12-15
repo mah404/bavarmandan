@@ -52,7 +52,10 @@ export const FooterSection = () => {
             </div>
             <div className=" items-center gap-2 ">
               <Link href="https://t.me/bavarmandanBot">
-                <h3 className="font-bold text-lg mt-6 transition duration-300  hover:text-primary"> ارتباط مستقیم با ما</h3>
+                <h3 className="font-bold text-lg mt-6 transition duration-300  hover:text-primary">
+                  {" "}
+                  ارتباط مستقیم با ما
+                </h3>
               </Link>
             </div>
           </div>
@@ -62,7 +65,7 @@ export const FooterSection = () => {
 
         <section className="w-full text-center">
           <h3 className="text-xs">
-© 1404 مالکیت، طراحی و توسعه{" "}
+            © 1404 مالکیت، طراحی و توسعه{" "}
             <Link
               target="_blank"
               href="#"

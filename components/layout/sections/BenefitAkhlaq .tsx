@@ -42,14 +42,12 @@ export const BenefitAkhlaq = () => {
   };
 
   const audioFilessadeghin = [
-        {
+    {
       title: "مع الصادقین",
       description: " حضرت زهرا علیهاالسَلام ـ انسية الحوراء",
       url: "https://www.dropbox.com/scl/fi/wnfrbef8ts4hyy9ta5vsm/maalsadeghin.mp3?rlkey=cufz2mrouppfkti6bdzxawi5j&st=w8kvmckw&dl=1",
     },
-  
-
-  ]
+  ];
 
   const audioFilesnew = [
     {
@@ -57,10 +55,12 @@ export const BenefitAkhlaq = () => {
       description: "دین؛ اثبات یا عملگرایی؟",
       url: "https://www.dropbox.com/scl/fi/soe83iie6x0cc9dbkxwk1/dinesbatyaamalgaraei.mp3?rlkey=balmqrgf3nr700d7ymytdhkde&st=1074ne4v&dl=1",
     },
-  
+        {
+      title: "چگونه ایمان آوردی؟ عقل یا احساس؟",
+      description: "چگونه ایمان آوردی؟ عقل یا احساس؟",
+      url: "https://www.dropbox.com/scl/fi/ktbeyef82f6ro8zjuwpt4/imanaghlyaehsas.mp3?rlkey=ua2zxw5ycxs37o3s1n3zi3des&st=vjvofac9&dl=1",
+    },
   ];
-
-
 
   const audioFiles = [
     {
@@ -96,12 +96,12 @@ export const BenefitAkhlaq = () => {
   ];
 
   const miscFiles = [
-       {
+    {
       title: "فاطمیه فراتر از شبهات",
       description: "",
       url: "https://www.dropbox.com/scl/fi/uxcrokjho3bt5wzlqs7p5/fatemiyeh.mp3?rlkey=gqjshgsxh1o0vbcm7nvc23xhs&st=2jnxc4rs&dl=0",
     },
-     {
+    {
       title: "اثبات خداوند فایده ای هم دارد؟",
       description: "",
       url: "https://www.dropbox.com/scl/fi/rcf8x7b79deftie0572hv/esbatekhodafaedeihamdarad.mp4?rlkey=hq29jbh7s5rxquaa4ktjojzug&st=so3yhkk8&dl=1",
@@ -154,10 +154,8 @@ export const BenefitAkhlaq = () => {
             />
           ) : (
             <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="group-0 ">
-                <AccordionTrigger className="">
-مع الصادقین                
-</AccordionTrigger>
+              <AccordionItem value="group-0 ">
+                <AccordionTrigger className="">مع الصادقین</AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-2  justify-center  mt-2 text-center">
                   {audioFilessadeghin.slice(0, 4).map((file, i) => (
                     <div
@@ -202,10 +200,8 @@ export const BenefitAkhlaq = () => {
                   ))}
                 </AccordionContent>
               </AccordionItem>
-                 <AccordionItem value="group-1 ">
-                <AccordionTrigger className="">
-                  کنکاش در عقاید
-                </AccordionTrigger>
+              <AccordionItem value="group-1 ">
+                <AccordionTrigger className="">کنکاش در عقاید</AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-2  justify-center  mt-2 text-center">
                   {audioFilesnew.slice(0, 4).map((file, i) => (
                     <div
