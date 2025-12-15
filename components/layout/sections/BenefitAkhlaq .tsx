@@ -41,6 +41,16 @@ export const BenefitAkhlaq = () => {
     }
   };
 
+  const audioFilessadeghin = [
+        {
+      title: "مع الصادقین",
+      description: " حضرت زهرا علیهاالسَلام ـ انسية الحوراء",
+      url: "https://www.dropbox.com/scl/fi/wnfrbef8ts4hyy9ta5vsm/maalsadeghin.mp3?rlkey=cufz2mrouppfkti6bdzxawi5j&st=w8kvmckw&dl=1",
+    },
+  
+
+  ]
+
   const audioFilesnew = [
     {
       title: "دین؛ اثبات یا عملگرایی؟ ",
@@ -144,6 +154,54 @@ export const BenefitAkhlaq = () => {
             />
           ) : (
             <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="group-0 ">
+                <AccordionTrigger className="">
+مع الصادقین                
+</AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-2  justify-center  mt-2 text-center">
+                  {audioFilessadeghin.slice(0, 4).map((file, i) => (
+                    <div
+                      key={i}
+                      className="border-b border-muted-foreground/30 p-3"
+                    >
+                      <div className="font-semibold mb-2 text-primary">
+                        {file.description}
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                        {/* Play */}
+                        <Button
+                          onClick={() =>
+                            play({
+                              title: file.title,
+                              url: file.url, // assumes streamable URL
+                              description: file.description,
+                            })
+                          }
+                          className="w-full sm:w-auto text-card"
+                        >
+                          پخش
+                        </Button>
+
+                        {/* Download */}
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="w-full sm:w-auto"
+                        >
+                          <a
+                            href={toDownloadUrl(file.url)}
+                            download={`${file.title || "audio"}.mp3`}
+                            rel="noopener noreferrer"
+                          >
+                            دانلود صوت
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
                  <AccordionItem value="group-1 ">
                 <AccordionTrigger className="">
                   کنکاش در عقاید
@@ -194,7 +252,7 @@ export const BenefitAkhlaq = () => {
               </AccordionItem>
               {/* First 4 sessions */}
 
-              <AccordionItem value="group-1 ">
+              <AccordionItem value="group-2 ">
                 <AccordionTrigger className="">
                   شیعه و میراث فاطمی
                 </AccordionTrigger>
@@ -244,7 +302,7 @@ export const BenefitAkhlaq = () => {
               </AccordionItem>
 
               {/* Last 2 sessions */}
-              <AccordionItem value="group-2">
+              <AccordionItem value="group-3">
                 <AccordionTrigger>گفتگوهای قرآنی</AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-4  justify-center  text-center">
                   {audioFiles.slice(4).map((file, i) => (
@@ -290,7 +348,7 @@ export const BenefitAkhlaq = () => {
                   ))}
                 </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="group-misc">
+              <AccordionItem value="group-4">
                 <AccordionTrigger>مباحث متفرقه</AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-4 justify-center text-center">
                   {miscFiles.length === 0 ? (
