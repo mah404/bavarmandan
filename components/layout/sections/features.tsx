@@ -1,92 +1,68 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Icon } from "@/components/ui/icon";
-import { icons } from "lucide-react";
+import { getLatestAudios } from "@/lib/getLatestAudios";
+import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
+import { Separator } from "@/components/ui/separator";
 
-interface FeaturesProps {
-  icon: string;
-  title: string;
-  description: string;
-}
-
-const featureList: FeaturesProps[] = [
-  {
-    icon: "TabletSmartphone",
-    title: "اول",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. A odio velit cum aliquam, consectetur.",
-  },
-  {
-    icon: "BadgeCheck",
-    title: "دوم",
-    description:
-      "Lorem ipsum dolor sit amet consectetur. Natus consectetur, odio ea accusamus aperiam.",
-  },
-  {
-    icon: "Goal",
-    title: "سوم",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. odio ea accusamus aperiam.",
-  },
-  {
-    icon: "PictureInPicture",
-    title: "چهارم",
-    description:
-      "Lorem elit. A odio velit cum aliquam. Natus consectetur dolores, odio ea accusamus aperiam.",
-  },
-  {
-    icon: "MousePointerClick",
-    title: "بعدی",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing. odio ea accusamus consectetur.",
-  },
-  {
-    icon: "Newspaper",
-    title: "ششم",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. A odio velit cum aliquam. Natus consectetur.",
-  },
-];
+const featureMeta = {
+  title: "جدیدترین فایل‌ها و آخرین  به روز رسانی ",
+};
 
 export const FeaturesSection = () => {
+  const { play } = useAudioPlayer();
+  const latest5 = getLatestAudios(5);
+
   return (
-    <section id="features" className="container py-24 sm:py-32">
-      <h2 className="text-lg text-primary text-center mb-2 tracking-wider">
-        قسمت بعدی
-      </h2>
+    <section id="features" className="container py-8 sm:py-8 ">
+      <div className="flex justify-center">
+        <Card className="w-full max-w-md md:max-w-lg lg:max-w-xl bg-card border-2 shadow-none ">
+          {/* Header */}
+          <CardHeader className="flex flex-col items-center text-center pb-4">
+            <CardTitle className="text-3xl sm:text-3xl font-semibold text-primary">
+              {featureMeta.title}
+              <Separator className="my-6 bg-muted-foreground " />
+            </CardTitle>
+          </CardHeader>
 
-      <h2 className="text-3xl md:text-4xl text-center font-bold mb-4">
-        درباره ما
-      </h2>
+          {/* Content */}
+          <CardContent className="flex flex-col gap-5">
+            {latest5.length === 0 ? (
+              <p className="text-primary text-center text-lg sm:text-xl">
+                هنوز فایل جدیدی ثبت نشده.
+              </p>
+            ) : (
+              latest5.map((audio, index) => (
+                <button
+                  key={index}
+                  onClick={() =>
+                    play({
+                      title: audio.title,
+                      url: audio.url,
+                    })
+                  }
+                  className="
+                    text-center
+                    text-lg sm:text-xl
+                    leading-relaxed
+                    transition
+                    hover:text-primary
+                    cursor-pointer
+                  "
+                >
+                  <span className="block font-medium">
+                    {audio.title}
+                    {audio.groupSubject && ` — ${audio.groupSubject}`}
+                  </span>
 
-      <h3 className="md:w-1/2 mx-auto text-xl text-center text-muted-foreground mb-8">
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatem
-        fugiat, odit similique quasi sint reiciendis quidem iure veritatis optio
-        facere tenetur.
-      </h3>
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {featureList.map(({ icon, title, description }) => (
-          <div key={title}>
-            <Card className="h-full bg-background border-0 shadow-none">
-              <CardHeader className="flex justify-center items-center">
-                <div className="bg-primary/20 p-2 rounded-full ring-8 ring-primary/10 mb-4">
-                  <Icon
-                    name={icon as keyof typeof icons}
-                    size={24}
-                    color="hsl(var(--primary))"
-                    className="text-yellow-300"
-                  />
-                </div>
-
-                <CardTitle>{title}</CardTitle>
-              </CardHeader>
-
-              <CardContent className="text-muted-foreground text-center">
-                {description}
-              </CardContent>
-            </Card>
-          </div>
-        ))}
+                  <span className="block text-sm sm:text-base text-muted-foreground mt-1">
+                    {new Date(audio.createdAt).toLocaleDateString("fa-IR")}
+                  </span>
+                </button>
+              ))
+            )}
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

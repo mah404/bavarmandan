@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Sheet,
@@ -21,13 +21,22 @@ import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
 import { title } from "process";
+import {
+  audioFilessadeghin,
+  audioFilesnew,
+  audioFiles,
+  miscFiles,
+} from "@/data/content";
+import { useSheetNav } from "./SheetNavProvider";
 
 export const BenefitAkhlaq = () => {
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const { play } = useAudioPlayer(); // ← use the global player
-
+  const SHEET_ID = "akhlagh"; // ✅ this sheet's id
+  const [accordionValue, setAccordionValue] = useState<string | undefined>();
+  const { target, clear } = useSheetNav();
   const toDownloadUrl = (u: string) =>
     u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
 
@@ -41,83 +50,35 @@ export const BenefitAkhlaq = () => {
     }
   };
 
-  const audioFilessadeghin = [
-    {
-      title: "مع الصادقین",
-      description: " حضرت زهرا علیهاالسَلام ـ انسية الحوراء",
-      url: "https://www.dropbox.com/scl/fi/wnfrbef8ts4hyy9ta5vsm/maalsadeghin.mp3?rlkey=cufz2mrouppfkti6bdzxawi5j&st=w8kvmckw&dl=1",
-    },
-  ];
+  useEffect(() => {
+    if (!target) return;
+    if (target.sheetId !== SHEET_ID) return;
 
-  const audioFilesnew = [
-    {
-      title: "دین؛ اثبات یا عملگرایی؟ ",
-      description: "دین؛ اثبات یا عملگرایی؟",
-      url: "https://www.dropbox.com/scl/fi/soe83iie6x0cc9dbkxwk1/dinesbatyaamalgaraei.mp3?rlkey=balmqrgf3nr700d7ymytdhkde&st=1074ne4v&dl=1",
-    },
-        {
-      title: "چگونه ایمان آوردی؟ عقل یا احساس؟",
-      description: "چگونه ایمان آوردی؟ عقل یا احساس؟",
-      url: "https://www.dropbox.com/scl/fi/ktbeyef82f6ro8zjuwpt4/imanaghlyaehsas.mp3?rlkey=ua2zxw5ycxs37o3s1n3zi3des&st=vjvofac9&dl=1",
-    },
-  ];
+    // 1) open the sheet first
+    setOpen(true);
 
-  const audioFiles = [
-    {
-      title: "جلسه اول مجموعه شیعه و میراث فاطمی ",
-      description: "دوشنبه،آن روز تاریک",
-      url: "https://www.dropbox.com/scl/fi/btmozuf3laxsbgsmbmy24/1shieefatemi1.mp3?rlkey=lc0q4kshy9af1tbwqy290oa6x&st=mp9fwkgr&dl=1",
-    },
-    {
-      title: "جلسه دوم مجموعه شیعه و میراث فاطمی",
-      description: "سقیفه ، حلوای حکومت، بلوای بدعت",
-      url: "https://www.dropbox.com/scl/fi/5oz26x4j7osyxvuxxfck3/2shieefatemi2.mp3?rlkey=li2lib2nfpp5do5brcjhcj8ua&st=vr39in6y&dl=1",
-    },
-    {
-      title: "جلسه سوم مجموعه شیعه و میراث فاطمی",
-      description: " فدک ، صدای حق طلبی فاطمی",
-      url: "https://www.dropbox.com/scl/fi/rh1sorwji64exrxm3flqs/3shieefatemi4.mp3?rlkey=ur0oa9u7f1ve39qfq6zzshysu&st=j4ek72gy&dl=1",
-    },
-    {
-      title: "جلسه چهارم مجموعه شیعه و میراث فاطمی",
-      description: "در تکاپوی نجات امت رسول (ص)",
-      url: "https://www.dropbox.com/scl/fi/47rrmjad2ho2r3exs76b4/4shieefatemi3.mp3?rlkey=r5yzdbzo5kvqhckg7gv0cpl71&st=g7oehbku&dl=1",
-    },
-    {
-      title: "گفتگوی قرآنی",
-      description: "عصمت انبیا",
-      url: "https://www.dropbox.com/scl/fi/z72trsexlmb6qqdwpuebs/5goftegooqoraaniesmat.mp3?rlkey=rowl60vaoscx9kc9jrvhh5nh2&st=uf6tidxe&dl=1",
-    },
-    {
-      title: "گفتگوی قرآنی",
-      description: "شفاعت",
-      url: "https://www.dropbox.com/scl/fi/b4ryi5fysvuilaebrh4hq/6goftegooyeqoraanishefaat.mp3?rlkey=w1kd24o757hyh88jollmzdp89&st=0vaqeb7s&dl=1",
-    },
-  ];
+    // 2) open the right accordion item
+    if (target.accordionValue) {
+      setAccordionValue(target.accordionValue);
+    }
 
-  const miscFiles = [
-    {
-      title: "فاطمیه فراتر از شبهات",
-      description: "",
-      url: "https://www.dropbox.com/scl/fi/uxcrokjho3bt5wzlqs7p5/fatemiyeh.mp3?rlkey=gqjshgsxh1o0vbcm7nvc23xhs&st=2jnxc4rs&dl=0",
-    },
-    {
-      title: "اثبات خداوند فایده ای هم دارد؟",
-      description: "",
-      url: "https://www.dropbox.com/scl/fi/rcf8x7b79deftie0572hv/esbatekhodafaedeihamdarad.mp4?rlkey=hq29jbh7s5rxquaa4ktjojzug&st=so3yhkk8&dl=1",
-    },
-    {
-      title: "مناظره با یک خداناباور ",
-      description: "مناظره استاد علی شریفی با زئوس",
-      url: "https://www.dropbox.com/scl/fi/zldwb9ip49avm4a9j1wkw/zeus.mp3?rlkey=jdwm0mvq4mviges1mx318q5al&st=861izmwb&dl=1",
-    },
-    {
-      title: "عصمت پیامبر",
-      description: "جناب آقای مهران بهرامی",
-      url: "https://www.dropbox.com/scl/fi/v3g3mjmvcuf6ak2jk3hll/anbia.mp3?rlkey=kafvptungppcirv7drh3nidtm&st=fe00razi&dl=1", // لینک جدیدت رو بگذار
-    },
-    // هر تعداد فایل جدید خواستی، مثل بالا اضافه کن
-  ];
+    // 3) after React renders sheet + accordion content, scroll to the item
+    if (target.itemDomId) {
+      const id = target.itemDomId;
+
+      // do 2 ticks to be safe (sheet render + accordion content render)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const el = document.getElementById(id);
+          el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+      });
+    }
+
+    // optional: clear nav target after it was used
+    const t = setTimeout(() => clear(), 800);
+    return () => clearTimeout(t);
+  }, [target, clear, SHEET_ID]);
 
   return (
     <>
@@ -140,7 +101,7 @@ export const BenefitAkhlaq = () => {
       </Card>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent>
+        <SheetContent className="overflow-y-auto">
           <SheetHeader>
             <SheetTitle>مباحث اعتقادی</SheetTitle>
             <SheetDescription className="mb-4"></SheetDescription>
@@ -153,12 +114,19 @@ export const BenefitAkhlaq = () => {
               className="text-muted-foreground bg-transparent mt-4"
             />
           ) : (
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="group-0 ">
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full"
+              value={accordionValue}
+              onValueChange={setAccordionValue}
+            >
+              <AccordionItem value="group-0">
                 <AccordionTrigger className="">مع الصادقین</AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-2  justify-center  mt-2 text-center">
                   {audioFilessadeghin.slice(0, 4).map((file, i) => (
                     <div
+                      id={`audio-eteghadat-audioFilessadeghin-${i}`}
                       key={i}
                       className="border-b border-muted-foreground/30 p-3"
                     >
@@ -200,11 +168,12 @@ export const BenefitAkhlaq = () => {
                   ))}
                 </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="group-1 ">
+              <AccordionItem value="group-1">
                 <AccordionTrigger className="">کنکاش در عقاید</AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-2  justify-center  mt-2 text-center">
                   {audioFilesnew.slice(0, 4).map((file, i) => (
                     <div
+                      id={`audio-eteghadat-audioFilesnew-${i}`}
                       key={i}
                       className="border-b border-muted-foreground/30 p-3"
                     >
@@ -248,13 +217,14 @@ export const BenefitAkhlaq = () => {
               </AccordionItem>
               {/* First 4 sessions */}
 
-              <AccordionItem value="group-2 ">
+              <AccordionItem value="group-2">
                 <AccordionTrigger className="">
                   شیعه و میراث فاطمی
                 </AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-2  justify-center  mt-2 text-center">
                   {audioFiles.slice(0, 4).map((file, i) => (
                     <div
+                      id={`audio-eteghadat-audioFiles-${i}`}
                       key={i}
                       className="border-b border-muted-foreground/30 p-3"
                     >
@@ -301,47 +271,50 @@ export const BenefitAkhlaq = () => {
               <AccordionItem value="group-3">
                 <AccordionTrigger>گفتگوهای قرآنی</AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-4  justify-center  text-center">
-                  {audioFiles.slice(4).map((file, i) => (
-                    <div
-                      key={i + 4}
-                      className="border-b border-muted-foreground/30 p-3"
-                    >
-                      <div className="font-semibold mb-2 text-primary">
-                        {file.description}
-                      </div>
+                  {audioFiles.slice(4).map((file, i) => {
+                    const realIndex = i + 4; // because slice(4) starts from index 4 in original array
 
-                      <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                        {/* Play */}
-                        <Button
-                          onClick={() =>
-                            play({
-                              title: file.title,
-                              url: file.url,
-                              description: file.description,
-                            })
-                          }
-                          className="w-full sm:w-auto text-card"
-                        >
-                          پخش
-                        </Button>
+                    return (
+                      <div
+                        id={`audio-eteghadat-audioFiles-${realIndex}`}
+                        key={realIndex}
+                        className="border-b border-muted-foreground/30 p-3"
+                      >
+                        <div className="font-semibold mb-2 text-primary">
+                          {file.description}
+                        </div>
 
-                        {/* Download */}
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="w-full sm:w-auto"
-                        >
-                          <a
-                            href={toDownloadUrl(file.url)}
-                            download={`${file.title || "audio"}.mp3`}
-                            rel="noopener noreferrer"
+                        <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                          <Button
+                            onClick={() =>
+                              play({
+                                title: file.title,
+                                url: file.url,
+                                description: file.description,
+                              })
+                            }
+                            className="w-full sm:w-auto text-card"
                           >
-                            دانلود صوت
-                          </a>
-                        </Button>
+                            پخش
+                          </Button>
+
+                          <Button
+                            asChild
+                            variant="outline"
+                            className="w-full sm:w-auto"
+                          >
+                            <a
+                              href={toDownloadUrl(file.url)}
+                              download={`${file.title || "audio"}.mp3`}
+                              rel="noopener noreferrer"
+                            >
+                              دانلود صوت
+                            </a>
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="group-4">
@@ -354,6 +327,7 @@ export const BenefitAkhlaq = () => {
                   ) : (
                     miscFiles.map((file, idx) => (
                       <div
+                        id={`audio-akhlagh-miscFiles-${idx}`}
                         key={`misc-${idx}`}
                         className="border-b border-muted-foreground/30 p-3"
                       >

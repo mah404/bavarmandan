@@ -33,6 +33,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      <FeaturesSection />
       <BenefitsSection />
       <ServicesSection />
       <CommunitySection />

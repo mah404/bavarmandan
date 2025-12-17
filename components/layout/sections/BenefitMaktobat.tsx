@@ -20,34 +20,7 @@ import { Icon } from "@/components/ui/icon";
 import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
-interface Maktobat {
-  id: string;
-  title: string;
-  content: string;
-  pdfUrl: string;
-  audioUrl?: string | null;
-}
-
-const dropboxAudioMap: Record<string, string> = {
-  "1": "https://www.dropbox.com/scl/fi/sku831xpg2ucre47klnog/1.mp3?rlkey=tw5tpdjlpbjmm8l25g3uzt85s&st=b70uutvh&dl=0",
-  "2": "https://www.dropbox.com/scl/fi/ig10u9c57y45bck5zr8lh/2.mp3?rlkey=zjf8vyojafpj6u1jsd91okx3g&st=vws4oz4o&dl=0",
-  "3": "https://www.dropbox.com/scl/fi/pt6p75rcm456z6nuiwdbi/3.mp3?rlkey=d3alrs62hxr62ugy8kg56rgrf&st=60qgasw7&dl=0",
-  "4": "https://www.dropbox.com/scl/fi/7rwfn9syqho61bhx8x7gn/4.mp3?rlkey=arbrbskuw27v6mnk7tbz4rxwt&st=333s63f1&dl=0",
-  "5": "https://www.dropbox.com/scl/fi/xxikq2qokywsxyfegh1ft/5.mp3?rlkey=ua0rfjcdwn536kwdrkqju70ft&st=dxnlmbxq&dl=0",
-  "6": "https://www.dropbox.com/scl/fi/7g5nhblpnzxdepr3h4cvr/6.mp3?rlkey=mi15f57k8ptksvzt6in8ytgb8&st=9m44u890&dl=0",
-  "7": "https://www.dropbox.com/scl/fi/lkrj661nntozh21gv5ht4/7.mp3?rlkey=5yn56iente51slxmw0uu58boj&st=gx2qy5v9&dl=0",
-  "8": "https://www.dropbox.com/scl/fi/jax9y6ps2r24e3r9ad35z/8.mp3?rlkey=6o2suuhwymg6yxuqd5xg2b2ig&st=0efxojg9&dl=0",
-  "9": "https://www.dropbox.com/scl/fi/qovtqj58e1k52ojbjsun0/9.mp3?rlkey=7kzh50tk2apfqdwy1rbj13g0e&st=76y08k74&dl=0",
-  "10": "https://www.dropbox.com/scl/fi/chiylb7qh7wqibwjo3hxx/10.mp3?rlkey=8z7f341hnnmjwmpcsb7eusd6k&st=0gl4f9dn&dl=0",
-  "11": "https://www.dropbox.com/scl/fi/3hnudo5bjmrcnvpin6kqe/11.mp3?rlkey=yf7h04r0ymojdxwrl2dl4sdm8&st=y14fd9au&dl=0",
-  "12": "https://www.dropbox.com/scl/fi/590vjsjglis3hdzz44muz/12.mp3?rlkey=fku64vt2189kit8ttmjtgtb2s&st=gq3lyzzq&dl=0",
-};
-
-const goftegooha: Record<string, string> = {
-  "1": "https://www.dropbox.com/scl/fi/iq2w7txicij0oy5ycqc54/goftegoo.mp3?rlkey=h20ywqwgf4gkpqshvcx6a3fi1&st=61dregoe&dl=1",
-  "2": "https://www.dropbox.com/scl/fi/rcf8x7b79deftie0572hv/esbatekhodafaedeihamdarad.mp4?rlkey=hq29jbh7s5rxquaa4ktjojzug&st=kllaw6zx&dl=1",
-  "3": "https://www.dropbox.com/scl/fi/hxylcdbhvcbgs71oourl9/enkareaghlbagoman.mp3?rlkey=v4a91m9f7l0rthi6z0w7efwo7&st=hsxuidcv&dl=1"
-};
+import { dropboxAudioMap, goftegooha, Maktobat } from "@/data/content";
 
 const CACHE_KEY = "maktobats_cache_v1";
 type CacheShape = { ts: number; items: Maktobat[] };
@@ -361,7 +334,7 @@ export const BenefitMaktobat = () => {
                       </a>
                     </div>
                   </div>
-                       <div className="rounded-xl shadow-md p-4">
+                  <div className="rounded-xl shadow-md p-4">
                     <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
                       🎧انکار عقل ، با وهم و گمان
                     </SheetDescription>
