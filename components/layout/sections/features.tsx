@@ -7,28 +7,39 @@ import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 
 const featureMeta = {
-  title: "جدیدترین فایل‌ها و آخرین  به روز رسانی ",
+  title: "جدیدترین فایل‌ها",
 };
 
 export const FeaturesSection = () => {
-  const latest5 = getLatestAudios(5);
+  const latest5 = getLatestAudios(3);
   const { play } = useAudioPlayer();
   const { goTo } = useSheetNav();
 
   return (
-    <section id="features" className="container py-8 sm:py-8">
-      <div className="flex justify-center">
-        <Card className="w-full max-w-md md:max-w-lg lg:max-w-xl bg-card border-2 shadow-none">
-          <CardHeader className="flex flex-col items-center text-center pb-4">
-            <CardTitle className="text-3xl sm:text-3xl font-semibold text-primary">
+    <section id="features" className="py-8 w-full "
+    >
+      <div className="flex justify-center ">
+        <Card
+          className="
+            w-full
+            max-w-xl
+            text-card
+            border
+            shadow-none
+            bg-primary
+            
+          "
+        >
+          <CardHeader className="flex flex-col items-center text-center py-2">
+            <CardTitle className="text-xl font-semibold text-card">
               {featureMeta.title}
-              <Separator className="my-6 bg-muted-foreground" />
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="flex flex-col gap-5">
+          <CardContent className="flex flex-col gap-2 py-2 bg-card text-primary cursor-pointer hover:bg-background transition"
+          >
             {latest5.length === 0 ? (
-              <p className="text-primary text-center text-lg sm:text-xl">
+              <p className="text-primary text-center text-sm">
                 هنوز فایل جدیدی ثبت نشده.
               </p>
             ) : (
@@ -36,8 +47,11 @@ export const FeaturesSection = () => {
                 <button
                   key={index}
                   onClick={() => {
-                    // ✅ If we know where it belongs → open that sheet & autoplay there
-                    if (audio.sheetId && audio.accordionValue && audio.itemDomId) {
+                    if (
+                      audio.sheetId &&
+                      audio.accordionValue &&
+                      audio.itemDomId
+                    ) {
                       goTo({
                         sheetId: audio.sheetId,
                         accordionValue: audio.accordionValue,
@@ -51,14 +65,20 @@ export const FeaturesSection = () => {
                       return;
                     }
 
-                    // fallback: just play
                     play({ title: audio.title, url: audio.url });
                   }}
-                  className="text-center text-lg sm:text-xl leading-relaxed transition hover:text-primary cursor-pointer"
+                  className="
+                    text-center
+                    text-sm
+                    leading-tight
+                    transition
+                    hover:text-white
+                    
+                    
+                  "
                 >
-                  <span className="block font-medium">{audio.title}</span>
-                  <span className="block text-sm sm:text-base text-muted-foreground mt-1">
-                    {audio.description}
+                  <span className="block text-lg font-medium">
+                    {audio.title}
                   </span>
                 </button>
               ))
