@@ -7,7 +7,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
 import Script from "next/script";
-import { SheetNavProvider } from "@/components/layout/sections/SheetNavProvider";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "مجمع باورمندان ",
@@ -139,12 +139,13 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <SheetNavProvider>
+          <Providers>
+
             <AudioPlayerProvider>
               <Navbar />
               {children}
             </AudioPlayerProvider>
-          </SheetNavProvider>
+          </Providers>
         </ThemeProvider>
         <Analytics />
       </body>

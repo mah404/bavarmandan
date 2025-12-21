@@ -13,18 +13,7 @@ export type LatestAudio = {
   createdAt: string;
   description?: string;
 
-  source:
-    | "audioGroups"
-    | "audioFilessadeghin"
-    | "audioFilesnew"
-    | "audioFiles"
-    | "miscFiles"
-    | "tajridAudios";
-
-  groupSubject?: string;
-
-  // ✅ add these
-  sheetId?: "akhlagh" | "akhlaq" | "eteghadat" | string;
+  sheetId?: string;
   accordionValue?: string;
   itemDomId?: string;
 };
@@ -67,6 +56,7 @@ export function getLatestAudios(limit = 5): LatestAudio[] {
   })),
 
 // 3) audioFilesnew (کنکاش در عقاید)
+// Example: audioFilesnew belongs to sheet "akhlagh" accordion group-1
 ...audioFilesnew
   .filter((x) => !!x.createdAt)
   .map((x, i) => ({
@@ -74,12 +64,12 @@ export function getLatestAudios(limit = 5): LatestAudio[] {
     url: x.url,
     createdAt: x.createdAt!,
     description: x.description,
-    source: "audioFilesnew" as const,
 
-    sheetId: "eteghadat" as const,
+    sheetId: "akhlagh",
     accordionValue: "group-1",
-    itemDomId: `audio-eteghadat-audioFilesnew-${i}`,
+    itemDomId: `audio-akhlagh-audioFilesnew-${i}`,
   })),
+
 
 // 4) audioFiles (میراث فاطمی + گفتگوها)
 // (if later you add createdAt)

@@ -58,13 +58,16 @@ export const audioGroups: AudioGroup[] = [
       {
         title: " جلسه 13  ",
         url: "https://www.dropbox.com/scl/fi/vn4y5a8nleh58aj5guwld/13.mp3?rlkey=mpx2rmnncoalyj5nhyxymmzzn&st=r1k5q7c3&dl=1",
-        
       },
-           {
+      {
         title: " جلسه 14  ",
         url: "https://www.dropbox.com/scl/fi/xoha005d97m9z1jsthx46/14.mp3?rlkey=x5eix06apgvha2kjmak3rwg1m&st=bp6gjg80&dl=1",
-        createdAt: "2025-11-29T12:00:00Z"
-
+        createdAt: "2025-11-29T12:00:00Z",
+      },
+      {
+        title: "جلسه 15",
+        url: "https://www.dropbox.com/scl/fi/6flp6gdqrhmq4qhlopfeb/15.mp3?rlkey=s3eu75j7ifaaz0qmr6k4x61lv&st=cin2t71j&dl=1",
+        createdAt: "2025-12-21T12:00:00Z",
       },
     ],
   },
@@ -234,7 +237,6 @@ export type AudioFile = {
   description?: string;
   url: string;
   createdAt?: string; // ISO date string
-
 };
 
 export const audioFilessadeghin: AudioFile[] = [
@@ -242,8 +244,7 @@ export const audioFilessadeghin: AudioFile[] = [
     title: "مع الصادقین",
     description: " حضرت زهرا علیهاالسَلام ـ انسية الحوراء",
     url: "https://www.dropbox.com/scl/fi/wnfrbef8ts4hyy9ta5vsm/maalsadeghin.mp3?rlkey=cufz2mrouppfkti6bdzxawi5j&st=w8kvmckw&dl=1",
-    createdAt: "2025-12-13T12:00:00Z"
-
+    createdAt: "2025-12-13T12:00:00Z",
   },
 ];
 
@@ -252,7 +253,6 @@ export type AudioItem = {
   description: string;
   url: string;
   createdAt?: string; // ISO date string
-
 };
 
 // 🔹 Exported content
@@ -261,15 +261,13 @@ export const audioFilesnew: AudioItem[] = [
     title: "دین؛ اثبات یا عملگرایی؟ ",
     description: "دین؛ اثبات یا عملگرایی؟",
     url: "https://www.dropbox.com/scl/fi/soe83iie6x0cc9dbkxwk1/dinesbatyaamalgaraei.mp3?rlkey=balmqrgf3nr700d7ymytdhkde&st=1074ne4v&dl=1",
-        createdAt: "2025-11-30T12:00:00Z"
-
+    createdAt: "2025-11-30T12:00:00Z",
   },
   {
     title: "چگونه ایمان آوردی؟ عقل یا احساس؟",
     description: "چگونه ایمان آوردی؟ عقل یا احساس؟",
     url: "https://www.dropbox.com/scl/fi/ktbeyef82f6ro8zjuwpt4/imanaghlyaehsas.mp3?rlkey=ua2zxw5ycxs37o3s1n3zi3des&st=vjvofac9&dl=1",
-    createdAt: "2025-12-14T12:00:00Z"
-
+    createdAt: "2025-12-14T12:00:00Z",
   },
 ];
 
@@ -278,7 +276,6 @@ export type AudioFiles = {
   description: string;
   url: string;
   createdAt?: string; // ISO date string
-
 };
 
 export const audioFiles: AudioFiles[] = [
@@ -319,7 +316,6 @@ export type AudioFilemisc = {
   description: string;
   url: string;
   createdAt?: string; // ISO date string
-
 };
 
 // ===== Data =====
@@ -347,7 +343,6 @@ export const miscFiles: AudioFilemisc[] = [
   // هر تعداد فایل جدید خواستی، مثل بالا اضافه کن
 ];
 
-
 export interface Maktobat {
   id: string;
   title: string;
@@ -355,7 +350,6 @@ export interface Maktobat {
   pdfUrl: string;
   audioUrl?: string | null;
   createdAt?: string; // ISO date string
-
 }
 
 export type DropboxAudioMap = Record<string, string>;
@@ -378,7 +372,7 @@ export const dropboxAudioMap: DropboxAudioMap = {
 export const goftegooha: DropboxAudioMap = {
   "1": "https://www.dropbox.com/scl/fi/iq2w7txicij0oy5ycqc54/goftegoo.mp3?rlkey=h20ywqwgf4gkpqshvcx6a3fi1&st=61dregoe&dl=1",
   "2": "https://www.dropbox.com/scl/fi/rcf8x7b79deftie0572hv/esbatekhodafaedeihamdarad.mp4?rlkey=hq29jbh7s5rxquaa4ktjojzug&st=kllaw6zx&dl=1",
-  "3": "https://www.dropbox.com/scl/fi/hxylcdbhvcbgs71oourl9/enkareaghlbagoman.mp3?rlkey=v4a91m9f7l0rthi6z0w7efwo7&st=hsxuidcv&dl=1"
+  "3": "https://www.dropbox.com/scl/fi/hxylcdbhvcbgs71oourl9/enkareaghlbagoman.mp3?rlkey=v4a91m9f7l0rthi6z0w7efwo7&st=hsxuidcv&dl=1",
 };
 
 export type TajridAudio = {
@@ -390,7 +384,6 @@ export type TajridAudio = {
   DescriptionFive?: string;
   DescriptionSix?: string;
   createdAt?: string; // ISO date string
-
 };
 
 // ===== Data =====
@@ -584,10 +577,11 @@ export const tajridAudios: TajridAudio[] = [
     DescriptionThree: "۲-اشکال به اصل استدلال های قائلین به نظریه حال",
     DescriptionFour: "",
   },
-    {
+  {
     url: "https://www.dropbox.com/scl/fi/bvnm8jgu0i9iawnujtmyu/27.mp3?rlkey=q5xkz8vib0x64itn2a7wumf59&st=mceq7vhb&dl=1",
     DescriptionOne: "صوت جلسه ۲۷ شرح کتاب تجرید الاعتقاد",
-    DescriptionTwo: "۱-بررسی و نقد پاسخ قائلین به حال نسبت به اشکالات وارد بر نظریه حال",
+    DescriptionTwo:
+      "۱-بررسی و نقد پاسخ قائلین به حال نسبت به اشکالات وارد بر نظریه حال",
     DescriptionThree: "۲-بررسی نقد برخی از معاصرین نسبت به  موجود بودن وجود",
     DescriptionFour: "",
   },
