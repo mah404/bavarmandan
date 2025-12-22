@@ -21,15 +21,47 @@ import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { dropboxAudioMap, goftegooha, Maktobat } from "@/data/content";
+import { useSheetNav } from "./SheetNavProvider";
 
 const CACHE_KEY = "maktobats_cache_v1";
 type CacheShape = { ts: number; items: Maktobat[] };
 
 export const BenefitMaktobat = () => {
+  const SHEET_ID = "maktobat";
+
+  const [accordionValue, setAccordionValue] = useState<string | undefined>();
+
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [maktobats, setMaktobats] = useState<Maktobat[]>([]);
   const { play } = useAudioPlayer(); // ← use the global player
+  const { target, clear } = useSheetNav();
+
+  useEffect(() => {
+    if (!target) return;
+    if (target.sheetId !== SHEET_ID) return;
+
+    setOpen(true);
+    if (target.accordionValue) setAccordionValue(target.accordionValue);
+
+    // wait for sheet + accordion content, then scroll and autoplay
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (target.itemDomId) {
+          document.getElementById(target.itemDomId)?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+        if (target.autoplay) {
+          play(target.autoplay);
+        }
+      });
+    });
+
+    const t = setTimeout(() => clear(), 800);
+    return () => clearTimeout(t);
+  }, [target, clear, play]);
 
   // Make Dropbox URLs streamable (inline) for the player
   const toStreamable = (u: string) => {
@@ -182,9 +214,16 @@ export const BenefitMaktobat = () => {
               className="text-muted-foreground bg-transparent mt-4"
             />
           ) : (
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full "
+              value={accordionValue}
+              onValueChange={setAccordionValue}
+            >
               {maktobats.map((maktobat) => (
                 <AccordionItem
+                  id={`maktobat-item-${maktobat.id}`} // ✅ ADD THIS
                   key={maktobat.id}
                   value={maktobat.id}
                   className="text-center"
@@ -194,10 +233,7 @@ export const BenefitMaktobat = () => {
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="mb-4 pb-2">
-                      <p className="text-sm text-primary">
-                        {" "}
-                        {maktobat.content}
-                      </p>
+                      <p className="text-sm text-primary">{maktobat.content}</p>
                       <div className="flex justify-center gap-2 mt-2 text-center">
                         <Button
                           size="sm"

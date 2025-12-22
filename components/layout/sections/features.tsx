@@ -45,6 +45,13 @@ export const FeaturesSection = () => {
                 <button
                   key={index}
                   onClick={() => {
+                    // 1) scroll to content section (where sliders are)
+                    document.getElementById("mohtava")?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+
+                    // 2) open the slider it belongs to + jump to item + autoplay
                     if (
                       audio.sheetId &&
                       audio.accordionValue &&
@@ -54,16 +61,16 @@ export const FeaturesSection = () => {
                         sheetId: audio.sheetId,
                         accordionValue: audio.accordionValue,
                         itemDomId: audio.itemDomId,
-                        autoplay: {
-                          title: audio.title,
-                          url: audio.url,
-                          description: audio.description,
-                        },
                       });
                       return;
                     }
 
-                    play({ title: audio.title, url: audio.url });
+                    // fallback: only play
+                    play({
+                      title: audio.title,
+                      url: audio.url,
+                      description: audio.description,
+                    });
                   }}
                   className="
                     text-center

@@ -104,3 +104,25 @@
 html {
     scroll-behavior: smooth;
 }
+
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 0px rgba(234, 179, 8, 0);
+        border-color: rgba(196, 165, 69, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 18px rgba(234, 179, 8, 0.75);
+        border-color: rgba(234, 179, 8, 1);
+    }
+    100% {
+        box-shadow: 0 0 0px rgba(234, 179, 8, 0);
+        border-color: rgba(234, 179, 8, 0.4);
+    }
+}
+
+.nav-highlight {
+    border-width: 2px !important;
+    border-style: solid;
+    border-radius: 0.75rem;
+    animation: pulseGlow 1.6s ease-in-out;
+}

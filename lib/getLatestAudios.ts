@@ -25,33 +25,37 @@ function safeTime(iso: string) {
 
 export function getLatestAudios(limit = 5): LatestAudio[] {
   const merged: LatestAudio[] = [
-    ...audioGroups.flatMap((group) =>
-      group.files
-        .filter((f) => !!f.createdAt)
-        .map((f) => ({
-          title: `${group.subject} - ${f.title}`.trim(),
-          url: f.url,
-          createdAt: f.createdAt!,
-          description: group.subject, // اختیاری (اگر خواستی جدا هم نشون بدی)
-          sheetId: "eteghadat", // اگر می‌خوای با goTo هم کار کنه (اختیاری)
-          accordionValue: "group-?", // (اختیاری)
-          itemDomId: "", // (اختیاری)
-        }))
-    ),
+...audioGroups.flatMap((group, groupIndex) =>
+  group.files.flatMap((f, fileIndex) => {
+    if (!f.createdAt) return [];
+    return [{
+      title: `${group.subject} - ${f.title}`.trim(),
+      url: f.url,
+      createdAt: f.createdAt!,
+      description: group.subject,
+      sheetId: "benefitsCard",
+      accordionValue: `group-${groupIndex}`,
+      itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`, // ✅
+    }];
+  })
+),
+
+
+   
 
     // 2) مع الصادقین
     ...audioFilessadeghin
       .filter((x) => !!x.createdAt)
-      .map((x) => ({
+      .map((x, i) => ({
         title: x.title,
         url: x.url,
         createdAt: x.createdAt!,
         description: x.description,
-        source: "audioFilessadeghin" as const,
 
-        sheetId: "eteghadat" as const,
-        accordionValue: "group-0",
-        itemDomId: `audio-eteghadat-audioFilessadeghin-0`,
+        // ✅ THIS IS THE IMPORTANT PART
+        sheetId: "akhlagh",
+        accordionValue: "group-1", // "مع الصادقین" accordion in BenefitAkhlaq
+        itemDomId: `audio-akhlagh-audioFilessadeghin-${i}`,
       })),
 
     // 3) audioFilesnew (کنکاش در عقاید)
@@ -65,7 +69,7 @@ export function getLatestAudios(limit = 5): LatestAudio[] {
         description: x.description,
 
         sheetId: "akhlagh",
-        accordionValue: "group-1",
+        accordionValue: "group-2",
         itemDomId: `audio-akhlagh-audioFilesnew-${i}`,
       })),
 

@@ -2,7 +2,6 @@
 
 import { Icon } from "@/components/ui/icon";
 import { Marquee } from "@devnomic/marquee";
-import "@devnomic/marquee/dist/index.css";
 import { icons } from "lucide-react";
 interface sponsorsProps {
   icon: string;
