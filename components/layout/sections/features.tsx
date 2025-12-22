@@ -16,8 +16,7 @@ export const FeaturesSection = () => {
   const { goTo } = useSheetNav();
 
   return (
-    <section id="features" className="py-8 w-full "
-    >
+    <section id="features" className="py-8 w-full ">
       <div className="flex justify-center ">
         <Card
           className="
@@ -36,8 +35,7 @@ export const FeaturesSection = () => {
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="flex flex-col gap-2 py-2 bg-card text-primary cursor-pointer hover:bg-background transition"
-          >
+          <CardContent className="flex flex-col gap-2 py-2 bg-card text-primary cursor-pointer hover:bg-background transition">
             {latest5.length === 0 ? (
               <p className="text-primary text-center text-sm">
                 هنوز فایل جدیدی ثبت نشده.
@@ -78,7 +76,7 @@ export const FeaturesSection = () => {
                   "
                 >
                   <span className="block text-lg font-medium">
-                    {audio.title}
+                    {audio.description?.trim() ?? audio.title}
                   </span>
                 </button>
               ))
