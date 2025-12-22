@@ -7,7 +7,7 @@ import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 
 const featureMeta = {
-  title: "جدیدترین فایل‌ها",
+  title: "جدیدترین محتوای اضافه شده",
 };
 
 export const FeaturesSection = () => {

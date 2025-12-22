@@ -18,8 +18,6 @@ export type LatestAudio = {
   itemDomId?: string;
 };
 
-
-
 function safeTime(iso: string) {
   const t = new Date(iso).getTime();
   return Number.isFinite(t) ? t : -Infinity;
@@ -27,80 +25,80 @@ function safeTime(iso: string) {
 
 export function getLatestAudios(limit = 5): LatestAudio[] {
   const merged: LatestAudio[] = [
-    // 1) audioGroups (nested)
     ...audioGroups.flatMap((group) =>
       group.files
         .filter((f) => !!f.createdAt)
         .map((f) => ({
-          title: f.title,
+          title: `${group.subject} - ${f.title}`.trim(),
           url: f.url,
           createdAt: f.createdAt!,
-          source: "audioGroups" as const,
-          groupSubject: group.subject,
+          description: group.subject, // اختیاری (اگر خواستی جدا هم نشون بدی)
+          sheetId: "eteghadat", // اگر می‌خوای با goTo هم کار کنه (اختیاری)
+          accordionValue: "group-?", // (اختیاری)
+          itemDomId: "", // (اختیاری)
         }))
     ),
 
-// 2) مع الصادقین
-...audioFilessadeghin
-  .filter((x) => !!x.createdAt)
-  .map((x) => ({
-    title: x.title,
-    url: x.url,
-    createdAt: x.createdAt!,
-    description: x.description,
-    source: "audioFilessadeghin" as const,
+    // 2) مع الصادقین
+    ...audioFilessadeghin
+      .filter((x) => !!x.createdAt)
+      .map((x) => ({
+        title: x.title,
+        url: x.url,
+        createdAt: x.createdAt!,
+        description: x.description,
+        source: "audioFilessadeghin" as const,
 
-    sheetId: "eteghadat" as const,
-    accordionValue: "group-0",
-    itemDomId: `audio-eteghadat-audioFilessadeghin-0`,
-  })),
+        sheetId: "eteghadat" as const,
+        accordionValue: "group-0",
+        itemDomId: `audio-eteghadat-audioFilessadeghin-0`,
+      })),
 
-// 3) audioFilesnew (کنکاش در عقاید)
-// Example: audioFilesnew belongs to sheet "akhlagh" accordion group-1
-...audioFilesnew
-  .filter((x) => !!x.createdAt)
-  .map((x, i) => ({
-    title: x.title,
-    url: x.url,
-    createdAt: x.createdAt!,
-    description: x.description,
+    // 3) audioFilesnew (کنکاش در عقاید)
+    // Example: audioFilesnew belongs to sheet "akhlagh" accordion group-1
+    ...audioFilesnew
+      .filter((x) => !!x.createdAt)
+      .map((x, i) => ({
+        title: x.title,
+        url: x.url,
+        createdAt: x.createdAt!,
+        description: x.description,
 
-    sheetId: "akhlagh",
-    accordionValue: "group-1",
-    itemDomId: `audio-akhlagh-audioFilesnew-${i}`,
-  })),
+        sheetId: "akhlagh",
+        accordionValue: "group-1",
+        itemDomId: `audio-akhlagh-audioFilesnew-${i}`,
+      })),
 
+    // 4) audioFiles (میراث فاطمی + گفتگوها)
+    // (if later you add createdAt)
+    ...audioFiles
+      .filter((x) => !!x.createdAt)
+      .map((x, i) => ({
+        title: x.title,
+        url: x.url,
+        createdAt: x.createdAt!,
+        description: x.description,
+        source: "audioFiles" as const,
 
-// 4) audioFiles (میراث فاطمی + گفتگوها)
-// (if later you add createdAt)
-...audioFiles
-  .filter((x) => !!x.createdAt)
-  .map((x, i) => ({
-    title: x.title,
-    url: x.url,
-    createdAt: x.createdAt!,
-    description: x.description,
-    source: "audioFiles" as const,
+        sheetId: "eteghadat" as const,
+        accordionValue: i < 4 ? "group-2" : "group-3",
+        itemDomId: `audio-eteghadat-audioFiles-${i}`,
+      })),
 
-    sheetId: "eteghadat" as const,
-    accordionValue: i < 4 ? "group-2" : "group-3",
-    itemDomId: `audio-eteghadat-audioFiles-${i}`,
-  })),
+    // 5) miscFiles
+    ...miscFiles
+      .filter((x) => !!x.createdAt)
+      .map((x, i) => ({
+        title: x.title,
+        url: x.url,
+        createdAt: x.createdAt!,
+        description: x.description,
+        source: "miscFiles" as const,
 
-// 5) miscFiles
-...miscFiles
-  .filter((x) => !!x.createdAt)
-  .map((x, i) => ({
-    title: x.title,
-    url: x.url,
-    createdAt: x.createdAt!,
-    description: x.description,
-    source: "miscFiles" as const,
-
-    sheetId: "eteghadat" as const,
-    accordionValue: "group-4",
-    itemDomId: `audio-eteghadat-miscFiles-${i}`,
-  })),
+        sheetId: "eteghadat" as const,
+        accordionValue: "group-4",
+        itemDomId: `audio-eteghadat-miscFiles-${i}`,
+      })),
 
     // 6) tajridAudios (currently no createdAt in your data, but helper supports it if you add later)
     ...tajridAudios
