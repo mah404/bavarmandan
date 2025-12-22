@@ -2,7 +2,6 @@ import { BenefitAkhlaq } from "./BenefitAkhlaq ";
 import { BenefitMaktobat } from "./BenefitMaktobat";
 import { BenefitTajrid } from "./BenefitTajrid ";
 import { BenefitsCard } from "./BenefitsCard";
-import { SheetNavProvider } from "./SheetNavProvider";
 import { FeaturesSection } from "./features";
 export const BenefitsSection = () => {
   return (
@@ -26,12 +25,10 @@ export const BenefitsSection = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-4 w-full">
-          <SheetNavProvider>
             <BenefitMaktobat />
             <BenefitTajrid />
             <BenefitAkhlaq />
             <BenefitsCard />
-          </SheetNavProvider>
         </div>
       </div>
     </section>

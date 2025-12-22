@@ -95,7 +95,7 @@ export const BenefitsCard = () => {
                           {file.title}
                         </div>
 
-                        <div className="flex gap-2 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
                           {/* Play */}
                           <Button
                             onClick={() =>
