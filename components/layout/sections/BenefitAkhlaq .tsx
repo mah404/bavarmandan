@@ -37,6 +37,13 @@ export const BenefitAkhlaq = () => {
 
   const { play } = useAudioPlayer();
   const { target, clear } = useSheetNav();
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+
+  const flashHighlight = (id: string) => {
+    setHighlightId(id);
+    // remove after animation finishes (match your CSS duration)
+    window.setTimeout(() => setHighlightId(null), 1500);
+  };
 
   const toDownloadUrl = (u: string) =>
     u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
@@ -65,7 +72,10 @@ export const BenefitAkhlaq = () => {
             behavior: "smooth",
             block: "center",
           });
+
+          flashHighlight(target.itemDomId);
         }
+
         if (target.autoplay) {
           play(target.autoplay);
         }
@@ -124,7 +134,12 @@ export const BenefitAkhlaq = () => {
                     <div
                       id={`audio-akhlagh-audioFilessadeghin-${i}`}
                       key={i}
-                      className="border-b border-muted-foreground/30 p-3"
+                      className={[
+                        "border-b border-muted-foreground/30 p-3 transition",
+                        highlightId === `audio-akhlagh-audioFilessadeghin-${i}`
+                          ? "nav-highlight border"
+                          : "",
+                      ].join(" ")}
                     >
                       <div className="font-semibold mb-2 text-primary">
                         {file.description}
@@ -173,9 +188,14 @@ export const BenefitAkhlaq = () => {
                 <AccordionContent className="flex flex-col gap-2 justify-center mt-2 text-center">
                   {audioFilesnew.slice(0, 4).map((file, i) => (
                     <div
+                      id={`audio-akhlagh-audioFilesnew-${i}`}
                       key={i}
-                      className="border-b border-muted-foreground/30 p-3"
-                    >
+        className={[
+                        "border-b border-muted-foreground/30 p-3  transition",
+                        highlightId === `audio-akhlagh-audioFilesnew-${i}`
+                          ? "nav-highlight border"
+                          : "",
+                      ].join(" ")}                    >
                       <div className="font-semibold mb-2 text-primary">
                         {file.description}
                       </div>
