@@ -190,12 +190,13 @@ export const BenefitAkhlaq = () => {
                     <div
                       id={`audio-akhlagh-audioFilesnew-${i}`}
                       key={i}
-        className={[
+                      className={[
                         "border-b border-muted-foreground/30 p-3  transition",
                         highlightId === `audio-akhlagh-audioFilesnew-${i}`
                           ? "nav-highlight border"
                           : "",
-                      ].join(" ")}                    >
+                      ].join(" ")}
+                    >
                       <div className="font-semibold mb-2 text-primary">
                         {file.description}
                       </div>

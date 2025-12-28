@@ -102,7 +102,7 @@ export default function RootLayout({
         {/* YouTube channel */}
         <meta
           property="og:see_also"
-          content="https://www.youtube.com/@bavarmandan"
+          content="https://www.youtube.com/@bavarmandan110"
         />
         <meta
           name="youtube:channel"
