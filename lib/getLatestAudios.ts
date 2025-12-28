@@ -1,6 +1,7 @@
 import {
   audioGroups,
   audioFilessadeghin,
+  audioFilesebadat,
   audioFilesnew,
   audioFiles,
   miscFiles,
@@ -41,6 +42,21 @@ export function getLatestAudios(limit = 5): LatestAudio[] {
 ),
 
 
+
+    // 2) عبادت نمیکنیم چرا
+    ...audioFilesebadat
+      .filter((x) => !!x.createdAt)
+      .map((x, i) => ({
+        title: x.title,
+        url: x.url,
+        createdAt: x.createdAt!,
+        description: x.description,
+
+        // ✅ THIS IS THE IMPORTANT PART
+        sheetId: "akhlagh",
+        accordionValue: "group-6", // " " accordion in BenefitAkhlaq
+        itemDomId: `audio-akhlagh-audioFilesebadat-${i}`,
+      })),
    
 
     // 2) مع الصادقین

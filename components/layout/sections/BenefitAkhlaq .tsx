@@ -25,6 +25,7 @@ import {
   audioFilesnew,
   audioFiles,
   miscFiles,
+  audioFilesebadat,
 } from "@/data/content";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 
@@ -334,6 +335,58 @@ export const BenefitAkhlaq = () => {
                   ))}
                 </AccordionContent>
               </AccordionItem>
+                   <AccordionItem value="group-6">
+                <AccordionTrigger className="">لذت در عبادت</AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-2 justify-center mt-2 text-center">
+                  {audioFilesebadat.slice(0, 4).map((file, i) => (
+                    <div
+                      id={`audio-akhlagh-audioFilesebadat-${i}`}
+                      key={i}
+                      className={[
+                        "border-b border-muted-foreground/30 p-3 transition",
+                        highlightId === `audio-akhlagh-audioFilesebadat-${i}`
+                          ? "nav-highlight border"
+                          : "",
+                      ].join(" ")}
+                    >
+                      <div className="font-semibold mb-2 text-primary">
+                        {file.description}
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                        {/* Play */}
+                        <Button
+                          onClick={() =>
+                            play({
+                              title: file.title,
+                              url: file.url, // assumes streamable URL
+                              description: file.description,
+                            })
+                          }
+                          className="w-full sm:w-auto text-card"
+                        >
+                          پخش
+                        </Button>
+
+                        {/* Download */}
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="w-full sm:w-auto"
+                        >
+                          <a
+                            href={toDownloadUrl(file.url)}
+                            download={`${file.title || "audio"}.mp3`}
+                            rel="noopener noreferrer"
+                          >
+                            دانلود
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
 
               <AccordionItem value="group-5">
                 <AccordionTrigger>مباحث متفرقه</AccordionTrigger>
@@ -387,6 +440,7 @@ export const BenefitAkhlaq = () => {
                   )}
                 </AccordionContent>
               </AccordionItem>
+         
             </Accordion>
           )}
         </SheetContent>
