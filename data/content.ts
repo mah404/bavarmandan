@@ -5,6 +5,16 @@ export type AudioGroup = {
 
 export const audioGroups: AudioGroup[] = [
   {
+    subject: "لذت در عبادت",
+    files: [
+      {
+        title: "چرا از عبادات لذت نمیبریم؟",
+        url: "https://www.dropbox.com/scl/fi/wi2cgy1sa6mfxdi4y8lbj/azebadatlezatnemibarim.mp3?rlkey=6acnsofow4mea7upl3x9girbl&st=i14jxnwb&dl=1",
+        createdAt: "2025-12-27T11:00:00Z",
+      },
+    ],
+  },
+  {
     subject: "تاملاتی در من",
     files: [
       {
@@ -247,26 +257,6 @@ export const audioFilessadeghin: AudioFile[] = [
     createdAt: "2025-12-13T12:00:00Z",
   },
 ];
-
-
-export type AudioFileebadat = {
-  title: string;
-  description?: string;
-  url: string;
-  createdAt?: string; // ISO date string
-};
-
-export const audioFilesebadat: AudioFileebadat[] = [
-  {
-    title:"لذت در عبادت",
-    description: "چرا از عبادات لذت نمیبریم؟",
-    url: "https://www.dropbox.com/scl/fi/wi2cgy1sa6mfxdi4y8lbj/azebadatlezatnemibarim.mp3?rlkey=6acnsofow4mea7upl3x9girbl&st=i14jxnwb&dl=1",
-    createdAt: "2025-12-27T11:00:00Z",
-  },
-];
-
-
-
 
 
 
