@@ -335,7 +335,7 @@ export const BenefitAkhlaq = () => {
                   ))}
                 </AccordionContent>
               </AccordionItem>
-                   <AccordionItem value="group-6">
+              <AccordionItem value="group-6">
                 <AccordionTrigger className="">لذت در عبادت</AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-2 justify-center mt-2 text-center">
                   {audioFilesebadat.slice(0, 4).map((file, i) => (
@@ -440,7 +440,6 @@ export const BenefitAkhlaq = () => {
                   )}
                 </AccordionContent>
               </AccordionItem>
-         
             </Accordion>
           )}
         </SheetContent>
