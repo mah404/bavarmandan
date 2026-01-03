@@ -40,13 +40,13 @@ const serviceList: ServiceProps[] = [
   },
   {
     title: " کانال یوتیوب",
-    description: "در حال احداث",
+    description:"",
     pro: 0,
-    link: "https://www.youtube.com/@bavarmandan",
+    link: "https://www.youtube.com/@bavarmandan110",
   },
   {
     title: " اینستاگرام",
-    description: "در حال احداث",
+    description: "",
     pro: 0,
     link: "https://www.instagram.com/bavarmandan110/",
   },
