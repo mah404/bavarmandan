@@ -127,7 +127,7 @@ export const ServicesSection = () => {
           ))}
         </div>
 
-        {/* Row 3 */}
+    
         {/* Row 3 (only "سایر منابع مفید" centered) */}
         <div className="flex justify-center w-full">
           {serviceList
