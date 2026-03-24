@@ -13,6 +13,7 @@ export const metadata = {
     type: "website",
     url: "https://www.bavarmandan.com/",
     title:"مجمع باورمندان",
+    
     description: "تارنما مجمع باورمندان کلاب هاوس",
     images: [
       {
