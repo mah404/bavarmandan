@@ -2,12 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Check } from "lucide-react";
 
 type LivePlayerProps = {
+  title?: string;
   streamUrl?: string;
 };
 
 export default function LivePlayer({
+  title = "شبکه خبر ایران 🇮🇷",
   streamUrl = "/api/stream?url=https%3A%2F%2Fgg.hls2.xyz%2Flive%2Firib-khabar%2Fchunks.m3u8",
 }: LivePlayerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -73,16 +82,31 @@ export default function LivePlayer({
   }, [streamUrl]);
 
   return (
-    <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-      <p>{status}</p>
-      <video
-        ref={videoRef}
-        controls
-        autoPlay
-        muted
-        playsInline
-        style={{ width: "100%", borderRadius: "12px", background: "black" }}
-      />
-    </div>
+    <section className="w-full flex justify-center px-4 pt-28 md:pt-32">
+      <div className="w-full max-w-3xl">
+        <Card className="overflow-hidden border-2 border-primary shadow-lg">
+          <div className="flex flex-col">
+            <CardHeader>
+              <CardTitle className="text-center text-xl">{title}</CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-6">
+              <div className="aspect-video w-full overflow-hidden rounded-lg border bg-black">
+                <video
+                  ref={videoRef}
+                  controls
+                  autoPlay
+                  muted
+                  playsInline
+                  className="h-full w-full bg-black"
+                />
+              </div>
+
+            
+            </CardContent>
+          </div>
+        </Card>
+      </div>
+    </section>
   );
 }

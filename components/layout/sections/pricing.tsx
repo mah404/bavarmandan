@@ -13,7 +13,7 @@ export const PricingSection = () => {
       
       {/* centered card */}
       <div className="w-full max-w-3xl">
-        <Card className="overflow-hidden  shadow-lg">
+        <Card className="overflow-hidden border-2 border-primary shadow-lg">
           <div className="flex flex-col">
 
             <CardHeader>
@@ -26,7 +26,6 @@ export const PricingSection = () => {
               
               {/* LIVE VIDEO */}
               <div className="aspect-video w-full overflow-hidden rounded-lg border bg-black">
-                <LivePlayer src="https://live-hls-web-aje-gcp.thelive.com/AJE/06.m3u8" />
               </div>
 
               {/* simple info */}
