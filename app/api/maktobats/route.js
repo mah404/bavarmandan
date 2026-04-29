@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const MONGODB_URI = process.env.MONGODB_URI;
 
 let cached = global.mongoose;
@@ -10,6 +13,10 @@ if (!cached) {
 }
 
 async function connectToDatabase() {
+    if (!MONGODB_URI) {
+        throw new Error("MONGODB_URI is not defined");
+    }
+
     if (cached.conn) return cached.conn;
 
     if (!cached.promise) {
@@ -27,31 +34,32 @@ const MaktobatSchema = new mongoose.Schema({
     content: String,
     pdf: Buffer,
     mimeType: String,
-    audioUrl: String, // ✅ added audio support
+    audioUrl: String,
 });
 
-let Maktobat;
-
-try {
-    Maktobat =
-        mongoose.models.Maktobat ||
-        mongoose.model("Maktobat", MaktobatSchema);
-} catch {
-    Maktobat = mongoose.model("Maktobat", MaktobatSchema);
-}
+const Maktobat =
+    mongoose.models.Maktobat || mongoose.model("Maktobat", MaktobatSchema);
 
 export async function GET() {
-    await connectToDatabase();
+    try {
+        await connectToDatabase();
 
-    const maktobats = await Maktobat.find();
+        const maktobats = await Maktobat.find();
 
-    const data = maktobats.map((doc) => ({
-        id: doc._id.toString(),
-        title: doc.title,
-        content: doc.content,
-        pdfUrl: `data:${doc.mimeType};base64,${doc.pdf.toString("base64")}`,
-        audioUrl: doc.audioUrl || null, // ✅ added this
-    }));
+        const data = maktobats.map((doc) => ({
+            id: doc._id.toString(),
+            title: doc.title,
+            content: doc.content,
+            pdfUrl: doc.pdf && doc.mimeType ?
+                `data:${doc.mimeType};base64,${doc.pdf.toString("base64")}` :
+                null,
+            audioUrl: doc.audioUrl || null,
+        }));
 
-    return NextResponse.json(data);
+        return NextResponse.json(data);
+    } catch (error) {
+        console.error("GET /api/maktobats error:", error);
+
+        return NextResponse.json({ error: "Failed to fetch maktobats" }, { status: 500 });
+    }
 }

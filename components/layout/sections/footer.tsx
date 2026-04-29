@@ -24,7 +24,7 @@ export const FooterSection = () => {
             </Link>{" "}
             <div className="flex flex-row">
               <Link
-                href="https://www.youtube.com/@bavarmandan"
+                href="https://www.youtube.com/@bavarmandan110"
                 className="opacity-60 hover:opacity-100 mr-2 transition duration-300 flex items-center gap-1  hover:text-primary"
               >
                 یوتیوب
