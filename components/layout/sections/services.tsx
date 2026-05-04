@@ -33,7 +33,7 @@ const serviceList: ServiceProps[] = [
   {
     title: "ارتباط مستقیم",
     description: "ارسال سوالات، انتقادات، پیشنهادات و نقطه نظرات",
-    link: "https://t.me/bavarmandanBot",
+    link: "https://t.me/bavarmandan_bot",
     icon: MessageCircle,
   },
   {

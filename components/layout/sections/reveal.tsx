@@ -49,7 +49,8 @@ export const MotionList = ({ children, className, delay = 0, ...props }: RevealP
     <motion.div
       className={className}
       initial={shouldReduceMotion ? false : "hidden"}
-      animate="show"
+      whileInView="show"
+      viewport={{ once: true, margin: "-80px" }}
       variants={{
         hidden: {},
         show: {
@@ -73,10 +74,10 @@ export const MotionItem = ({ children, className, ...props }: RevealProps) => {
     <motion.div
       className={className}
       variants={{
-        hidden: shouldReduceMotion ? {} : { opacity: 0, y: 10 },
+        hidden: shouldReduceMotion ? {} : { opacity: 0, y: 14, scale: 0.985 },
         show: shouldReduceMotion ? {} : { opacity: 1, y: 0 },
       }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
       {...props}
     >
       {children}

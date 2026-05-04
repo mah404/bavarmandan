@@ -229,6 +229,77 @@ html {
     scroll-behavior: smooth;
 }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 980ms;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+    z-index: 1;
+}
+
+::view-transition-new(root) {
+    z-index: 2;
+}
+
+html.theme-flow::view-transition-old(root) {
+    animation-name: theme-flow-old;
+}
+
+html.theme-flow::view-transition-new(root) {
+    animation-name: theme-flow-new;
+}
+
+@keyframes theme-flow-old {
+    0% {
+        opacity: 1;
+        filter: saturate(1);
+        transform: translateX(0);
+    }
+    58% {
+        opacity: 1;
+        filter: saturate(0.96);
+    }
+    100% {
+        opacity: 0.98;
+        filter: saturate(0.92);
+        transform: translateX(0.8%);
+    }
+}
+
+@keyframes theme-flow-new {
+    0% {
+        clip-path: inset(0 100% 0 0);
+        filter: blur(18px) saturate(1.04);
+        opacity: 0.82;
+        transform: translateX(-1.4%);
+    }
+    42% {
+        filter: blur(9px) saturate(1.02);
+        opacity: 0.94;
+    }
+    72% {
+        filter: blur(3px) saturate(1);
+        opacity: 1;
+    }
+    100% {
+        clip-path: inset(0 0 0 0);
+        filter: blur(0) saturate(1);
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 1ms;
+    }
+}
+
 @keyframes pulseGlow {
     0% {
         box-shadow: 0 0 0px rgba(234, 179, 8, 0);
