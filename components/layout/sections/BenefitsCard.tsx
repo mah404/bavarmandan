@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -9,7 +9,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Icon } from "@/components/ui/icon";
 import {
   Accordion,
   AccordionContent,
@@ -22,6 +21,7 @@ import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
 import { audioGroups } from "@/data/content";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
+import { HoverLift, MotionItem, MotionList } from "./reveal";
 
 export const BenefitsCard = () => {
   const SHEET_ID = "benefitsCard";
@@ -104,23 +104,19 @@ const scrollToId = async (id: string, tries = 20) => {
 
   return (
     <>
+      <HoverLift>
       <Card
         onClick={() => {
           fetchDescription();
           setOpen(true);
         }}
-        className="cursor-pointer hover:bg-background transition"
+        className="service-tile group flex min-h-[178px] cursor-pointer flex-col justify-between"
       >
-        <CardHeader>
-          <div className="flex justify-between">
-            <Icon name="Wallet" size={32} color="hsl(var(--primary))" />
-            <span className="text-5xl text-muted-foreground/15 font-medium">
-              04
-            </span>
-          </div>
-          <CardTitle>مباحث اخلاقی</CardTitle>
-        </CardHeader>
+        <h3 className="pt-8 text-right text-3xl font-bold leading-[3rem] text-foreground">
+          مباحث اخلاقی
+        </h3>
       </Card>
+      </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>
         {/* ✅ make sure the SheetContent can scroll */}
@@ -152,13 +148,14 @@ const scrollToId = async (id: string, tries = 20) => {
                     {group.subject}
                   </AccordionTrigger>
 
-                  <AccordionContent className="flex flex-col gap-4 justify-center mt-2 text-center">
+                  <AccordionContent className="justify-center mt-2 text-center">
+                    <MotionList className="flex flex-col gap-3">
                     {group.files.map((file, fileIndex) => (
-                      <div
+                      <MotionItem
                         // ✅ IMPORTANT: id must match what you generate in getLatestAudios
                         id={`audio-benefitsCard-${groupIndex}-${fileIndex}`}
                         key={fileIndex}
-                        className="border-b border-muted-foreground p-2 scroll-mt-24"
+                        className="motion-list-item scroll-mt-24"
                       >
                         <div className="font-semibold mb-3 text-primary">
                           {file.title}
@@ -186,8 +183,9 @@ const scrollToId = async (id: string, tries = 20) => {
                             </Button>
                           </a>
                         </div>
-                      </div>
+                      </MotionItem>
                     ))}
+                    </MotionList>
                   </AccordionContent>
                 </AccordionItem>
               ))}

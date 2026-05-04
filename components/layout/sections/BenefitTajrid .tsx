@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -16,12 +16,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { BookOpenText } from "lucide-react";
 import loadingPdfAnim from "@/public/loading.json";
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { tajridAudios } from "@/data/content";
+import { HoverLift, MotionItem, MotionList } from "./reveal";
 
 // PDF config
 const TOTAL_PDFS = 2;
@@ -56,20 +56,16 @@ export const BenefitTajrid = () => {
 
   return (
     <>
+      <HoverLift>
       <Card
         onClick={() => setOpen(true)}
-        className="cursor-pointer hover:bg-background transition"
+        className="service-tile group flex min-h-[178px] cursor-pointer flex-col justify-between"
       >
-        <CardHeader>
-          <div className="flex justify-between">
-            <BookOpenText size={32} color="hsl(var(--primary))" />
-            <span className="text-5xl text-muted-foreground/15 font-medium">
-              02
-            </span>
-          </div>
-          <CardTitle>دروس شرح کتاب تجرید الاعتقاد</CardTitle>
-        </CardHeader>
+        <h3 className="pt-8 text-right text-3xl font-bold leading-[3rem] text-foreground">
+          دروس شرح کتاب تجرید الاعتقاد
+        </h3>
       </Card>
+      </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent className="max-h-screen overflow-y-auto">
@@ -88,14 +84,15 @@ export const BenefitTajrid = () => {
                   <AccordionItem value="tajrid-pdfs">
                     <AccordionTrigger>کتاب شرح تجرید الاعتقاد</AccordionTrigger>
                     <AccordionContent>
+                      <MotionList className="flex flex-col gap-3">
                       {sections.map((section, index) => {
                         const vol = index + 1;
                         const label = `کتاب کشف المراد جلد ${vol}`;
                         const fileName = `${label}.pdf`;
                         return (
-                          <div
+                          <MotionItem
                             key={section.id}
-                            className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+                            className="motion-list-item flex flex-col gap-2 md:flex-row md:items-center md:justify-between"
                           >
                             <span className="text-sm text-muted-foreground">
                               {label}
@@ -125,9 +122,10 @@ export const BenefitTajrid = () => {
                                 دانلود
                               </Button>
                             </div>
-                          </div>
+                          </MotionItem>
                         );
                       })}
+                      </MotionList>
                     </AccordionContent>
                   </AccordionItem>
 
@@ -153,7 +151,8 @@ export const BenefitTajrid = () => {
                         <AccordionTrigger>
                           جلسه {sessionNumber}
                         </AccordionTrigger>
-                        <AccordionContent className="space-y-2">
+                        <AccordionContent>
+                          <MotionItem className="motion-list-item">
                           {descriptions.length > 0 && (
                             <div
                               className="text-sm text-primary leading-relaxed text-right"
@@ -205,6 +204,7 @@ export const BenefitTajrid = () => {
                               </a>
                             </Button>
                           </div>
+                          </MotionItem>
                         </AccordionContent>
                       </AccordionItem>
                     );

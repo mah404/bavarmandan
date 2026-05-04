@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -16,12 +16,12 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Icon } from "@/components/ui/icon";
 import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { dropboxAudioMap, goftegooha, Maktobat } from "@/data/content";
 import { useSheetNav } from "./SheetNavProvider";
+import { HoverLift, MotionItem, MotionList } from "./reveal";
 
 const CACHE_KEY = "maktobats_cache_v1";
 type CacheShape = { ts: number; items: Maktobat[] };
@@ -183,20 +183,16 @@ export const BenefitMaktobat = () => {
 
   return (
     <>
+      <HoverLift>
       <Card
         onClick={() => handleOpen(true)}
-        className="cursor-pointer hover:bg-background transition"
+        className="service-tile group flex min-h-[178px] cursor-pointer flex-col justify-between"
       >
-        <CardHeader>
-          <div className="flex justify-between">
-            <Icon name="Blocks" size={32} color="hsl(var(--primary))" />
-            <span className="text-5xl text-muted-foreground/15 font-medium">
-              01
-            </span>
-          </div>
-          <CardTitle>برهان امکان و وجوب</CardTitle>
-        </CardHeader>
+        <h3 className="pt-8 text-right text-3xl font-bold leading-[3rem] text-foreground">
+          برهان امکان و وجوب
+        </h3>
       </Card>
+      </HoverLift>
 
       <Sheet open={open} onOpenChange={handleOpen}>
         <SheetContent className="max-h-screen overflow-y-auto">
@@ -232,6 +228,7 @@ export const BenefitMaktobat = () => {
                     {maktobat.title}
                   </AccordionTrigger>
                   <AccordionContent>
+                    <MotionItem className="motion-list-item mb-3">
                     <div className="mb-4 pb-2">
                       <p className="text-sm text-primary">{maktobat.content}</p>
                       <div className="flex justify-center gap-2 mt-2 text-center">
@@ -300,6 +297,7 @@ export const BenefitMaktobat = () => {
                         )}
                       </div>
                     </div>
+                    </MotionItem>
                   </AccordionContent>
                 </AccordionItem>
               ))}
@@ -307,8 +305,10 @@ export const BenefitMaktobat = () => {
                 <AccordionTrigger className="text-muted-foreground">
                   مباحث متفرقه
                 </AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-4">
-                  <div className="rounded-xl shadow-md p-4">
+                <AccordionContent>
+                  <MotionList className="flex flex-col gap-3">
+                  <MotionItem className="motion-list-item">
+                  <div className="rounded-xl p-1">
                     <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
                       🎧 گفتمان
                     </SheetDescription>
@@ -339,7 +339,9 @@ export const BenefitMaktobat = () => {
                       </a>
                     </div>
                   </div>
-                  <div className="rounded-xl shadow-md p-4">
+                  </MotionItem>
+                  <MotionItem className="motion-list-item">
+                  <div className="rounded-xl p-1">
                     <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
                       🎧 گفتاری در باب بساطت
                     </SheetDescription>
@@ -370,7 +372,9 @@ export const BenefitMaktobat = () => {
                       </a>
                     </div>
                   </div>
-                  <div className="rounded-xl shadow-md p-4">
+                  </MotionItem>
+                  <MotionItem className="motion-list-item">
+                  <div className="rounded-xl p-1">
                     <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
                       🎧انکار عقل ، با وهم و گمان
                     </SheetDescription>
@@ -401,6 +405,8 @@ export const BenefitMaktobat = () => {
                       </a>
                     </div>
                   </div>
+                  </MotionItem>
+                  </MotionList>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

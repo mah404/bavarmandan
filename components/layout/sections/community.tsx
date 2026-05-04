@@ -1,38 +1,40 @@
-import DiscordIcon from "@/components/icons/discord-icon";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Scale } from "lucide-react";
 import Link from "next/link";
+import { Reveal } from "./reveal";
 
 export const CommunitySection = () => {
   return (
-    <section id="rules" className="py-12 ">
-      <hr className="border-secondary" />
+    <section id="rules" className="py-12">
+      <hr className="border-secondary/70" />
       <div className="container py-20 sm:py-20">
-        <div className="lg:w-[60%] mx-auto">
+        <Reveal className="lg:w-[60%] mx-auto">
           <Card
             dir="rtl"
-            className="bg-background border-none shadow-none text-center flex flex-col items-center justify-center"
+            className="text-center flex flex-col items-center justify-center border-none bg-transparent shadow-none"
           >
-            <CardHeader>
-         <CardTitle className="text-center font-bold text-xl sm:text-3xl md:text-4xl lg:text-4xl">
-  <div className="flex flex-col items-center text-primary text-2xl font-bold bg-card p-2 border-secondary border dark:border-none rounded-2xl dark:bg-transparent dark:rounded-none dark:p-0">
-    <span className="text-yellow-300 bg-gradient-to-r bg-clip-text leading-snug text-center whitespace-nowrap">
+            <CardHeader className="w-full pb-8">
+              <CardTitle className="mx-auto max-w-5xl text-center">
+                <div className="flex flex-col items-center" dir="rtl">
+                  <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-card/25 px-4 py-2 text-sm font-bold text-primary backdrop-blur">
+                    <Scale className="size-4" />
+                    آیین حضور و گفت‌وگو
+                  </span>
+                  <span className="block text-3xl font-extrabold leading-[1.7] text-primary md:text-4xl">
       تذکرات و نکات جلسات «مجمع باورمندان»
     </span>
-    <span className="text-yellow-300 bg-gradient-to-r bg-clip-text leading-snug text-center whitespace-nowrap">
+                  <span className="mt-1 block text-2xl font-extrabold leading-[1.7] text-foreground/90 md:text-3xl">
       در کلاب‌هاوس
     </span>
   </div>
 </CardTitle>
 
-              <hr className="border-primary w-full   " />
+              <hr className="mx-auto mt-5 h-px w-full max-w-2xl border-0 bg-gradient-to-l from-transparent via-primary/50 to-transparent" />
             </CardHeader>
             <CardContent className="lg:w-[80%] font-semibold text-xl text-muted-foreground leading-relaxed">
               با توجه به اهداف شکل‌گیری جلسات «مجمع باورمندان» در کلاب‌هاوس، که
@@ -110,9 +112,9 @@ export const CommunitySection = () => {
               باورمندان را بر عهده نمی‌گیرد.
             </CardContent>
           </Card>
-        </div>
+        </Reveal>
       </div>
-      <hr className="border-secondary border-yellow-500" />
+      <hr className="border-primary/50" />
     </section>
   );
 };

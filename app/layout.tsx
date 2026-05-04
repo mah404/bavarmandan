@@ -81,7 +81,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-br"
-      className={cn("dark overflow-x-hidden", inter.variable, vazir.variable)}
+      className={cn("overflow-x-hidden", inter.variable, vazir.variable)}
       suppressHydrationWarning
     >
       <head>

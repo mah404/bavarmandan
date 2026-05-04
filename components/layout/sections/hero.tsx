@@ -1,31 +1,22 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { FloatInPlace, MotionButton, Reveal } from "./reveal";
 
 export const HeroSection = () => {
-  const [data, setData] = useState<any>(null);
-
-  const { theme } = useTheme();
   return (
     <section className="container w-full">
-      <div className="grid place-items-center lg:max-w-screen-xl gap-8 mx-auto py-20 md:py-32">
-        <div className="text-center  space-y-8 ">
-          <Badge variant="outline" className="border-none text-md py-2">
-            <span> </span>
-          </Badge>
-
-          <div className="max-w-screen-md  mx-auto text-center text-4xl md:text-6xl font-thin">
+      <div className="grid place-items-center lg:max-w-screen-xl gap-8 mx-auto py-16 md:py-28">
+        <Reveal className="text-center space-y-8">
+          <FloatInPlace className="max-w-screen-md mx-auto text-center text-4xl md:text-6xl font-thin leading-tight">
             <h1 className="">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ </h1>
-          </div>
+          </FloatInPlace>
 
           <p
-            className="max-w-screen-sm mx-auto text-md text-muted-foreground   flex-col flex"
+            className="lux-text-panel max-w-screen-sm mx-auto text-md flex-col flex"
             dir="rtl"
           >
-            <span className="text-primary text-2xl font-bold bg-card p-1 border-secondary border dark:border-none rounded-2xl dark:bg-transparent dark:rounded-none dark:p-0">
+            <span className="text-primary text-2xl font-bold leading-relaxed">
               رَبَّنَا إِنَّنَا سَمِعْنَا مُنَادِيًا يُنَادِي لِلْإِيمَانِ أَنْ
               آمِنُوا بِرَبِّكُمْ فَآمَنَّا رَبَّنَا فَاغْفِرْ لَنَا ذُنُوبَنَا
               وَكَفِّرْ عَنَّا سَيِّئَاتِنَا وَتَوَفَّنَا مَعَ الْأَبْرَارِ
@@ -39,11 +30,11 @@ export const HeroSection = () => {
             </span>
           </p>
 
-          <hr className="border-primary w-full   " />
+          <hr className="soft-divider w-full" />
 
           <p
             dir="rtl"
-            className="max-w-screen-sm text-gray-100 mx-auto text-xl text-muted-foreground leading-relaxed"
+            className="max-w-screen-md mx-auto text-lg md:text-xl text-foreground/85 dark:text-muted-foreground leading-relaxed"
           >
             با سلام و سپاس از حضور شما در تارنمای{" "}
             <span className=" inline-block whitespace-nowrap text-primary pl-1  pr-1">
@@ -58,13 +49,14 @@ export const HeroSection = () => {
             و انتقادات سازنده‌ی شما صمیمانه استقبال می‌کنیم.
           </p>
 
-          <div className="space-y-4 md:space-y-0 md:space-x-4">
+          <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
+            <MotionButton className="w-5/6 md:w-auto">
             <Button
               variant="secondary"
-              className="w-5/6 md:w-1/4 font-bold group/arrow text-md"
+              className="modern-action w-full group/arrow text-md"
             >
               <Link
-                className="flex"
+                className="flex items-center"
                 href="https://www.clubhouse.com/house/%D9%85%D8%AC%D9%85%D8%B9-%D8%A8%D8%A7%D9%88%D8%B1%D9%85%D9%86%D8%AF%D8%A7%D9%86?chs=vgJIag5VYG%3AHJqbfkIoYRlofbeOY8p06RDKoa8xs1iz8W4cLx6HAlA&utm_medium=ch_house_settings"
               >
                 کلاب هاوس
@@ -75,11 +67,13 @@ export const HeroSection = () => {
                 />
               </Link>
             </Button>
+            </MotionButton>
 
+            <MotionButton className="w-5/6 md:w-auto">
             <Button
               asChild
               variant="secondary"
-              className="w-5/6  text-md md:w-1/4 font-bold  "
+              className="modern-action w-full text-md"
             >
               <Link
                 href="https://t.me/bavarmandan110"
@@ -93,13 +87,9 @@ export const HeroSection = () => {
                 />
               </Link>
             </Button>
+            </MotionButton>
           </div>
-        </div>
-        <div className="relative group mt-14 flex flex-col">
-          <div className="absolute top-2 lg:-top-8 left-1/2 transform -translate-x-1/2 w-[90%] mx-auto h-24 lg:h-80 bg-primary/50 rounded-full blur-3xl"></div>
-
-          <div className="absolute bottom-0 left-0 w-full h-20 md:h-28 bg-gradient-to-b from-background/0 via-background/50 to-background rounded-lg"></div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

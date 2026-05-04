@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -9,7 +9,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Icon } from "@/components/ui/icon";
 import {
   Accordion,
   AccordionContent,
@@ -27,6 +26,7 @@ import {
   miscFiles,
 } from "@/data/content";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
+import { HoverLift, MotionItem, MotionList } from "./reveal";
 
 export const BenefitAkhlaq = () => {
   const SHEET_ID = "akhlagh";
@@ -88,23 +88,19 @@ export const BenefitAkhlaq = () => {
 
   return (
     <>
+      <HoverLift>
       <Card
         onClick={() => {
           fetchDescription();
           setOpen(true);
         }}
-        className="cursor-pointer hover:bg-background transition"
+        className="service-tile group flex min-h-[178px] cursor-pointer flex-col justify-between"
       >
-        <CardHeader>
-          <div className="flex justify-between">
-            <Icon name="Wallet" size={32} color="hsl(var(--primary))" />
-            <span className="text-5xl text-muted-foreground/15 font-medium">
-              03
-            </span>
-          </div>
-          <CardTitle> مباحث اعتقادی</CardTitle>
-        </CardHeader>
+        <h3 className="pt-8 text-right text-3xl font-bold leading-[3rem] text-foreground">
+          مباحث اعتقادی
+        </h3>
       </Card>
+      </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent className="h-dvh overflow-y-auto">
@@ -129,13 +125,14 @@ export const BenefitAkhlaq = () => {
             >
               <AccordionItem value="group-1">
                 <AccordionTrigger className=""> مع الصادقین </AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-2 justify-center mt-2 text-center">
+                <AccordionContent className="justify-center mt-2 text-center">
+                  <MotionList className="flex flex-col gap-3">
                   {audioFilessadeghin.slice(0, 4).map((file, i) => (
-                    <div
+                    <MotionItem
                       id={`audio-akhlagh-audioFilessadeghin-${i}`}
                       key={i}
                       className={[
-                        "border-b border-muted-foreground/30 p-3 transition",
+                        "motion-list-item transition",
                         highlightId === `audio-akhlagh-audioFilessadeghin-${i}`
                           ? "nav-highlight border"
                           : "",
@@ -175,8 +172,9 @@ export const BenefitAkhlaq = () => {
                           </a>
                         </Button>
                       </div>
-                    </div>
+                    </MotionItem>
                   ))}
+                  </MotionList>
                 </AccordionContent>
               </AccordionItem>
 
@@ -185,13 +183,14 @@ export const BenefitAkhlaq = () => {
                   {" "}
                   کنکاش در عقاید{" "}
                 </AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-2 justify-center mt-2 text-center">
+                <AccordionContent className="justify-center mt-2 text-center">
+                  <MotionList className="flex flex-col gap-3">
                   {audioFilesnew.slice(0, 4).map((file, i) => (
-                    <div
+                    <MotionItem
                       id={`audio-akhlagh-audioFilesnew-${i}`}
                       key={i}
                       className={[
-                        "border-b border-muted-foreground/30 p-3  transition",
+                        "motion-list-item transition",
                         highlightId === `audio-akhlagh-audioFilesnew-${i}`
                           ? "nav-highlight border"
                           : "",
@@ -231,8 +230,9 @@ export const BenefitAkhlaq = () => {
                           </a>
                         </Button>
                       </div>
-                    </div>
+                    </MotionItem>
                   ))}
+                  </MotionList>
                 </AccordionContent>
               </AccordionItem>
 
@@ -242,11 +242,12 @@ export const BenefitAkhlaq = () => {
                   {" "}
                   شیعه و میراث فاطمی{" "}
                 </AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-2 justify-center mt-2 text-center">
+                <AccordionContent className="justify-center mt-2 text-center">
+                  <MotionList className="flex flex-col gap-3">
                   {audioFiles.slice(0, 4).map((file, i) => (
-                    <div
+                    <MotionItem
                       key={i}
-                      className="border-b border-muted-foreground/30 p-3"
+                      className="motion-list-item"
                     >
                       <div className="font-semibold mb-2 text-primary">
                         {file.description}
@@ -282,19 +283,21 @@ export const BenefitAkhlaq = () => {
                           </a>
                         </Button>
                       </div>
-                    </div>
+                    </MotionItem>
                   ))}
+                  </MotionList>
                 </AccordionContent>
               </AccordionItem>
 
               {/* Last 2 sessions */}
               <AccordionItem value="group-4">
                 <AccordionTrigger>گفتگوهای قرآنی</AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-4 justify-center text-center">
+                <AccordionContent className="justify-center text-center">
+                  <MotionList className="flex flex-col gap-3">
                   {audioFiles.slice(4).map((file, i) => (
-                    <div
+                    <MotionItem
                       key={i + 4}
-                      className="border-b border-muted-foreground/30 p-3"
+                      className="motion-list-item"
                     >
                       <div className="font-semibold mb-2 text-primary">
                         {file.description}
@@ -330,23 +333,25 @@ export const BenefitAkhlaq = () => {
                           </a>
                         </Button>
                       </div>
-                    </div>
+                    </MotionItem>
                   ))}
+                  </MotionList>
                 </AccordionContent>
               </AccordionItem>
          
               <AccordionItem value="group-5">
                 <AccordionTrigger>مباحث متفرقه</AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-4 justify-center text-center  scroll-mt-24">
+                <AccordionContent className="justify-center text-center scroll-mt-24">
                   {miscFiles.length === 0 ? (
                     <div className="text-muted-foreground py-4">
                       فعلاً صوتی اضافه نشده.
                     </div>
                   ) : (
-                    miscFiles.map((file, idx) => (
-                      <div
+                    <MotionList className="flex flex-col gap-3">
+                    {miscFiles.map((file, idx) => (
+                      <MotionItem
                         key={`misc-${idx}`}
-                        className="border-b border-muted-foreground/30 p-3"
+                        className="motion-list-item"
                       >
                         <div className="font-semibold mb-2 text-primary">
                           {file.title}
@@ -382,8 +387,9 @@ export const BenefitAkhlaq = () => {
                             </a>
                           </Button>
                         </div>
-                      </div>
-                    ))
+                      </MotionItem>
+                    ))}
+                    </MotionList>
                   )}
                 </AccordionContent>
               </AccordionItem>

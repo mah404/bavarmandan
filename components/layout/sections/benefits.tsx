@@ -3,34 +3,47 @@ import { BenefitMaktobat } from "./BenefitMaktobat";
 import { BenefitTajrid } from "./BenefitTajrid ";
 import { BenefitsCard } from "./BenefitsCard";
 import { FeaturesSection } from "./features";
+import { MotionItem, MotionList, Reveal } from "./reveal";
+
 export const BenefitsSection = () => {
   return (
-    <section id="mohtava" className="container py-24 sm:py-32">
-      <div className="grid lg:grid-cols-2 place-items-center lg:gap-24">
-        <div className="w-full flex flex-col items-center text-center">
-          {/* Title + description */}
-          <div className="flex flex-col items-center mb-6">
-            <h2 className="text-2xl mb-4 text-primary font-bold bg-card px-6 py-2 border-secondary border dark:border-none rounded-2xl dark:bg-transparent dark:rounded-none">
-              <span className="text-sm align-super">*</span>
-              محتوای صوتی و نوشتاری
-            </h2>
+    <section id="mohtava" className="container py-20 sm:py-28">
+      <Reveal className="space-y-12">
+        <div
+          className="mx-auto flex max-w-4xl flex-col items-center text-center"
+          dir="rtl"
+        >
+          <div className="mb-5 h-1 w-16 rounded-full bg-primary" />
+          <h2 className="text-4xl font-extrabold leading-[1.7] text-primary md:text-5xl">
+            <span className="text-2xl align-super">*</span>
+            محتوای صوتی و نوشتاری
+          </h2>
+          <p className="mt-3 max-w-2xl text-xl leading-9 text-muted-foreground md:text-2xl">
+            مجموعه صوتی کامل و تدوین نشده‌ی جلسات
+          </p>
+        </div>
 
-            <p className="text-md text-muted-foreground max-w-md">
-              مجموعه صوتی کامل و تدوین نشده‌ی جلسات
-            </p>
+        <div className="grid items-stretch gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="order-2 lg:order-1">
+            <FeaturesSection />
           </div>
 
-          {/* Features */}
-          <FeaturesSection />
+          <MotionList className="order-1 grid gap-5 sm:grid-cols-2 lg:order-2">
+            <MotionItem>
+              <BenefitMaktobat />
+            </MotionItem>
+            <MotionItem>
+              <BenefitTajrid />
+            </MotionItem>
+            <MotionItem>
+              <BenefitAkhlaq />
+            </MotionItem>
+            <MotionItem>
+              <BenefitsCard />
+            </MotionItem>
+          </MotionList>
         </div>
-
-        <div className="grid lg:grid-cols-2 gap-4 w-full">
-            <BenefitMaktobat />
-            <BenefitTajrid />
-            <BenefitAkhlaq />
-            <BenefitsCard />
-        </div>
-      </div>
+      </Reveal>
     </section>
   );
 };

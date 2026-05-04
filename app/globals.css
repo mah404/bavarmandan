@@ -3,42 +3,42 @@
 @tailwind utilities;
 @layer base {
      :root {
-        --background: 174 85.9% 73.9%;
-        /* #02dbd0 */
-        --foreground: 20 14.3% 4.1%;
+        --background: 173.4 100% 41.76%;
+        /* oklch(77.7% 0.152 181.912) */
+        --foreground: 184 52% 8%;
         /* ~#0a0807 */
-        --card: 176 97.3% 34.5%;
-        /* #ffffff */
-        --card-foreground: 20 14.3% 4.1%;
+        --card: 158 40% 96%;
+        /* soft mint-ivory surface */
+        --card-foreground: 184 52% 8%;
         /* ~#0a0807 */
-        --popover: 0 0% 100%;
-        /* #ffffff */
+        --popover: 158 44% 97%;
+        /* soft elevated surface */
         --popover-foreground: 20 14.3% 4.1%;
         /* ~#0a0807 */
-        --primary: 50.4 97.8% 63.5%;
+        --primary: 43 95% 42%;
         /* #f5d11f */
-        --primary-foreground: 60 9.1% 97.8%;
+        --primary-foreground: 184 52% 8%;
         /* ~#fefdfb */
-        --secondary: 60 4.8% 95.9%;
+        --secondary: 48 92% 91%;
         /* ~#f8f8f3 */
-        --secondary-foreground: 24 9.8% 10%;
+        --secondary-foreground: 184 52% 8%;
         /* ~#1a1613 */
-        --muted: 60 4.8% 95.9%;
+        --muted: 165 34% 88%;
         /* ~#f8f8f3 */
-        --muted-foreground: 24.9 2.4% 40;
-        --accent: 60 4.8% 95.9%;
+        --muted-foreground: 181 38% 22%;
+        --accent: 47 92% 88%;
         /* ~#f8f8f3 */
-        --accent-foreground: 24 9.8% 10%;
+        --accent-foreground: 184 52% 8%;
         /* ~#1a1613 */
         --destructive: 47.3 91.8% 53.3%;
         /* #f25555 */
         --destructive-foreground: 60 9.1% 97.8%;
         /* ~#fefdfb */
-        --border: 20 5.9% 90%;
+        --border: 174 30% 74%;
         /* ~#e9e8e4 */
-        --input: 20 5.9% 90%;
+        --input: 174 30% 74%;
         /* ~#e9e8e4 */
-        --ring: 49.9 90.7% 57.6%;
+        --ring: 43 95% 42%;
         /* #f5b918 */
         --radius: 0.5rem;
     }
@@ -98,6 +98,130 @@
     }
     body {
         @apply bg-background text-foreground;
+    }
+}
+
+body {
+    background-color: oklch(77.7% 0.152 181.912);
+    background-image: linear-gradient(180deg, oklch(84% 0.105 181.912), oklch(77.7% 0.152 181.912) 44rem, oklch(73% 0.16 181.912)), linear-gradient(135deg, hsl(var(--primary) / 0.1), transparent 38%), linear-gradient(225deg, oklch(88% 0.08 181.912 / 0.44), transparent 46%);
+    background-size: 100% 100%;
+    background-attachment: fixed;
+}
+
+.dark body {
+    background-color: hsl(var(--background));
+    background-image: linear-gradient(180deg, hsl(var(--primary) / 0.035), transparent 34rem);
+}
+
+@layer components {
+    .glass-panel {
+        @apply border border-secondary/50 bg-card/65 text-card-foreground shadow-[0_10px_30px_rgba(0,0,0,0.07)] backdrop-blur-xl;
+    }
+    .dark .glass-panel {
+        box-shadow: 0 16px 44px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+    .section-kicker {
+        @apply inline-flex items-center justify-center rounded-full border border-secondary/50 bg-card/40 px-4 py-2 text-center text-sm font-bold text-primary shadow-sm backdrop-blur dark:border-primary/20 dark:bg-transparent dark:shadow-none;
+    }
+    .modern-card {
+        @apply relative overflow-hidden rounded-2xl border-secondary/50 bg-card/60 text-card-foreground shadow-[0_10px_28px_rgba(0,0,0,0.07)] backdrop-blur-xl transition duration-300 hover:border-primary/40 hover:bg-card/75 hover:shadow-[0_16px_38px_rgba(0,0,0,0.1)] dark:bg-card/80;
+    }
+    .modern-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(180deg, hsl(var(--foreground) / 0.05), transparent 28%);
+        opacity: 0.55;
+    }
+    .modern-card>* {
+        position: relative;
+        z-index: 1;
+    }
+    .modern-action {
+        @apply rounded-full border border-primary/25 bg-primary px-6 py-3 font-bold text-foreground shadow-sm transition duration-300 hover:bg-primary/90 hover:shadow-[0_10px_24px_hsl(var(--primary)/0.16)];
+    }
+    .lux-text-panel {
+        @apply rounded-3xl border border-secondary/50 bg-card/50 p-5 text-foreground shadow-[0_10px_30px_rgba(0,0,0,0.07)] backdrop-blur-xl md:p-7 dark:bg-card/40 dark:text-foreground;
+    }
+    .sheet-modern {
+        @apply border-secondary/60 bg-card/90 text-card-foreground shadow-[0_18px_56px_rgba(0,0,0,0.16)] backdrop-blur-xl dark:bg-card/90;
+    }
+    .motion-list-item {
+        @apply rounded-2xl border border-secondary/40 bg-card/40 p-3 shadow-sm backdrop-blur transition-colors hover:border-primary/40 hover:bg-card/70 dark:bg-background/20 dark:hover:bg-background/30;
+    }
+    .motion-underline {
+        @apply relative;
+    }
+    .motion-underline::after {
+        content: "";
+        position: absolute;
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: 0.35rem;
+        height: 1px;
+        transform: scaleX(0);
+        transform-origin: center;
+        background: hsl(var(--primary));
+        transition: transform 260ms ease;
+    }
+    .motion-underline:hover::after {
+        transform: scaleX(1);
+    }
+    .soft-divider {
+        @apply border-primary/40;
+    }
+    .hero-shell {
+        @apply relative overflow-hidden rounded-[2rem] border border-secondary/50 bg-card/40 px-5 py-12 shadow-[0_18px_48px_rgba(0,0,0,0.08)] backdrop-blur-xl md:px-10 md:py-16;
+    }
+    .hero-shell::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(135deg, hsl(var(--primary) / 0.16), transparent 34%), linear-gradient(180deg, hsl(var(--card) / 0.5), transparent 60%);
+    }
+    .hero-shell>* {
+        position: relative;
+        z-index: 1;
+    }
+    .brand-mark {
+        @apply mx-auto mb-8 grid size-24 place-items-center rounded-[1.75rem] border border-secondary/60 bg-background/40 p-2 shadow-[0_14px_34px_rgba(0,0,0,0.12)] backdrop-blur md:size-28;
+    }
+    .service-tile {
+        @apply relative min-h-[168px] overflow-hidden rounded-2xl border border-secondary/40 bg-card/35 p-6 text-right shadow-sm backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:bg-card/55 hover:shadow-[0_12px_28px_rgba(0,0,0,0.08)] dark:bg-card/70;
+    }
+    .service-tile::before {
+        content: "";
+        position: absolute;
+        top: 1.35rem;
+        right: 1.35rem;
+        width: 2.75rem;
+        height: 2px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.85));
+        opacity: 0.85;
+        transition: width 260ms ease, opacity 260ms ease;
+    }
+    .service-tile::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(135deg, hsl(var(--primary) / 0.08), transparent 42%);
+        opacity: 0;
+        transition: opacity 260ms ease;
+    }
+    .service-tile>* {
+        position: relative;
+        z-index: 1;
+    }
+    .service-tile:hover::before {
+        width: 4rem;
+        opacity: 1;
+    }
+    .service-tile:hover::after {
+        opacity: 1;
     }
 }
 
