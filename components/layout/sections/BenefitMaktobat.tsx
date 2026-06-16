@@ -261,6 +261,41 @@ export const BenefitMaktobat = () => {
         </Button>
       </a>
     </div>
+    <div className="rounded-xl shadow-md p-4 mt-4">
+  <p className="text-primary text-sm font-semibold mb-2 text-center">
+    🎧 پخش صوت
+  </p>
+
+  {maktobat.audioUrl ? (
+    <div className="flex gap-2 justify-center">
+      <Button
+        onClick={() =>
+          play({
+            title: maktobat.title,
+            url: toStreamable(maktobat.audioUrl!),
+            description: maktobat.content,
+          })
+        }
+        className="sm:w-auto w-full text-card"
+      >
+        پخش
+      </Button>
+
+      <a
+        href={toDownloadUrl(maktobat.audioUrl!)}
+        download={`${maktobat.title || "audio"}.mp3`}
+      >
+        <Button variant="outline" className="sm:w-auto w-full">
+          دانلود صوت
+        </Button>
+      </a>
+    </div>
+  ) : (
+    <p className="text-gray-500 text-sm text-center">
+      فایل صوتی موجود نیست
+    </p>
+  )}
+</div>
   </div>
 </AccordionContent>
                 </AccordionItem>
