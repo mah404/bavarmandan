@@ -19,6 +19,7 @@ import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
+import { Landmark } from "lucide-react";
 import {
   audioFilessadeghin,
   audioFilesnew,
@@ -88,17 +89,24 @@ export const BenefitAkhlaq = () => {
 
   return (
     <>
-      <HoverLift>
+      <HoverLift className="h-full">
       <Card
         onClick={() => {
           fetchDescription();
           setOpen(true);
         }}
-        className="service-tile group flex min-h-[178px] cursor-pointer flex-col justify-between"
+        className="service-tile group flex h-full min-h-[168px] cursor-pointer flex-col justify-between"
       >
-        <h3 className="pt-8 text-right text-3xl font-bold leading-[3rem] text-foreground">
-          مباحث اعتقادی
-        </h3>
+        <div className="service-tile-header">
+          <span className="service-tile-kicker">اعتقادات</span>
+          <span className="service-tile-mark" aria-hidden="true">
+            <Landmark className="size-5" />
+          </span>
+        </div>
+        <div className="service-tile-copy">
+          <h3>مباحث اعتقادی</h3>
+          <p>مجموعه گفتارهای اعتقادی</p>
+        </div>
       </Card>
       </HoverLift>
 

@@ -16,6 +16,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
 import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
@@ -183,14 +184,21 @@ export const BenefitMaktobat = () => {
 
   return (
     <>
-      <HoverLift>
+      <HoverLift className="h-full">
       <Card
         onClick={() => handleOpen(true)}
-        className="service-tile group flex min-h-[178px] cursor-pointer flex-col justify-between"
+        className="service-tile group flex h-full min-h-[168px] cursor-pointer flex-col justify-between"
       >
-        <h3 className="pt-8 text-right text-3xl font-bold leading-[3rem] text-foreground">
-          برهان امکان و وجوب
-        </h3>
+        <div className="service-tile-header">
+          <span className="service-tile-kicker">مکتوبات</span>
+          <span className="service-tile-mark" aria-hidden="true">
+            <Sparkles className="size-5" />
+          </span>
+        </div>
+        <div className="service-tile-copy">
+          <h3>برهان امکان و وجوب</h3>
+          <p>متن، صوت و فایل‌های مرتبط</p>
+        </div>
       </Card>
       </HoverLift>
 
@@ -227,78 +235,34 @@ export const BenefitMaktobat = () => {
                   <AccordionTrigger className="text-muted-foreground">
                     {maktobat.title}
                   </AccordionTrigger>
-                  <AccordionContent>
-                    <MotionItem className="motion-list-item mb-3">
-                    <div className="mb-4 pb-2">
-                      <p className="text-sm text-primary">{maktobat.content}</p>
-                      <div className="flex justify-center gap-2 mt-2 text-center">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            const blob = fetch(maktobat.pdfUrl)
-                              .then((res) => res.blob())
-                              .then((blob) => {
-                                const url = URL.createObjectURL(blob);
-                                window.open(url, "_blank");
-                              });
-                          }}
-                        >
-                          مشاهده
-                        </Button>
+            <AccordionContent>
+  <div className="mb-4 pb-2">
+    <p className="text-sm text-primary whitespace-pre-line">
+      {maktobat.content || "متنی برای این مکتوب موجود نیست"}
+    </p>
 
-                        <a
-                          href={maktobat.pdfUrl}
-                          download={`${maktobat.title || "maktobat"}.pdf`}
-                        >
-                          <Button size="sm" className="text-background">
-                            دانلود{" "}
-                          </Button>
-                        </a>
-                      </div>
+    <div className="flex justify-center gap-2 mt-2 text-center">
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={async () => {
+          const res = await fetch(maktobat.pdfUrl);
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          window.open(url, "_blank");
+        }}
+      >
+        مشاهده
+      </Button>
 
-                      <div className="rounded-xl shadow-md p-4 ">
-                        <SheetDescription className="text-primary text-sm font-semibold mb-2">
-                          🎧 پخش صوت
-                        </SheetDescription>
-                        {maktobat.audioUrl ? (
-                          <div className="flex gap-2 justify-center">
-                            {/* Play */}
-                            <Button
-                              onClick={() =>
-                                play({
-                                  title: maktobat.title,
-                                  url: maktobat.audioUrl!, // streamable: ...raw=1
-                                  description: maktobat.content,
-                                })
-                              }
-                              className="sm:w-auto w-full text-card "
-                            >
-                              پخش
-                            </Button>
-
-                            {/* Download */}
-                            <a
-                              href={toDownloadUrl(maktobat.audioUrl!)} // downloadable: ...dl=1
-                              download={`${maktobat.title || "audio"}.mp3`}
-                            >
-                              <Button
-                                variant="outline"
-                                className="sm:w-auto w-full"
-                              >
-                                دانلود صوت
-                              </Button>
-                            </a>
-                          </div>
-                        ) : (
-                          <p className="text-gray-500 text-sm">
-                            فایل صوتی موجود نیست
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    </MotionItem>
-                  </AccordionContent>
+      <a href={maktobat.pdfUrl} download={`${maktobat.title || "maktobat"}.pdf`}>
+        <Button size="sm" className="text-background">
+          دانلود
+        </Button>
+      </a>
+    </div>
+  </div>
+</AccordionContent>
                 </AccordionItem>
               ))}
               <AccordionItem value="group-2">

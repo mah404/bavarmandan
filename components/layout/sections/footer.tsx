@@ -71,9 +71,7 @@ export const FooterSection = () => {
               className="mt-4 flex flex-col items-center"
               delay={0.08}
             >
-              <MotionItem>
-                <p className="text-xs font-bold text-primary">در ارتباط بمانید</p>
-              </MotionItem>
+            
               <MotionItem>
                 <h3 className="mt-1 text-xl font-extrabold leading-8 text-foreground md:text-2xl">
                   شبکه‌های اجتماعی مجمع باورمندان
@@ -118,15 +116,19 @@ export const FooterSection = () => {
             <div className="mx-auto mt-6 h-px w-full max-w-3xl bg-gradient-to-r from-transparent via-secondary/70 to-transparent" />
 
             <section className="mt-4 w-full text-center">
-              <h3 className="text-xs text-muted-foreground">
-                © 1404 مالکیت، طراحی و توسعه{" "}
+              <h3
+                className="flex flex-wrap items-center justify-center gap-x-1 gap-y-1 text-xs text-muted-foreground"
+                dir="rtl"
+              >
+                <span>مالکیت، طراحی و توسعه</span>
                 <Link
                   target="_blank"
                   href="#"
-                  className="mx-2 font-bold text-primary transition hover:text-foreground"
+                  className="inline-block whitespace-nowrap font-bold text-primary transition hover:text-foreground"
                 >
                   فرزندان امیرالمومنین (ع)
                 </Link>
+                <span dir="ltr">© 1404</span>
               </h3>
             </section>
           </Reveal>

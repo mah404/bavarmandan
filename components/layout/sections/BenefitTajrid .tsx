@@ -16,6 +16,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { BookOpenText } from "lucide-react";
 import loadingPdfAnim from "@/public/loading.json";
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
@@ -56,14 +57,21 @@ export const BenefitTajrid = () => {
 
   return (
     <>
-      <HoverLift>
+      <HoverLift className="h-full">
       <Card
         onClick={() => setOpen(true)}
-        className="service-tile group flex min-h-[178px] cursor-pointer flex-col justify-between"
+        className="service-tile group flex h-full min-h-[168px] cursor-pointer flex-col justify-between"
       >
-        <h3 className="pt-8 text-right text-3xl font-bold leading-[3rem] text-foreground">
-          دروس شرح کتاب تجرید الاعتقاد
-        </h3>
+        <div className="service-tile-header">
+          <span className="service-tile-kicker">شرح کتاب</span>
+          <span className="service-tile-mark" aria-hidden="true">
+            <BookOpenText className="size-5" />
+          </span>
+        </div>
+        <div className="service-tile-copy">
+          <h3>دروس شرح کتاب تجرید الاعتقاد</h3>
+          <p>شرح، جزوه و صوت جلسات</p>
+        </div>
       </Card>
       </HoverLift>
 
@@ -151,61 +159,53 @@ export const BenefitTajrid = () => {
                         <AccordionTrigger>
                           جلسه {sessionNumber}
                         </AccordionTrigger>
-                        <AccordionContent>
-                          <MotionItem className="motion-list-item">
-                          {descriptions.length > 0 && (
-                            <div
-                              className="text-sm text-primary leading-relaxed text-right"
-                              dir="rtl"
-                            >
-                              {descriptions.map((desc, idx) => (
-                                <p key={idx}>{desc}</p>
-                              ))}
-                            </div>
-                          )}
+                   <AccordionContent>
+  <div className="space-y-4">
+    {descriptions.length > 0 ? (
+      <div
+        className="text-sm text-primary leading-relaxed text-right whitespace-pre-line"
+        dir="rtl"
+      >
+        {descriptions.map((desc, idx) => (
+          <p key={idx}>{desc}</p>
+        ))}
+      </div>
+    ) : (
+      <p className="text-sm text-muted-foreground text-center">
+        توضیحی برای این جلسه موجود نیست
+      </p>
+    )}
 
-                          <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                            {/* Play button */}
-                            <Button
-                              className="w-full sm:w-auto text-card"
-                              onClick={() => {
-                                if (!url) {
-                                  console.error(
-                                    "No URL for session",
-                                    sessionNumber,
-                                    audio
-                                  );
-                                  return;
-                                }
-                                play({
-                                  title: `جلسه ${sessionNumber}`,
-                                  url,
-                                  description: descriptions.length
-                                    ? descriptions.join(" | ")
-                                    : undefined,
-                                });
-                              }}
-                            >
-                              پخش
-                            </Button>
+    <div className="flex flex-col sm:flex-row gap-2 justify-center">
+      <Button
+        className="w-full sm:w-auto text-card"
+        onClick={() => {
+          if (!url) return;
 
-                            {/* Download button */}
-                            <Button
-                              asChild
-                              variant="outline"
-                              className="w-full sm:w-auto"
-                            >
-                              <a
-                                href={toDownloadUrl(url)}
-                                download={`جلسه-${sessionNumber}.mp3`}
-                                rel="noopener noreferrer"
-                              >
-                                دانلود صوت
-                              </a>
-                            </Button>
-                          </div>
-                          </MotionItem>
-                        </AccordionContent>
+          play({
+            title: `جلسه ${sessionNumber}`,
+            url,
+            description: descriptions.length
+              ? descriptions.join(" | ")
+              : undefined,
+          });
+        }}
+      >
+        پخش
+      </Button>
+
+      <Button asChild variant="outline" className="w-full sm:w-auto">
+        <a
+          href={toDownloadUrl(url)}
+          download={`جلسه-${sessionNumber}.mp3`}
+          rel="noopener noreferrer"
+        >
+          دانلود صوت
+        </a>
+      </Button>
+    </div>
+  </div>
+</AccordionContent>
                       </AccordionItem>
                     );
                   })}

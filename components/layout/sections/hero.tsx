@@ -8,15 +8,15 @@ export const HeroSection = () => {
     <section className="container w-full">
       <div className="grid place-items-center lg:max-w-screen-xl gap-8 mx-auto py-16 md:py-28">
         <Reveal className="text-center space-y-8">
-          <FloatInPlace className="max-w-screen-md mx-auto text-center text-4xl md:text-6xl font-thin leading-tight">
-            <h1 className="">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ </h1>
-          </FloatInPlace>
-
-          <p
+          <div
             className="lux-text-panel max-w-screen-sm mx-auto text-md flex-col flex"
             dir="rtl"
           >
-            <span className="text-primary text-2xl font-bold leading-relaxed">
+            <FloatInPlace className="mx-auto mb-8 text-center text-[1.95rem] font-thin leading-tight sm:text-4xl md:text-6xl">
+              <span className="block whitespace-nowrap">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</span>
+            </FloatInPlace>
+
+            <span className="text-primary text-xl font-bold leading-relaxed sm:text-2xl">
               رَبَّنَا إِنَّنَا سَمِعْنَا مُنَادِيًا يُنَادِي لِلْإِيمَانِ أَنْ
               آمِنُوا بِرَبِّكُمْ فَآمَنَّا رَبَّنَا فَاغْفِرْ لَنَا ذُنُوبَنَا
               وَكَفِّرْ عَنَّا سَيِّئَاتِنَا وَتَوَفَّنَا مَعَ الْأَبْرَارِ
@@ -28,7 +28,7 @@ export const HeroSection = () => {
             <span className="text-muted-foreground text-xs pt-4">
               (سوره مبارکه آل عمران آیه شریفه ۱۹۳)
             </span>
-          </p>
+          </div>
 
           <hr className="soft-divider w-full" />
 

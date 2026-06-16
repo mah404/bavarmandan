@@ -14,8 +14,8 @@ export const BenefitsSection = () => {
           dir="rtl"
         >
           <div className="mb-5 h-1 w-16 rounded-full bg-primary" />
-          <h2 className="text-4xl font-extrabold leading-[1.7] text-primary md:text-5xl">
-            <span className="text-2xl align-super">*</span>
+          <h2 className="whitespace-nowrap text-[2rem] font-extrabold leading-[1.7] text-primary sm:text-4xl md:text-5xl">
+            <span className="text-xl align-super sm:text-2xl">*</span>
             محتوای صوتی و نوشتاری
           </h2>
           <p className="mt-3 max-w-2xl text-xl leading-9 text-muted-foreground md:text-2xl">
@@ -28,17 +28,17 @@ export const BenefitsSection = () => {
             <FeaturesSection />
           </div>
 
-          <MotionList className="order-1 grid gap-5 sm:grid-cols-2 lg:order-2">
-            <MotionItem>
+          <MotionList className="order-1 grid auto-rows-fr gap-5 sm:grid-cols-2 lg:order-2">
+            <MotionItem className="h-full">
               <BenefitMaktobat />
             </MotionItem>
-            <MotionItem>
+            <MotionItem className="h-full">
               <BenefitTajrid />
             </MotionItem>
-            <MotionItem>
+            <MotionItem className="h-full">
               <BenefitAkhlaq />
             </MotionItem>
-            <MotionItem>
+            <MotionItem className="h-full">
               <BenefitsCard />
             </MotionItem>
           </MotionList>

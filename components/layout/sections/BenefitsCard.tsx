@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { audioGroups } from "@/data/content";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
+import { HeartHandshake } from "lucide-react";
 
 export const BenefitsCard = () => {
   const SHEET_ID = "benefitsCard";
@@ -104,17 +105,24 @@ const scrollToId = async (id: string, tries = 20) => {
 
   return (
     <>
-      <HoverLift>
+      <HoverLift className="h-full">
       <Card
         onClick={() => {
           fetchDescription();
           setOpen(true);
         }}
-        className="service-tile group flex min-h-[178px] cursor-pointer flex-col justify-between"
+        className="service-tile group flex h-full min-h-[168px] cursor-pointer flex-col justify-between"
       >
-        <h3 className="pt-8 text-right text-3xl font-bold leading-[3rem] text-foreground">
-          مباحث اخلاقی
-        </h3>
+        <div className="service-tile-header">
+          <span className="service-tile-kicker">اخلاق</span>
+          <span className="service-tile-mark" aria-hidden="true">
+            <HeartHandshake className="size-5" />
+          </span>
+        </div>
+        <div className="service-tile-copy">
+          <h3>مباحث اخلاقی</h3>
+          <p>گفتارها و فایل‌های صوتی</p>
+        </div>
       </Card>
       </HoverLift>
 
