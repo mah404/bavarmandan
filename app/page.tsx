@@ -5,15 +5,14 @@ import { FooterSection } from "@/components/layout/sections/footer";
 import { HeroSection } from "@/components/layout/sections/hero";
 import { ServicesSection } from "@/components/layout/sections/services";
 
-
 export const metadata = {
   title: "مجمع باورمندان کلاب هاوس",
   description: "تارنما مجمع باورمندان کلاب هاوس",
   openGraph: {
     type: "website",
     url: "https://www.bavarmandan.com/",
-    title:"مجمع باورمندان",
-    
+    title: "مجمع باورمندان",
+
     description: "تارنما مجمع باورمندان کلاب هاوس",
     images: [
       {
