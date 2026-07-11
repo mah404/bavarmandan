@@ -25,7 +25,7 @@ interface ServiceProps {
 
 const serviceList: ServiceProps[] = [
   {
-    title: "تلگرام مجمع باورمندان کلاب هاوس",
+    title: "تلگرام مجمع باورمندان  ",
     description: "کانال اطلاع رسانی برنامه ها و جلسات مجمع",
     link: "https://t.me/bavarmandan110",
     icon: Send,
