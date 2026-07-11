@@ -40,6 +40,12 @@ const socialLinks = [
     icon: "/telegramicon.png",
     alt: "telegram",
   },
+  {
+    label: "بله",
+    href: "https://web.bale.ai/chat?uid=4670553549",
+    icon: "/bale.png",
+    alt: "bale",
+  },
 ];
 
 export const FooterSection = () => {
