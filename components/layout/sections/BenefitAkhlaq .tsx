@@ -31,6 +31,11 @@ import { HoverLift, MotionItem, MotionList } from "./reveal";
 
 export const BenefitAkhlaq = () => {
   const SHEET_ID = "akhlagh";
+  const beliefSessionOne = {
+    title: "جلسه اول",
+    description: "اصول عقاید شیعه",
+    url: "https://www.dropbox.com/scl/fi/0wwiv0ykckisbnjc41a5j/1.mp3?rlkey=oexig7hcnxxyiy71ntve7i9b2&st=uzfwso1x&dl=0",
+  };
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -48,6 +53,9 @@ export const BenefitAkhlaq = () => {
 
   const toDownloadUrl = (u: string) =>
     u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
+
+  const toStreamable = (u: string) =>
+    u ? u.replace(/([?&])raw=1/, "$1raw=1").replace(/([?&])dl=0/, "$1raw=1") : u;
 
   const fetchDescription = async () => {
     setLoading(true);
@@ -141,8 +149,39 @@ export const BenefitAkhlaq = () => {
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="justify-center mt-2 text-center">
-                  <div className="motion-list-item py-6 text-center text-sm font-semibold text-muted-foreground">
-                    فایل بارگذاری خواهد شد
+                  <div className="motion-list-item">
+                    <div className="font-semibold mb-3 text-primary">
+                      {beliefSessionOne.description} - {beliefSessionOne.title}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                      <Button
+                        onClick={() =>
+                          play({
+                            title: beliefSessionOne.title,
+                            url: toStreamable(beliefSessionOne.url),
+                            description: beliefSessionOne.description,
+                          })
+                        }
+                        className="w-full sm:w-auto text-card"
+                      >
+                        پخش
+                      </Button>
+
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="w-full sm:w-auto"
+                      >
+                        <a
+                          href={toDownloadUrl(beliefSessionOne.url)}
+                          download="اصول-عقاید-شیعه-جلسه-اول.mp3"
+                          rel="noopener noreferrer"
+                        >
+                          دانلود
+                        </a>
+                      </Button>
+                    </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
