@@ -28,15 +28,18 @@ export const BenefitsSection = () => {
             <FeaturesSection />
           </div>
 
-          <MotionList className="order-1 grid auto-rows-fr gap-5 sm:grid-cols-2 lg:order-2">
+          <MotionList
+            className="order-1 grid auto-rows-fr gap-5 sm:grid-cols-2 lg:order-2"
+            dir="rtl"
+          >
+            <MotionItem className="h-full">
+              <BenefitAkhlaq />
+            </MotionItem>
             <MotionItem className="h-full">
               <BenefitMaktobat />
             </MotionItem>
             <MotionItem className="h-full">
               <BenefitTajrid />
-            </MotionItem>
-            <MotionItem className="h-full">
-              <BenefitAkhlaq />
             </MotionItem>
             <MotionItem className="h-full">
               <BenefitsCard />
