@@ -104,7 +104,7 @@ export const BenefitAkhlaq = () => {
           </span>
         </div>
         <div className="service-tile-copy">
-          <h3>مباحث اعتقادی</h3>
+          <h3>اصول عقاید</h3>
           <p>مجموعه گفتارهای اعتقادی</p>
         </div>
       </Card>
@@ -113,7 +113,7 @@ export const BenefitAkhlaq = () => {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent className="h-dvh overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>مباحث اعتقادی</SheetTitle>
+            <SheetTitle>اصول عقاید</SheetTitle>
             <SheetDescription className="mb-4"></SheetDescription>
           </SheetHeader>
 
@@ -131,6 +131,22 @@ export const BenefitAkhlaq = () => {
               value={accordionValue}
               onValueChange={setAccordionValue}
             >
+              <AccordionItem value="belief">
+                <AccordionTrigger className="text-right">
+                  <span className="flex flex-col items-start gap-1">
+                    <span>باورداشت</span>
+                    <span className="text-sm font-medium leading-6 text-muted-foreground">
+                      بیان ساده از عقاید شیعه
+                    </span>
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="justify-center mt-2 text-center">
+                  <div className="motion-list-item py-6 text-center text-sm font-semibold text-muted-foreground">
+                    فایل بارگذاری خواهد شد
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
               <AccordionItem value="group-1">
                 <AccordionTrigger className=""> مع الصادقین </AccordionTrigger>
                 <AccordionContent className="justify-center mt-2 text-center">
@@ -151,12 +167,11 @@ export const BenefitAkhlaq = () => {
                       </div>
 
                       <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                        {/* Play */}
                         <Button
                           onClick={() =>
                             play({
                               title: file.title,
-                              url: file.url, // assumes streamable URL
+                              url: file.url,
                               description: file.description,
                             })
                           }
@@ -165,7 +180,6 @@ export const BenefitAkhlaq = () => {
                           پخش
                         </Button>
 
-                        {/* Download */}
                         <Button
                           asChild
                           variant="outline"
