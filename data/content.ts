@@ -3,6 +3,22 @@ export type AudioGroup = {
   files: { title: string; url: string; createdAt?: string }[];
 };
 
+export type BeliefAudio = {
+  title: string;
+  description: string;
+  url: string;
+  createdAt?: string;
+};
+
+export const beliefAudios: BeliefAudio[] = [
+  {
+    title: "جلسه اول",
+    description: "اصول عقاید شیعه - جلسه اول",
+    url: "https://www.dropbox.com/scl/fi/0wwiv0ykckisbnjc41a5j/1.mp3?rlkey=oexig7hcnxxyiy71ntve7i9b2&st=uzfwso1x&dl=0",
+    createdAt: "2025-12-28T12:00:00Z",
+  },
+];
+
 export const audioGroups: AudioGroup[] = [
   {
     subject: "لذت در عبادت",

@@ -1,4 +1,5 @@
 import {
+  beliefAudios,
   audioGroups,
   audioFilessadeghin,
   audioFilesnew,
@@ -25,6 +26,18 @@ function safeTime(iso: string) {
 
 export function getLatestAudios(limit = 5): LatestAudio[] {
   const merged: LatestAudio[] = [
+    ...beliefAudios
+      .filter((x) => !!x.createdAt)
+      .map((x, i) => ({
+        title: x.title,
+        url: x.url,
+        createdAt: x.createdAt!,
+        description: x.description,
+        sheetId: "akhlagh",
+        accordionValue: "belief",
+        itemDomId: `audio-akhlagh-belief-${i}`,
+      })),
+
 ...audioGroups.flatMap((group, groupIndex) =>
   group.files.flatMap((f, fileIndex) => {
     if (!f.createdAt) return [];

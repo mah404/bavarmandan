@@ -21,6 +21,7 @@ import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
 import { Landmark } from "lucide-react";
 import {
+  beliefAudios,
   audioFilessadeghin,
   audioFilesnew,
   audioFiles,
@@ -31,11 +32,6 @@ import { HoverLift, MotionItem, MotionList } from "./reveal";
 
 export const BenefitAkhlaq = () => {
   const SHEET_ID = "akhlagh";
-  const beliefSessionOne = {
-    title: "جلسه اول",
-    description: "اصول عقاید شیعه",
-    url: "https://www.dropbox.com/scl/fi/0wwiv0ykckisbnjc41a5j/1.mp3?rlkey=oexig7hcnxxyiy71ntve7i9b2&st=uzfwso1x&dl=0",
-  };
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -149,40 +145,53 @@ export const BenefitAkhlaq = () => {
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="justify-center mt-2 text-center">
-                  <div className="motion-list-item">
-                    <div className="font-semibold mb-3 text-primary">
-                      {beliefSessionOne.description} - {beliefSessionOne.title}
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                      <Button
-                        onClick={() =>
-                          play({
-                            title: beliefSessionOne.title,
-                            url: toStreamable(beliefSessionOne.url),
-                            description: beliefSessionOne.description,
-                          })
-                        }
-                        className="w-full sm:w-auto text-card"
+                  <MotionList className="flex flex-col gap-3">
+                    {beliefAudios.map((file, i) => (
+                      <MotionItem
+                        id={`audio-akhlagh-belief-${i}`}
+                        key={file.url}
+                        className={[
+                          "motion-list-item transition",
+                          highlightId === `audio-akhlagh-belief-${i}`
+                            ? "nav-highlight border"
+                            : "",
+                        ].join(" ")}
                       >
-                        پخش
-                      </Button>
+                        <div className="font-semibold mb-3 text-primary">
+                          {file.description}
+                        </div>
 
-                      <Button
-                        asChild
-                        variant="outline"
-                        className="w-full sm:w-auto"
-                      >
-                        <a
-                          href={toDownloadUrl(beliefSessionOne.url)}
-                          download="اصول-عقاید-شیعه-جلسه-اول.mp3"
-                          rel="noopener noreferrer"
-                        >
-                          دانلود
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
+                        <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                          <Button
+                            onClick={() =>
+                              play({
+                                title: file.title,
+                                url: toStreamable(file.url),
+                                description: file.description,
+                              })
+                            }
+                            className="w-full sm:w-auto text-card"
+                          >
+                            پخش
+                          </Button>
+
+                          <Button
+                            asChild
+                            variant="outline"
+                            className="w-full sm:w-auto"
+                          >
+                            <a
+                              href={toDownloadUrl(file.url)}
+                              download="اصول-عقاید-شیعه-جلسه-اول.mp3"
+                              rel="noopener noreferrer"
+                            >
+                              دانلود
+                            </a>
+                          </Button>
+                        </div>
+                      </MotionItem>
+                    ))}
+                  </MotionList>
                 </AccordionContent>
               </AccordionItem>
 
