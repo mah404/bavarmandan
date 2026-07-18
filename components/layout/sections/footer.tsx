@@ -87,21 +87,21 @@ export const FooterSection = () => {
             </MotionList>
 
             <MotionList
-              className="mt-5 grid w-full grid-cols-2 items-center gap-3 rounded-2xl border border-secondary/35 bg-background/10 p-3 backdrop-blur sm:w-auto sm:max-w-none sm:flex sm:flex-wrap sm:justify-center sm:gap-2.5 sm:p-2"
+              className="mt-5 grid w-full grid-cols-2 items-center gap-x-3 gap-y-4 rounded-2xl border border-secondary/35 bg-background/10 p-3 backdrop-blur sm:w-auto sm:max-w-none sm:flex sm:flex-wrap sm:justify-center sm:gap-2.5 sm:p-2"
               delay={0.14}
               dir="rtl"
             >
               {socialLinks.map(({ label, href, icon, alt }) => (
-                <MotionItem key={label}>
-                  <MotionButton>
+                <MotionItem key={label} className="w-full sm:w-auto">
+                  <MotionButton className="w-full sm:w-auto">
                     <Link
                       href={href}
-                      className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-transparent bg-card/25 px-3 py-2 text-sm font-bold text-foreground transition duration-300 hover:border-primary/40 hover:bg-card/60 hover:text-primary sm:w-auto"
+                      className="group inline-flex h-14 w-full items-center justify-start gap-2 rounded-xl border border-transparent bg-card/25 px-3 text-sm font-bold text-foreground transition duration-300 hover:border-primary/40 hover:bg-card/60 hover:text-primary sm:h-auto sm:w-auto sm:justify-center sm:py-2"
                     >
                       <span className="grid size-7 place-items-center rounded-lg bg-background/25 transition duration-300 group-hover:bg-primary/10">
                         <Image src={icon} alt={alt} width={16} height={16} />
                       </span>
-                      <span>{label}</span>
+                      <span className="text-right leading-none">{label}</span>
                     </Link>
                   </MotionButton>
                 </MotionItem>
