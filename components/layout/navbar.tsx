@@ -15,6 +15,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ToggleTheme } from "./toogle-theme";
 import { motion, useReducedMotion } from "framer-motion";
+import { PWAInstallButton } from "../pwa-install-button";
 
 interface RouteProps {
   href: string;
@@ -153,6 +154,20 @@ export const Navbar = () => {
 
               <SheetFooter className="flex-col items-start justify-start sm:flex-col">
                 <Separator className="mb-3" />
+                <PWAInstallButton
+                  fullWidth
+                  label="اپلیکیشن باورمندان"
+                  icon={
+                    <Image
+                      src="/mainicon.jpg"
+                      alt="اپلیکیشن باورمندان"
+                      width={28}
+                      height={28}
+                      className="size-7 rounded-md border border-primary/35 object-cover"
+                    />
+                  }
+                  className="mb-3 border-primary/70 bg-card/45 text-foreground hover:bg-card/70 hover:text-primary dark:bg-card/35 dark:text-foreground"
+                />
                 <ToggleTheme />
               </SheetFooter>
             </SheetContent>

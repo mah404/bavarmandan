@@ -121,7 +121,7 @@ export const FooterSection = () => {
                         className="size-6 rounded-md border border-primary/35 object-cover"
                       />
                     }
-                    className="border-primary/55 bg-card/35 text-foreground hover:bg-card/65 hover:text-primary dark:bg-card/35 dark:text-foreground"
+                    className="border-primary/70 bg-card/45 text-foreground hover:bg-card/70 hover:text-primary dark:bg-card/35 dark:text-foreground"
                   />
                 </MotionButton>
               </MotionItem>
@@ -139,7 +139,7 @@ export const FooterSection = () => {
                     className="size-7 rounded-md border border-primary/35 object-cover"
                   />
                 }
-                className="h-11 border-primary bg-[#0b2f2a] px-5 text-[#9ce8d7] ring-1 ring-primary/35 hover:bg-[#0f3a34] dark:bg-[#0b2f2a] dark:text-[#9ce8d7]"
+                className="h-11 border-primary bg-card/55 px-5 text-foreground ring-1 ring-primary/35 hover:bg-card/75 hover:text-primary dark:bg-[#0b2f2a] dark:text-[#9ce8d7] dark:hover:bg-[#0f3a34]"
               />
             </MotionButton>
 
