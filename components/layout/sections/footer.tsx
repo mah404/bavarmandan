@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
+import { PWAInstallButton } from "@/components/pwa-install-button";
 import {
   FloatInPlace,
   MotionButton,
@@ -86,7 +87,7 @@ export const FooterSection = () => {
             </MotionList>
 
             <MotionList
-              className="mt-5 flex flex-wrap items-center justify-center gap-2.5 rounded-2xl border border-secondary/35 bg-background/10 p-2 backdrop-blur"
+              className="mt-5 grid w-full grid-cols-2 items-center gap-3 rounded-2xl border border-secondary/35 bg-background/10 p-3 backdrop-blur sm:w-auto sm:max-w-none sm:flex sm:flex-wrap sm:justify-center sm:gap-2.5 sm:p-2"
               delay={0.14}
               dir="rtl"
             >
@@ -95,7 +96,7 @@ export const FooterSection = () => {
                   <MotionButton>
                     <Link
                       href={href}
-                      className="group inline-flex items-center gap-2 rounded-xl border border-transparent bg-card/25 px-3 py-2 text-sm font-bold text-foreground transition duration-300 hover:border-primary/40 hover:bg-card/60 hover:text-primary"
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-transparent bg-card/25 px-3 py-2 text-sm font-bold text-foreground transition duration-300 hover:border-primary/40 hover:bg-card/60 hover:text-primary sm:w-auto"
                     >
                       <span className="grid size-7 place-items-center rounded-lg bg-background/25 transition duration-300 group-hover:bg-primary/10">
                         <Image src={icon} alt={alt} width={16} height={16} />
@@ -105,7 +106,42 @@ export const FooterSection = () => {
                   </MotionButton>
                 </MotionItem>
               ))}
+
+              <MotionItem className="col-span-2 flex justify-center sm:hidden">
+                <MotionButton className="w-full max-w-xs">
+                  <PWAInstallButton
+                    fullWidth
+                    label="اپلیکیشن باورمندان"
+                    icon={
+                      <Image
+                        src="/mainicon.jpg"
+                        alt="اپلیکیشن باورمندان"
+                        width={22}
+                        height={22}
+                        className="size-6 rounded-md border border-primary/35 object-cover"
+                      />
+                    }
+                    className="border-primary/55 bg-card/35 text-foreground hover:bg-card/65 hover:text-primary dark:bg-card/35 dark:text-foreground"
+                  />
+                </MotionButton>
+              </MotionItem>
             </MotionList>
+
+            <MotionButton className="mt-5 hidden sm:block">
+              <PWAInstallButton
+                label="اپلیکیشن باورمندان"
+                icon={
+                  <Image
+                    src="/mainicon.jpg"
+                    alt="اپلیکیشن باورمندان"
+                    width={28}
+                    height={28}
+                    className="size-7 rounded-md border border-primary/35 object-cover"
+                  />
+                }
+                className="h-11 border-primary bg-[#0b2f2a] px-5 text-[#9ce8d7] ring-1 ring-primary/35 hover:bg-[#0f3a34] dark:bg-[#0b2f2a] dark:text-[#9ce8d7]"
+              />
+            </MotionButton>
 
             <MotionButton className="mt-5">
               <Link

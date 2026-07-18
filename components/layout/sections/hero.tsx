@@ -1,6 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { PWAInstallButton } from "@/components/pwa-install-button";
 import Link from "next/link";
+import Image from "next/image";
 import { FloatInPlace, MotionButton, Reveal } from "./reveal";
 
 export const HeroSection = () => {
@@ -87,6 +89,22 @@ export const HeroSection = () => {
                 />
               </Link>
             </Button>
+            </MotionButton>
+
+            <MotionButton className="w-5/6 md:w-auto">
+              <PWAInstallButton
+                label="اپلیکیشن باورمندان"
+                icon={
+                  <Image
+                    src="/mainicon.jpg"
+                    alt="اپلیکیشن باورمندان"
+                    width={28}
+                    height={28}
+                    className="size-7 rounded-md border border-primary/35 object-cover"
+                  />
+                }
+                className="modern-action h-11 w-full border-primary bg-[#0b2f2a] text-[#9ce8d7] ring-1 ring-primary/35 hover:bg-[#0f3a34] dark:bg-[#0b2f2a] dark:text-[#9ce8d7]"
+              />
             </MotionButton>
           </div>
         </Reveal>

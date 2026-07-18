@@ -92,6 +92,20 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <Script
+          id="pwa-install-prompt-capture"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.__bavarmandanInstallPrompt = null;
+              window.addEventListener("beforeinstallprompt", function(event) {
+                event.preventDefault();
+                window.__bavarmandanInstallPrompt = event;
+                window.dispatchEvent(new Event("bavarmandan-pwa-install-ready"));
+              });
+            `,
+          }}
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@100..800&display=swap"
           rel="stylesheet"
