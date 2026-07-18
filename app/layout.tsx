@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Vazirmatn } from "next/font/google";
 import Script from "next/script";
+import { Suspense } from "react";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
+import { PWAInstallIntent } from "@/components/pwa-install-intent";
 import { Providers } from "./providers";
 
 const siteUrl = "https://www.bavarmandan.com";
@@ -161,6 +163,9 @@ export default function RootLayout({
             <AudioPlayerProvider>
               <Navbar />
               {children}
+              <Suspense fallback={null}>
+                <PWAInstallIntent />
+              </Suspense>
             </AudioPlayerProvider>
           </Providers>
         </ThemeProvider>
