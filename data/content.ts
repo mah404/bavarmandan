@@ -7,6 +7,8 @@ export type BeliefAudio = {
   title: string;
   description: string;
   url: string;
+  points: string[];
+  summaries: { title: string; url: string }[];
   createdAt?: string;
 };
 
@@ -15,6 +17,20 @@ export const beliefAudios: BeliefAudio[] = [
     title: "جلسه اول",
     description: "اصول عقاید شیعه - جلسه اول",
     url: "https://www.dropbox.com/scl/fi/0wwiv0ykckisbnjc41a5j/1.mp3?rlkey=oexig7hcnxxyiy71ntve7i9b2&st=uzfwso1x&dl=0",
+    points: [
+      "توضیحی پیرامون مسیر پیش رو",
+      "اثبات ضرورت بررسی اصول عقاید و ادعا های ادیان",
+    ],
+    summaries: [
+      {
+        title: "قسمت ۱",
+        url: "https://www.dropbox.com/scl/fi/8a9j7rc2ogh3nz0i8dwcb/1.pdf?rlkey=ayxpc90wzslofhormt7jape8b&st=re24knug&dl=0",
+      },
+      {
+        title: "قسمت ۲",
+        url: "https://www.dropbox.com/scl/fi/aefh9d7b8btp0caoporoo/.pdf?rlkey=zikcj2s06mjhbhi40rdjpcj3v&st=dhkvss8v&dl=0",
+      },
+    ],
     createdAt: "2025-12-28T12:00:00Z",
   },
 ];

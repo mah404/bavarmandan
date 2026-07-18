@@ -8,7 +8,6 @@ import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
 import Script from "next/script";
 import { Providers } from "./providers";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "مجمع باورمندان ",
@@ -86,7 +85,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <Link
+        <link
           href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@100..800&display=swap"
           rel="stylesheet"
         />

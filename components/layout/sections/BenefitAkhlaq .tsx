@@ -19,7 +19,7 @@ import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
-import { Landmark } from "lucide-react";
+import { ChevronDown, Landmark } from "lucide-react";
 import {
   beliefAudios,
   audioFilessadeghin,
@@ -36,6 +36,9 @@ export const BenefitAkhlaq = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [accordionValue, setAccordionValue] = useState<string | undefined>();
+  const [openBeliefSession, setOpenBeliefSession] = useState<string | null>(
+    "belief-session-0"
+  );
 
   const { play } = useAudioPlayer();
   const { target, clear } = useSheetNav();
@@ -52,6 +55,16 @@ export const BenefitAkhlaq = () => {
 
   const toStreamable = (u: string) =>
     u ? u.replace(/([?&])raw=1/, "$1raw=1").replace(/([?&])dl=0/, "$1raw=1") : u;
+
+  const toDirectDropboxUrl = (u: string) => {
+    if (!u.includes("dropbox.com")) return u;
+    const direct = u
+      .replace("www.dropbox.com", "dl.dropboxusercontent.com")
+      .replace(/([?&])(dl|raw)=[01]/g, "")
+      .replace(/[?&]$/, "");
+
+    return direct + (direct.includes("?") ? "&raw=1" : "?raw=1");
+  };
 
   const fetchDescription = async () => {
     setLoading(true);
@@ -145,53 +158,176 @@ export const BenefitAkhlaq = () => {
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="justify-center mt-2 text-center">
-                  <MotionList className="flex flex-col gap-3">
+                  <div className="flex w-full flex-col gap-1">
                     {beliefAudios.map((file, i) => (
-                      <MotionItem
+                      <div
                         id={`audio-akhlagh-belief-${i}`}
                         key={file.url}
                         className={[
-                          "motion-list-item transition",
+                          "border-b border-secondary bg-card/70 dark:bg-card px-4 my-3 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40",
                           highlightId === `audio-akhlagh-belief-${i}`
-                            ? "nav-highlight border"
+                            ? "nav-highlight"
                             : "",
                         ].join(" ")}
                       >
-                        <div className="font-semibold mb-3 text-primary">
-                          {file.description}
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOpenBeliefSession((current) =>
+                              current === `belief-session-${i}`
+                                ? null
+                              : `belief-session-${i}`
+                            )
+                          }
+                          className="flex w-full items-center justify-between gap-4 py-4 text-right text-sm font-semibold text-muted-foreground transition-all hover:text-primary"
+                        >
+                          <span>{file.title}</span>
+                          <ChevronDown
+                            className={[
+                              "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+                              openBeliefSession === `belief-session-${i}`
+                                ? "rotate-180"
+                                : "",
+                            ].join(" ")}
+                          />
+                        </button>
 
-                        <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                          <Button
-                            onClick={() =>
-                              play({
-                                title: file.title,
-                                url: toStreamable(file.url),
-                                description: file.description,
-                              })
-                            }
-                            className="w-full sm:w-auto text-card"
-                          >
-                            پخش
-                          </Button>
-
-                          <Button
-                            asChild
-                            variant="outline"
-                            className="w-full sm:w-auto"
-                          >
-                            <a
-                              href={toDownloadUrl(file.url)}
-                              download="اصول-عقاید-شیعه-جلسه-اول.mp3"
-                              rel="noopener noreferrer"
+                        {openBeliefSession === `belief-session-${i}` ? (
+                          <div className="pb-4 pt-0">
+                            <div
+                              className="motion-list-item space-y-2 text-right text-sm font-semibold leading-7 text-primary"
+                              dir="rtl"
                             >
-                              دانلود
-                            </a>
-                          </Button>
-                        </div>
-                      </MotionItem>
+                              {file.points.map((point, index) => (
+                                <p key={point}>
+                                  {index + 1}- {point}
+                                </p>
+                              ))}
+                            </div>
+
+                            <div className="motion-list-item mt-3 text-center">
+                              <p className="mb-2 text-sm font-semibold text-primary">
+                                🎧 پخش صوت
+                              </p>
+
+                              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    play({
+                                      title: file.title,
+                                      url: toStreamable(file.url),
+                                      description: file.description,
+                                    })
+                                  }
+                                  className="w-full sm:w-auto text-card"
+                                >
+                                  پخش
+                                </Button>
+
+                                <Button
+                                  asChild
+                                  size="sm"
+                                  variant="outline"
+                                  className="w-full sm:w-auto"
+                                >
+                                  <a
+                                    href={toDownloadUrl(file.url)}
+                                    download="اصول-عقاید-شیعه-جلسه-اول.mp3"
+                                    rel="noopener noreferrer"
+                                  >
+                                    دانلود صوت
+                                  </a>
+                                </Button>
+                              </div>
+                            </div>
+
+                            <div className="mt-4 text-right" dir="rtl">
+                              <p className="mb-3 text-sm font-bold text-primary">
+                                خلاصه متن محتوا
+                              </p>
+
+                              <div className="flex flex-col gap-3">
+                                {file.summaries.map((summary) => (
+                                  <div
+                                    key={summary.url}
+                                    className="motion-list-item"
+                                  >
+                                    <p className="mb-2 text-sm font-semibold text-primary">
+                                      {summary.title}
+                                    </p>
+
+                                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="w-full sm:w-auto"
+                                        onClick={() =>
+                                          window.open(
+                                            `/api/pdf-view?url=${encodeURIComponent(
+                                              toDirectDropboxUrl(summary.url)
+                                            )}`,
+                                            "_blank"
+                                          )
+                                        }
+                                      >
+                                        مشاهده
+                                      </Button>
+
+                                      <Button
+                                        asChild
+                                        size="sm"
+                                        className="w-full sm:w-auto text-card"
+                                      >
+                                        <a
+                                          href={toDownloadUrl(summary.url)}
+                                          download={`${summary.title}.pdf`}
+                                          rel="noopener noreferrer"
+                                        >
+                                          دانلود
+                                        </a>
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
                     ))}
-                  </MotionList>
+                    <div className="border-b border-secondary bg-card/70 dark:bg-card px-4 my-3 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpenBeliefSession((current) =>
+                            current === "belief-session-1"
+                              ? null
+                              : "belief-session-1"
+                          )
+                        }
+                        className="flex w-full items-center justify-between gap-4 py-4 text-right text-sm font-semibold text-muted-foreground transition-all hover:text-primary"
+                      >
+                        <span>جلسه دوم</span>
+                        <ChevronDown
+                          className={[
+                            "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+                            openBeliefSession === "belief-session-1"
+                              ? "rotate-180"
+                              : "",
+                          ].join(" ")}
+                        />
+                      </button>
+
+                      {openBeliefSession === "belief-session-1" ? (
+                        <div className="pb-4 pt-0">
+                          <div className="motion-list-item py-5 text-center text-sm font-semibold text-muted-foreground">
+                            به زودی
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
                 </AccordionContent>
               </AccordionItem>
 
