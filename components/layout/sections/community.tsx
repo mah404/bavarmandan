@@ -95,7 +95,7 @@ export const CommunitySection = () => {
               پیام‌رسان تلگرام
               <Link
                 className="text-yellow-300 pl-1 pr-1"
-                href="https://t.me/bavarmandanBot"
+                href="https://t.me/bavarmandan_bot"
               >
                 (آدرس مندرج)
               </Link>

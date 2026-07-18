@@ -310,16 +310,18 @@ body {
         box-shadow: 0 6px 16px hsl(var(--primary) / 0.24);
     }
     .audio-player-shell {
-        background: oklch(90% 0.055 181.912);
+        background: hsl(var(--background) / 0.74);
         color: hsl(var(--foreground));
         border-color: hsl(var(--primary) / 0.45);
-        box-shadow: 0 18px 54px oklch(42% 0.08 181.912 / 0.2);
+        box-shadow: 0 18px 54px oklch(42% 0.08 181.912 / 0.18);
+        backdrop-filter: blur(18px) saturate(1.18);
+        -webkit-backdrop-filter: blur(18px) saturate(1.18);
     }
     .audio-player-muted {
         color: hsl(var(--muted-foreground));
     }
     .dark .audio-player-shell {
-        background: #082b26;
+        background: hsl(var(--background) / 0.78);
         color: hsl(var(--foreground));
         border-color: hsl(var(--primary) / 0.25);
         box-shadow: 0 18px 54px rgba(0, 0, 0, 0.24);
