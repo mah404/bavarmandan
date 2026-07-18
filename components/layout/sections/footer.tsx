@@ -118,7 +118,7 @@ export const FooterSection = () => {
                         alt="اپلیکیشن باورمندان"
                         width={22}
                         height={22}
-                        className="size-6 rounded-md border border-primary/35 object-cover"
+                        className="size-6 rounded-full border border-primary/35 object-cover"
                       />
                     }
                     className="border-primary/70 bg-card/45 text-foreground hover:bg-card/70 hover:text-primary dark:bg-card/35 dark:text-foreground"
@@ -136,7 +136,7 @@ export const FooterSection = () => {
                     alt="اپلیکیشن باورمندان"
                     width={28}
                     height={28}
-                    className="size-7 rounded-md border border-primary/35 object-cover"
+                    className="size-7 rounded-full border border-primary/35 object-cover"
                   />
                 }
                 className="h-11 border-primary bg-card/55 px-5 text-foreground ring-1 ring-primary/35 hover:bg-card/75 hover:text-primary dark:bg-[#0b2f2a] dark:text-[#9ce8d7] dark:hover:bg-[#0f3a34]"

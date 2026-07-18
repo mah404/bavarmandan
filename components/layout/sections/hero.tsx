@@ -100,7 +100,7 @@ export const HeroSection = () => {
                     alt="اپلیکیشن باورمندان"
                     width={28}
                     height={28}
-                    className="size-7 rounded-md border border-primary/35 object-cover"
+                    className="size-7 rounded-full border border-primary/35 object-cover"
                   />
                 }
                 className="modern-action h-11 w-full border-primary bg-card/55 text-foreground ring-1 ring-primary/35 hover:bg-card/75 hover:text-primary dark:bg-[#0b2f2a] dark:text-[#9ce8d7] dark:hover:bg-[#0f3a34]"

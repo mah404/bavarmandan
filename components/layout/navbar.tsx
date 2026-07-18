@@ -68,7 +68,7 @@ export const Navbar = () => {
             alt="Bavarmandan"
             width={44}
             height={44}
-            className="size-11 rounded-lg border border-primary/40 object-cover shadow-sm transition duration-300 group-hover:scale-105"
+            className="size-11 rounded-full border border-primary/40 object-cover shadow-sm transition duration-300 group-hover:scale-105"
           />
           <span className="hidden text-right sm:block">
             <span className="block text-base font-extrabold leading-5 text-foreground">
@@ -105,7 +105,7 @@ export const Navbar = () => {
               <button
                 type="button"
                 aria-label="Open navigation"
-                className="grid size-11 place-items-center rounded-lg border border-primary/25 text-primary transition duration-300 hover:border-primary/50 hover:bg-primary/10"
+                className="grid size-11 place-items-center rounded-full border border-primary/25 text-primary transition duration-300 hover:border-primary/50 hover:bg-primary/10"
               >
                 <Menu className="size-6" />
               </button>
@@ -128,7 +128,7 @@ export const Navbar = () => {
                         alt="Bavarmandan"
                         width={44}
                         height={44}
-                        className="size-11 shrink-0 rounded-lg border border-primary/40 object-cover"
+                        className="size-11 shrink-0 rounded-full border border-primary/40 object-cover"
                       />
                       <span className="min-w-0 text-right text-lg font-extrabold leading-8">
                         مجمع باورمندان 
@@ -163,10 +163,10 @@ export const Navbar = () => {
                       alt="اپلیکیشن باورمندان"
                       width={28}
                       height={28}
-                      className="size-7 rounded-md border border-primary/35 object-cover"
+                      className="size-7 rounded-full border border-primary/35 object-cover"
                     />
                   }
-                  className="mb-3 border-primary/70 bg-card/45 text-foreground hover:bg-card/70 hover:text-primary dark:bg-card/35 dark:text-foreground"
+                  className="mb-3 rounded-lg border-primary/70 bg-card/45 text-foreground hover:bg-card/70 hover:text-primary dark:bg-card/35 dark:text-foreground"
                 />
                 <ToggleTheme />
               </SheetFooter>

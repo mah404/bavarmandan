@@ -63,7 +63,7 @@ export const ToggleTheme = () => {
       variant="ghost"
       disabled={isTransitioning}
       aria-label="تغییر حالت رنگ"
-      className="w-full justify-start rounded-lg border border-primary/20 bg-background/15 px-4 transition-all duration-300 hover:border-primary/45 hover:bg-primary/10 disabled:opacity-100 lg:size-11 lg:justify-center lg:p-0"
+      className="w-full justify-start rounded-lg border border-primary/20 bg-background/15 px-4 transition-all duration-300 hover:border-primary/45 hover:bg-primary/10 disabled:opacity-100 lg:size-11 lg:rounded-full lg:justify-center lg:p-0"
     >
       <div className="flex gap-2 dark:hidden">
         <Moon className="size-5" />
