@@ -42,7 +42,6 @@ export function PWAInstallIntent() {
 
     const handleAppInstalled = () => {
       track("pwa_installed_from_install_link");
-      recordPwaEvent("pwa_installed_from_install_link");
       window.__bavarmandanInstallPrompt = null;
       setInstallPrompt(null);
       setIsStandalone(true);
@@ -65,7 +64,6 @@ export function PWAInstallIntent() {
   useEffect(() => {
     if (searchParams?.get("install") === "1" && !isStandalone) {
       track("pwa_install_link_opened");
-      recordPwaEvent("pwa_install_link_opened");
       setOpen(true);
     }
   }, [isStandalone, searchParams]);
@@ -74,12 +72,13 @@ export function PWAInstallIntent() {
 
   const installApp = async () => {
     track("pwa_install_link_button_clicked");
-    recordPwaEvent("pwa_install_link_button_clicked");
+    recordPwaEvent("pwa_install_button_clicked", {
+      source: "install_link_modal",
+    });
     const promptEvent = installPrompt ?? window.__bavarmandanInstallPrompt;
 
     if (!promptEvent) {
       track("pwa_install_link_prompt_unavailable");
-      recordPwaEvent("pwa_install_link_prompt_unavailable");
       setShowGuide(true);
       if (guideTimer.current) window.clearTimeout(guideTimer.current);
       guideTimer.current = window.setTimeout(() => setShowGuide(false), 7000);
@@ -89,10 +88,6 @@ export function PWAInstallIntent() {
     await promptEvent.prompt();
     const choice = await promptEvent.userChoice;
     track("pwa_install_link_prompt_result", { outcome: choice.outcome });
-    recordPwaEvent("pwa_install_link_prompt_result", {
-      outcome: choice.outcome,
-      platform: choice.platform,
-    });
     window.__bavarmandanInstallPrompt = null;
     setInstallPrompt(null);
     if (choice.outcome === "accepted") setOpen(false);

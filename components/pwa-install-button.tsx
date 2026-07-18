@@ -60,7 +60,6 @@ export function PWAInstallButton({
 
     const handleAppInstalled = () => {
       track("pwa_installed");
-      recordPwaEvent("pwa_installed");
       window.__bavarmandanInstallPrompt = null;
       setInstallPrompt(null);
       setIsStandalone(true);
@@ -88,12 +87,11 @@ export function PWAInstallButton({
 
   const installApp = async () => {
     track("pwa_install_button_clicked");
-    recordPwaEvent("pwa_install_button_clicked");
+    recordPwaEvent("pwa_install_button_clicked", { source: "site_button" });
     const promptEvent = installPrompt ?? window.__bavarmandanInstallPrompt;
 
     if (!promptEvent) {
       track("pwa_install_prompt_unavailable");
-      recordPwaEvent("pwa_install_prompt_unavailable");
       setShowInstallNotice(true);
       if (noticeTimer.current) window.clearTimeout(noticeTimer.current);
       noticeTimer.current = window.setTimeout(() => {
@@ -105,10 +103,6 @@ export function PWAInstallButton({
     await promptEvent.prompt();
     const choice = await promptEvent.userChoice;
     track("pwa_install_prompt_result", { outcome: choice.outcome });
-    recordPwaEvent("pwa_install_prompt_result", {
-      outcome: choice.outcome,
-      platform: choice.platform,
-    });
     window.__bavarmandanInstallPrompt = null;
     setInstallPrompt(null);
   };

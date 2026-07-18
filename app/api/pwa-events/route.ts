@@ -5,18 +5,30 @@ import clientPromise from "@/lib/mongodb";
 
 export const dynamic = "force-dynamic";
 
-const allowedEvents = new Set([
-  "pwa_install_button_clicked",
-  "pwa_install_prompt_unavailable",
-  "pwa_install_prompt_result",
-  "pwa_installed",
-  "pwa_opened_standalone",
-  "pwa_install_link_opened",
-  "pwa_install_link_button_clicked",
-  "pwa_install_link_prompt_unavailable",
-  "pwa_install_link_prompt_result",
-  "pwa_installed_from_install_link",
-]);
+const allowedEvents = new Set(["pwa_install_button_clicked"]);
+
+const berlinTimeZone = "Europe/Berlin";
+
+const getBerlinParts = (date: Date) => {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: berlinTimeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+
+  const value = (type: string) =>
+    parts.find((part) => part.type === type)?.value ?? "00";
+
+  return {
+    dayBerlin: `${value("year")}-${value("month")}-${value("day")}`,
+    timeBerlin: `${value("hour")}:${value("minute")}:${value("second")}`,
+  };
+};
 
 const getClientIp = (request: NextRequest) =>
   request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
@@ -40,6 +52,7 @@ export async function POST(request: NextRequest) {
     const db = client.db();
     const userAgent = request.headers.get("user-agent") ?? "unknown";
     const ip = getClientIp(request);
+    const berlin = getBerlinParts(now);
 
     await db.collection("pwa_events").insertOne({
       event,
@@ -62,7 +75,12 @@ export async function POST(request: NextRequest) {
       userAgent,
       ipHash: hashValue(`${ip}:${process.env.PWA_ANALYTICS_SALT ?? ""}`),
       createdAt: now,
-      day: now.toISOString().slice(0, 10),
+      createdAtUtc: now.toISOString(),
+      createdAtBerlin: `${berlin.dayBerlin} ${berlin.timeBerlin}`,
+      day: berlin.dayBerlin,
+      dayBerlin: berlin.dayBerlin,
+      timeBerlin: berlin.timeBerlin,
+      timezoneServer: berlinTimeZone,
     });
 
     return NextResponse.json({ ok: true });
@@ -113,6 +131,11 @@ export async function GET(request: NextRequest) {
             language: 1,
             timezone: 1,
             createdAt: 1,
+            createdAtUtc: 1,
+            createdAtBerlin: 1,
+            dayBerlin: 1,
+            timeBerlin: 1,
+            timezoneServer: 1,
           },
         }
       )
