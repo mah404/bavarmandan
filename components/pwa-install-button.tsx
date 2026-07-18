@@ -5,6 +5,7 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 
+import { recordPwaEvent } from "@/lib/pwa-events";
 import { cn } from "@/lib/utils";
 
 type BeforeInstallPromptEvent = Event & {
@@ -59,6 +60,7 @@ export function PWAInstallButton({
 
     const handleAppInstalled = () => {
       track("pwa_installed");
+      recordPwaEvent("pwa_installed");
       window.__bavarmandanInstallPrompt = null;
       setInstallPrompt(null);
       setIsStandalone(true);
@@ -86,10 +88,12 @@ export function PWAInstallButton({
 
   const installApp = async () => {
     track("pwa_install_button_clicked");
+    recordPwaEvent("pwa_install_button_clicked");
     const promptEvent = installPrompt ?? window.__bavarmandanInstallPrompt;
 
     if (!promptEvent) {
       track("pwa_install_prompt_unavailable");
+      recordPwaEvent("pwa_install_prompt_unavailable");
       setShowInstallNotice(true);
       if (noticeTimer.current) window.clearTimeout(noticeTimer.current);
       noticeTimer.current = window.setTimeout(() => {
@@ -101,6 +105,10 @@ export function PWAInstallButton({
     await promptEvent.prompt();
     const choice = await promptEvent.userChoice;
     track("pwa_install_prompt_result", { outcome: choice.outcome });
+    recordPwaEvent("pwa_install_prompt_result", {
+      outcome: choice.outcome,
+      platform: choice.platform,
+    });
     window.__bavarmandanInstallPrompt = null;
     setInstallPrompt(null);
   };

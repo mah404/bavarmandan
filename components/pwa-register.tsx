@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { track } from "@vercel/analytics";
 
+import { recordPwaEvent } from "@/lib/pwa-events";
+
 export function PWARegister() {
   useEffect(() => {
     const isStandalone =
@@ -13,6 +15,7 @@ export function PWARegister() {
 
     if (isStandalone) {
       track("pwa_opened_standalone");
+      recordPwaEvent("pwa_opened_standalone");
     }
 
     if (process.env.NODE_ENV !== "production") return;
