@@ -69,7 +69,10 @@ export const BenefitAkhlaq = () => {
   const fetchDescription = async () => {
     setLoading(true);
     try {
-      await fetch("/api/benefit?id=akhlagh").then((r) => r.json());
+      const response = await fetch("/api/benefit?id=akhlagh");
+      if (response.ok) await response.json();
+    } catch {
+      // Description is optional; keep the sheet usable when the endpoint is absent.
     } finally {
       setLoading(false);
     }

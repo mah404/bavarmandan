@@ -11,7 +11,6 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import { Separator } from "../ui/separator";
-import { Button } from "../ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { ToggleTheme } from "./toogle-theme";
@@ -32,6 +31,23 @@ const routeList: RouteProps[] = [
 export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const shouldReduceMotion = useReducedMotion();
+
+  const handleMobileNav = (
+    event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
+    href: string
+  ) => {
+    event.preventDefault();
+    const id = href.replace("#", "");
+    setIsOpen(false);
+
+    window.setTimeout(() => {
+      const target = document.getElementById(id);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.history.pushState(null, "", href);
+      }
+    }, 260);
+  };
 
   return (
     <motion.header
@@ -99,23 +115,22 @@ export const Navbar = () => {
               className="sheet-modern flex flex-col justify-between rounded-r-2xl"
             >
               <div>
-                <SheetHeader className="mb-6">
+                <SheetHeader className="mb-6 pr-14 pt-1">
                   <SheetTitle>
                     <Link
                       href="/"
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3"
-                      dir="rtl"
+                      className="flex min-w-0 flex-row-reverse items-center justify-start gap-3"
                     >
                       <Image
                         src="/mainicon.jpg"
                         alt="Bavarmandan"
                         width={44}
                         height={44}
-                        className="size-11 rounded-lg border border-primary/40 object-cover"
+                        className="size-11 shrink-0 rounded-lg border border-primary/40 object-cover"
                       />
-                      <span className="text-right text-lg font-extrabold">
-                        مجمع باورمندان کلاب هاوس
+                      <span className="min-w-0 text-right text-lg font-extrabold leading-8">
+                        مجمع باورمندان 
                       </span>
                     </Link>
                   </SheetTitle>
@@ -123,18 +138,15 @@ export const Navbar = () => {
 
                 <div className="flex flex-col gap-2" dir="rtl">
                   {routeList.map(({ href, label }) => (
-                    <Button
+                    <button
                       key={href}
-                      onClick={() => setIsOpen(false)}
-                      asChild
-                      variant="ghost"
-                      className="h-12 justify-between rounded-xl border border-secondary/35 bg-card/30 px-4 text-base font-bold transition hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                      type="button"
+                      onClick={(e) => handleMobileNav(e, href)}
+                      className="flex h-12 w-full items-center justify-between rounded-xl border border-secondary/35 bg-card/30 px-4 text-base font-bold transition hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
                     >
-                      <Link href={href}>
-                        <span>{label}</span>
-                        <span className="h-px w-8 bg-primary/60" />
-                      </Link>
-                    </Button>
+                      <span>{label}</span>
+                      <span className="h-px w-8 bg-primary/60" />
+                    </button>
                   ))}
                 </div>
               </div>

@@ -1,54 +1,41 @@
-import type { Metadata } from "next";
-import { Inter, Vazirmatn } from "next/font/google"; // add Arabic-capable font
+import type { Metadata, Viewport } from "next";
+import { Inter, Vazirmatn } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
-import Script from "next/script";
 import { Providers } from "./providers";
 
+const siteUrl = "https://www.bavarmandan.com";
+
 export const metadata: Metadata = {
-  title: "مجمع باورمندان ",
+  metadataBase: new URL(siteUrl),
+  title: "مجمع باورمندان",
   description:
-    "وبسایت رسمی مجمع باورمندان ؛ معرفی جلسات، گفتگوها و محتوای مرتبط.",
+    "تارنمای مجمع باورمندان؛ معرفی جلسات، گفتگوها، فایل‌های صوتی و منابع مرتبط.",
+  applicationName: "مجمع باورمندان",
+  manifest: "/manifest.webmanifest",
   keywords: [
     "مجمع باورمندان",
     "کلاب هاوس",
-    "گفتگو",
-    "ایران",
-    "فلسفه",
-    "باورمندان",
     "جلسات اعتقادی",
-    "باور قرآن",
-    "گفتگوهای فلسفی",
-    "خداباوران",
-    "خداناباوران",
-    "جلسات کلاب هاوس",
-    "اندیشه دینی",
     "گفتگوی اعتقادی",
-    "بحث فلسفی",
-    "گفتگو درباره خدا",
-    "ایمان و عقل",
-    "جامعه باورمندان",
-    "دیالوگ فلسفی",
-    "نقد دین",
-    "معرفت‌شناسی",
-    "خردگرایی",
-    "بحث دینی",
+    "اندیشه دینی",
     "فلسفه دین",
-    "الهیات",
+    "باورمندان",
   ],
   openGraph: {
     title: "مجمع باورمندان",
     description:
-      "  معرفی جلسات و گفتگوهای مجمع باورمندان در کلاب هاوس و سایر پلتفرم ها",
-    url: "https://www.bavarmandan.com",
+      "معرفی جلسات و گفتگوهای مجمع باورمندان در کلاب هاوس و سایر پلتفرم‌ها.",
+    url: siteUrl,
     siteName: "مجمع باورمندان",
     images: [
       {
-        url: "https://www.bavarmandan.com/mainicon.jpg",
+        url: "/mainicon.jpg",
         width: 1200,
         height: 630,
         alt: "مجمع باورمندان",
@@ -60,6 +47,25 @@ export const metadata: Metadata = {
   verification: {
     google: "4cbe7fbb3092c5fd",
   },
+  appleWebApp: {
+    capable: true,
+    title: "مجمع باورمندان",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    icon: [
+      { url: "/pwa-icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/pwa-icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/pwa-icon-192.png", sizes: "192x192", type: "image/png" }],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#082b26",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 const inter = Inter({
@@ -80,7 +86,8 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="pt-br"
+      lang="fa"
+      dir="rtl"
       className={cn("overflow-x-hidden", inter.variable, vazir.variable)}
       suppressHydrationWarning
     >
@@ -89,7 +96,6 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@100..800&display=swap"
           rel="stylesheet"
         />
-        {/* Instagram profile */}
         <meta
           property="og:see_also"
           content="https://www.instagram.com/bavarmandan110/"
@@ -98,8 +104,6 @@ export default function RootLayout({
           name="instagram:site"
           content="https://www.instagram.com/bavarmandan110/"
         />
-
-        {/* YouTube channel */}
         <meta
           property="og:see_also"
           content="https://www.youtube.com/@bavarmandan110"
@@ -116,8 +120,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "مجمع باورمندان",
-              url: "https://www.bavarmandan.com",
-              logo: "https://www.bavarmandan.com/mainicon.jpg", // use a square ≥112px
+              url: siteUrl,
+              logo: `${siteUrl}/mainicon.jpg`,
               sameAs: [
                 "https://www.instagram.com/bavarmandan110/",
                 "https://www.youtube.com/@bavarmandan",
@@ -129,7 +133,7 @@ export default function RootLayout({
 
       <body
         className={cn(
-          "min-h-screen bg-background overflow-x-hidden",
+          "min-h-screen overflow-x-hidden bg-background",
           inter.className
         )}
       >
@@ -140,7 +144,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Providers>
-
             <AudioPlayerProvider>
               <Navbar />
               {children}

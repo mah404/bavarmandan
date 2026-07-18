@@ -110,7 +110,7 @@ export const FooterSection = () => {
             <MotionButton className="mt-5">
               <Link
                 href="https://t.me/bavarmandan_bot"
-                className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary px-4 py-2.5 text-sm font-extrabold text-primary-foreground shadow-sm transition duration-300 hover:border-primary/60 hover:bg-primary/90"
+                className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary px-4 py-2.5 text-sm font-extrabold text-primary-foreground shadow-sm transition duration-300 hover:border-primary/60 hover:bg-primary/90 dark:text-[#082b26]"
               >
                 <MessageCircle className="size-4" />
                 ارتباط مستقیم با ما

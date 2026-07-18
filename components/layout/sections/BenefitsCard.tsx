@@ -42,7 +42,10 @@ export const BenefitsCard = () => {
   const fetchDescription = async () => {
     setLoading(true);
     try {
-      await fetch("/api/benefit?id=eteghadat").then((r) => r.json());
+      const response = await fetch("/api/benefit?id=eteghadat");
+      if (response.ok) await response.json();
+    } catch {
+      // Description is optional; keep the sheet usable when the endpoint is absent.
     } finally {
       setLoading(false);
     }

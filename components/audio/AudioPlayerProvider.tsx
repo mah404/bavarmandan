@@ -16,6 +16,7 @@ import {
   Pause,
   Play,
   Rewind,
+  Repeat2,
   Share2,
   Volume2,
   VolumeX,
@@ -83,6 +84,7 @@ export const AudioPlayerProvider = ({
   const [progress, setProgress] = useState(0);
   const [volume, setVolumeState] = useState(1);
   const [muted, setMuted] = useState(false);
+  const [isLooping, setIsLooping] = useState(false);
 
   // Docked visibility + minimize
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
@@ -164,6 +166,9 @@ export const AudioPlayerProvider = ({
   useEffect(() => {
     if (audioRef.current) audioRef.current.muted = muted;
   }, [muted]);
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.loop = isLooping;
+  }, [isLooping]);
 
   // Mount + load saved state
   useEffect(() => {
@@ -743,7 +748,7 @@ export const AudioPlayerProvider = ({
                 size="icon"
                 onClick={() => setMuted((m) => !m)}
                 aria-label={muted || volume === 0 ? "Unmute" : "Mute"}
-                className="hidden h-9 w-9 rounded-full text-primary hover:bg-primary/10 hover:text-primary sm:inline-flex"
+                className="h-8 w-8 rounded-full text-primary hover:bg-primary/10 hover:text-primary sm:h-9 sm:w-9"
               >
                 {muted || volume === 0 ? (
                   <VolumeX className="h-5 w-5" />
@@ -771,6 +776,19 @@ export const AudioPlayerProvider = ({
                 aria-label="Volume"
                 data-no-drag
               />
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsLooping((value) => !value)}
+                aria-label={isLooping ? "Disable repeat" : "Enable repeat"}
+                className={`h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary sm:h-9 sm:w-9 ${
+                  isLooping ? "bg-primary/15 text-primary" : "text-primary"
+                }`}
+                title="Repeat"
+              >
+                <Repeat2 className="h-4 w-4" />
+              </Button>
 
               <Button
                 variant="ghost"

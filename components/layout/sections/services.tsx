@@ -116,7 +116,11 @@ export const ServicesSection = () => {
                 </button>
               </PopoverTrigger>
 
-              <PopoverContent align="center" side="bottom" className="w-[420px]">
+              <PopoverContent
+                align="center"
+                side="bottom"
+                className="w-[min(calc(100vw-2rem),420px)] border-secondary/60 bg-card/95 shadow-[0_18px_50px_rgba(0,0,0,0.16)] backdrop-blur-xl dark:bg-card/95"
+              >
                 <Tabs defaultValue="sites" className="w-full" dir="rtl">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="sites">تارنماهای مفید</TabsTrigger>
@@ -166,7 +170,7 @@ export const ServicesSection = () => {
                       <p className="text-sm text-primary">کتب مفید:</p>
                       <Link
                         dir="rtl"
-                        href="/taghvim-shia.pdf"
+                        href="/taghvim-shia"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary underline underline-offset-4"
