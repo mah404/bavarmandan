@@ -9,6 +9,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
 import { PWAInstallIntent } from "@/components/pwa-install-intent";
+import { PWARegister } from "@/components/pwa-register";
 import { Providers } from "./providers";
 
 const siteUrl = "https://www.bavarmandan.com";
@@ -161,6 +162,7 @@ export default function RootLayout({
         >
           <Providers>
             <AudioPlayerProvider>
+              <PWARegister />
               <Navbar />
               {children}
               <Suspense fallback={null}>

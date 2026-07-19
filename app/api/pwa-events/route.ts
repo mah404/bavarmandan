@@ -42,51 +42,63 @@ const getClientIp = (request: NextRequest) =>
 const hashValue = (value: string) =>
   createHash("sha256").update(value).digest("hex");
 
+const recordEvent = async (
+  request: NextRequest,
+  event: string,
+  data: Record<string, unknown>
+) => {
+  if (!allowedEvents.has(event)) {
+    return { ok: false, status: 400, error: "Invalid event" };
+  }
+
+  const now = new Date();
+  const client = await clientPromise;
+  const db = client.db();
+  const userAgent = request.headers.get("user-agent") ?? "unknown";
+  const ip = getClientIp(request);
+  const berlin = getBerlinParts(now);
+
+  await db.collection("pwa_events").insertOne({
+    event,
+    payload: data.payload && typeof data.payload === "object" ? data.payload : {},
+    visitorId:
+      typeof data.visitorId === "string" ? data.visitorId.slice(0, 80) : null,
+    url: typeof data.url === "string" ? data.url.slice(0, 500) : null,
+    path: typeof data.path === "string" ? data.path.slice(0, 200) : null,
+    referrer:
+      typeof data.referrer === "string" ? data.referrer.slice(0, 500) : null,
+    displayMode:
+      typeof data.displayMode === "string" ? data.displayMode.slice(0, 40) : null,
+    language:
+      typeof data.language === "string" ? data.language.slice(0, 40) : null,
+    timezone:
+      typeof data.timezone === "string" ? data.timezone.slice(0, 80) : null,
+    userAgent,
+    ipAddress: ip,
+    ipHash: hashValue(`${ip}:${process.env.PWA_ANALYTICS_SALT ?? ""}`),
+    createdAt: now,
+    createdAtUtc: now.toISOString(),
+    createdAtBerlin: `${berlin.dayBerlin} ${berlin.timeBerlin}`,
+    day: berlin.dayBerlin,
+    dayBerlin: berlin.dayBerlin,
+    timeBerlin: berlin.timeBerlin,
+    timezoneServer: berlinTimeZone,
+  });
+
+  return { ok: true, status: 200 };
+};
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const event = typeof body.event === "string" ? body.event : "";
-
-    if (!allowedEvents.has(event)) {
-      return NextResponse.json({ error: "Invalid event" }, { status: 400 });
+    const result = await recordEvent(request, event, body);
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: result.error },
+        { status: result.status }
+      );
     }
-
-    const now = new Date();
-    const client = await clientPromise;
-    const db = client.db();
-    const userAgent = request.headers.get("user-agent") ?? "unknown";
-    const ip = getClientIp(request);
-    const berlin = getBerlinParts(now);
-
-    await db.collection("pwa_events").insertOne({
-      event,
-      payload:
-        body.payload && typeof body.payload === "object" ? body.payload : {},
-      visitorId:
-        typeof body.visitorId === "string" ? body.visitorId.slice(0, 80) : null,
-      url: typeof body.url === "string" ? body.url.slice(0, 500) : null,
-      path: typeof body.path === "string" ? body.path.slice(0, 200) : null,
-      referrer:
-        typeof body.referrer === "string" ? body.referrer.slice(0, 500) : null,
-      displayMode:
-        typeof body.displayMode === "string"
-          ? body.displayMode.slice(0, 40)
-          : null,
-      language:
-        typeof body.language === "string" ? body.language.slice(0, 40) : null,
-      timezone:
-        typeof body.timezone === "string" ? body.timezone.slice(0, 80) : null,
-      userAgent,
-      ipAddress: ip,
-      ipHash: hashValue(`${ip}:${process.env.PWA_ANALYTICS_SALT ?? ""}`),
-      createdAt: now,
-      createdAtUtc: now.toISOString(),
-      createdAtBerlin: `${berlin.dayBerlin} ${berlin.timeBerlin}`,
-      day: berlin.dayBerlin,
-      dayBerlin: berlin.dayBerlin,
-      timeBerlin: berlin.timeBerlin,
-      timezoneServer: berlinTimeZone,
-    });
 
     return NextResponse.json({ ok: true });
   } catch (error) {
@@ -96,6 +108,53 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  const event = request.nextUrl.searchParams.get("event");
+
+  if (event) {
+    try {
+      const payload = {
+        source: request.nextUrl.searchParams.get("source"),
+      };
+      const result = await recordEvent(request, event, {
+        payload,
+        visitorId: request.nextUrl.searchParams.get("visitorId"),
+        url: request.nextUrl.searchParams.get("url"),
+        path: request.nextUrl.searchParams.get("path"),
+        referrer: request.nextUrl.searchParams.get("referrer"),
+        displayMode: request.nextUrl.searchParams.get("displayMode"),
+        language: request.nextUrl.searchParams.get("language"),
+        timezone: request.nextUrl.searchParams.get("timezone"),
+      });
+
+      if (!result.ok) {
+        return NextResponse.json(
+          { error: result.error },
+          { status: result.status }
+        );
+      }
+
+      return new NextResponse(
+        Buffer.from(
+          "R0lGODlhAQABAPAAAP///wAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==",
+          "base64"
+        ),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "image/gif",
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Unable to record PWA event pixel", error);
+      return NextResponse.json(
+        { error: "Unable to record event" },
+        { status: 500 }
+      );
+    }
+  }
+
   const token = process.env.PWA_ANALYTICS_TOKEN;
   const providedToken = request.nextUrl.searchParams.get("token");
 

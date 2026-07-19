@@ -5,6 +5,12 @@ type PwaEventPayload = Record<
   string | number | boolean | null | undefined
 >;
 
+declare global {
+  interface Window {
+    __bavarmandanTrackingPixels?: HTMLImageElement[];
+  }
+}
+
 const getVisitorId = () => {
   const storageKey = "bavarmandan_pwa_visitor_id";
   const existing = window.localStorage.getItem(storageKey);
@@ -36,27 +42,34 @@ export function recordPwaEvent(
 ) {
   if (typeof window === "undefined") return;
 
-  const body = JSON.stringify({
+  const params = new URLSearchParams({
     event,
-    payload,
     visitorId: getVisitorId(),
     url: window.location.href,
     path: window.location.pathname,
-    referrer: document.referrer || null,
     displayMode: getDisplayMode(),
     language: navigator.language,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    t: String(Date.now()),
   });
 
-  fetch("/api/pwa-events", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body,
-    keepalive: true,
-    cache: "no-store",
-  }).catch(() => {
-    if (!navigator.sendBeacon) return;
-    const blob = new Blob([body], { type: "application/json" });
-    navigator.sendBeacon("/api/pwa-events", blob);
+  if (document.referrer) {
+    params.set("referrer", document.referrer);
+  }
+
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      params.set(key, String(value));
+    }
   });
+
+  const image = new Image();
+  window.__bavarmandanTrackingPixels ??= [];
+  window.__bavarmandanTrackingPixels.push(image);
+  image.onload = image.onerror = () => {
+    window.__bavarmandanTrackingPixels =
+      window.__bavarmandanTrackingPixels?.filter((item) => item !== image);
+  };
+  image.decoding = "async";
+  image.src = `/api/pwa-events?${params.toString()}`;
 }
