@@ -1,4 +1,4 @@
-const CACHE_NAME = "bavarmandan-pwa-v1";
+const CACHE_NAME = "bavarmandan-pwa-v2";
 const PRECACHE_URLS = [
   "/",
   "/taghvim-shia",

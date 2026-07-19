@@ -89,7 +89,8 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (error) {
+    console.error("Unable to record PWA event", error);
     return NextResponse.json({ error: "Unable to record event" }, { status: 500 });
   }
 }

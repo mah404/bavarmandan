@@ -48,18 +48,15 @@ export function recordPwaEvent(
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   });
 
-  if (navigator.sendBeacon) {
-    const blob = new Blob([body], { type: "application/json" });
-    navigator.sendBeacon("/api/pwa-events", blob);
-    return;
-  }
-
   fetch("/api/pwa-events", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body,
     keepalive: true,
+    cache: "no-store",
   }).catch(() => {
-    // Analytics should never block the app experience.
+    if (!navigator.sendBeacon) return;
+    const blob = new Blob([body], { type: "application/json" });
+    navigator.sendBeacon("/api/pwa-events", blob);
   });
 }
