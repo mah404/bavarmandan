@@ -31,7 +31,17 @@ const routeList: RouteProps[] = [
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const secretAudioRef = React.useRef<HTMLAudioElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
+
+  const playSecretAudio = () => {
+    if (!secretAudioRef.current) {
+      secretAudioRef.current = new Audio("/sout.mp3");
+    }
+
+    secretAudioRef.current.currentTime = 0;
+    secretAudioRef.current.play().catch(() => {});
+  };
 
   const handleMobileNav = (
     event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
@@ -58,27 +68,27 @@ export const Navbar = () => {
       className="sticky top-4 z-40 mx-auto w-[94%] max-w-6xl"
     >
       <div className="relative flex items-center justify-between rounded-xl border border-secondary/45 bg-card/70 px-3 py-2 shadow-[0_16px_42px_rgba(0,0,0,0.1)] backdrop-blur-xl dark:bg-card/85">
-        <Link
-          href="/"
-          className="group flex items-center gap-3 rounded-lg border border-transparent py-1 pl-4 pr-1 transition duration-300 hover:border-primary/25 hover:bg-background/20"
+        <button
+          type="button"
+          onClick={playSecretAudio}
+          className="group flex items-center gap-3 rounded-lg border border-transparent py-1 pl-4 pr-1 transition duration-300  focus:outline-none focus-visible:outline-none focus-visible:ring-0"
           dir="rtl"
+          aria-label="Play Bavarmandan audio"
         >
           <Image
             src="/mainicon.jpg"
             alt="Bavarmandan"
             width={44}
             height={44}
-            className="size-11 rounded-full border border-primary/40 object-cover shadow-sm transition duration-300 group-hover:scale-105"
+            className="size-11 rounded-full border object-cover  transition duration-300 "
           />
           <span className="hidden text-right sm:block">
             <span className="block text-base font-extrabold leading-5 text-foreground">
               مجمع باورمندان
             </span>
-            <span className="block text-xs font-bold text-primary">
-              کلاب‌هاوس
-            </span>
+         
           </span>
-        </Link>
+        </button>
 
         <nav
           className="absolute left-1/2 hidden -translate-x-1/2 rounded-lg border border-secondary/35 bg-background/15 p-1 backdrop-blur lg:flex"
@@ -116,24 +126,29 @@ export const Navbar = () => {
               className="sheet-modern flex flex-col justify-between rounded-r-2xl"
             >
               <div>
-                <SheetHeader className="mb-6 pr-14 pt-1">
+                <SheetHeader className="mb-6 h-14 pt-0">
                   <SheetTitle>
-                    <Link
-                      href="/"
-                      onClick={() => setIsOpen(false)}
-                      className="flex min-w-0 flex-row-reverse items-center justify-start gap-3"
+                    <button
+                      type="button"
+                      onClick={playSecretAudio}
+                      className="absolute left-5 top-8 flex h-10 max-w-[calc(100%-6rem)] items-center gap-2 border border-transparent focus:outline-none focus-visible:outline-none focus-visible:ring-0"
+                      dir="ltr"
+                      aria-label="Play Bavarmandan audio"
                     >
                       <Image
                         src="/mainicon.jpg"
                         alt="Bavarmandan"
                         width={44}
                         height={44}
-                        className="size-11 shrink-0 rounded-full border border-primary/40 object-cover"
+                        className="size-10 shrink-0 rounded-full border border-primary/40 object-cover"
                       />
-                      <span className="min-w-0 text-right text-lg font-extrabold leading-8">
+                      <span
+                        className="min-w-0 whitespace-nowrap text-right text-lg font-extrabold leading-none"
+                        dir="rtl"
+                      >
                         مجمع باورمندان 
                       </span>
-                    </Link>
+                    </button>
                   </SheetTitle>
                 </SheetHeader>
 
