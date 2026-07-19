@@ -6,6 +6,7 @@ import clientPromise from "@/lib/mongodb";
 export const dynamic = "force-dynamic";
 
 const allowedEvents = new Set([
+  "site_link_opened",
   "pwa_install_button_clicked",
   "pwa_install_link_opened",
 ]);
