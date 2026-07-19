@@ -34,9 +34,24 @@ export const Navbar = () => {
   const secretAudioRef = React.useRef<HTMLAudioElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
-  const playSecretAudio = () => {
+  React.useEffect(() => {
+    return () => {
+      if (secretAudioRef.current) {
+        secretAudioRef.current.pause();
+        secretAudioRef.current.currentTime = 0;
+      }
+    };
+  }, []);
+
+  const toggleSecretAudio = () => {
     if (!secretAudioRef.current) {
       secretAudioRef.current = new Audio("/sout.mp3");
+    }
+
+    if (!secretAudioRef.current.paused) {
+      secretAudioRef.current.pause();
+      secretAudioRef.current.currentTime = 0;
+      return;
     }
 
     secretAudioRef.current.currentTime = 0;
@@ -70,7 +85,7 @@ export const Navbar = () => {
       <div className="relative flex items-center justify-between rounded-xl border border-secondary/45 bg-card/70 px-3 py-2 shadow-[0_16px_42px_rgba(0,0,0,0.1)] backdrop-blur-xl dark:bg-card/85">
         <button
           type="button"
-          onClick={playSecretAudio}
+          onClick={toggleSecretAudio}
           className="group flex items-center gap-3 rounded-lg border border-transparent py-1 pl-4 pr-1 transition duration-300  focus:outline-none focus-visible:outline-none focus-visible:ring-0"
           dir="rtl"
           aria-label="Play Bavarmandan audio"
@@ -130,7 +145,7 @@ export const Navbar = () => {
                   <SheetTitle>
                     <button
                       type="button"
-                      onClick={playSecretAudio}
+                      onClick={toggleSecretAudio}
                       className="absolute left-5 top-8 flex h-10 max-w-[calc(100%-6rem)] items-center gap-2 border border-transparent focus:outline-none focus-visible:outline-none focus-visible:ring-0"
                       dir="ltr"
                       aria-label="Play Bavarmandan audio"
