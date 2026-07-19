@@ -64,6 +64,9 @@ export function PWAInstallIntent() {
   useEffect(() => {
     if (searchParams?.get("install") === "1" && !isStandalone) {
       track("pwa_install_link_opened");
+      recordPwaEvent("pwa_install_link_opened", {
+        source: "install_link",
+      });
       setOpen(true);
     }
   }, [isStandalone, searchParams]);

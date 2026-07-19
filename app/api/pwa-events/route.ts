@@ -5,7 +5,10 @@ import clientPromise from "@/lib/mongodb";
 
 export const dynamic = "force-dynamic";
 
-const allowedEvents = new Set(["pwa_install_button_clicked"]);
+const allowedEvents = new Set([
+  "pwa_install_button_clicked",
+  "pwa_install_link_opened",
+]);
 
 const berlinTimeZone = "Europe/Berlin";
 
@@ -73,6 +76,7 @@ export async function POST(request: NextRequest) {
       timezone:
         typeof body.timezone === "string" ? body.timezone.slice(0, 80) : null,
       userAgent,
+      ipAddress: ip,
       ipHash: hashValue(`${ip}:${process.env.PWA_ANALYTICS_SALT ?? ""}`),
       createdAt: now,
       createdAtUtc: now.toISOString(),
@@ -130,6 +134,8 @@ export async function GET(request: NextRequest) {
             displayMode: 1,
             language: 1,
             timezone: 1,
+            ipAddress: 1,
+            ipHash: 1,
             createdAt: 1,
             createdAtUtc: 1,
             createdAtBerlin: 1,
