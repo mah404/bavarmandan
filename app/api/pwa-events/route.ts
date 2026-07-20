@@ -109,6 +109,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   const event = request.nextUrl.searchParams.get("event");
+  const debug = request.nextUrl.searchParams.get("debug") === "1";
 
   if (event) {
     try {
@@ -133,6 +134,14 @@ export async function GET(request: NextRequest) {
         );
       }
 
+      if (debug) {
+        return NextResponse.json({
+          ok: true,
+          event,
+          storedAtBerlin: getBerlinParts(new Date()),
+        });
+      }
+
       return new NextResponse(
         Buffer.from(
           "R0lGODlhAQABAPAAAP///wAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==",
@@ -148,6 +157,16 @@ export async function GET(request: NextRequest) {
       );
     } catch (error) {
       console.error("Unable to record PWA event pixel", error);
+      if (debug) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error:
+              error instanceof Error ? error.message : "Unable to record event",
+          },
+          { status: 500 }
+        );
+      }
       return NextResponse.json(
         { error: "Unable to record event" },
         { status: 500 }

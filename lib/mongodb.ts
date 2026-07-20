@@ -1,29 +1,40 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI!;
 const options = {};
 
-// ✅ Extend global type to include custom property
 declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-let client;
-let clientPromise: Promise<MongoClient>;
+const mongoUris = [
+  { name: "MONGODB_URI", value: process.env.MONGODB_URI },
+  { name: "MONGO_URL", value: process.env.MONGO_URL },
+].filter((item): item is { name: string; value: string } => Boolean(item.value));
 
-if (!process.env.MONGODB_URI) {
-  throw new Error("Please add MONGODB_URI to .env.local");
+if (mongoUris.length === 0) {
+  throw new Error("Please add MONGODB_URI or MONGO_URL to your environment");
 }
 
-if (process.env.NODE_ENV === "development") {
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    global._mongoClientPromise = client.connect();
+const connectWithFallback = async () => {
+  let lastError: unknown;
+
+  for (const uri of mongoUris) {
+    try {
+      const client = new MongoClient(uri.value, options);
+      await client.connect();
+      return client;
+    } catch (error) {
+      lastError = error;
+      console.error(`MongoDB connection failed with ${uri.name}`, error);
+    }
   }
-  clientPromise = global._mongoClientPromise;
-} else {
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
+
+  throw lastError;
+};
+
+const clientPromise =
+  process.env.NODE_ENV === "development"
+    ? (global._mongoClientPromise ??= connectWithFallback())
+    : connectWithFallback();
 
 export default clientPromise;

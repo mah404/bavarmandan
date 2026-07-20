@@ -20,6 +20,7 @@ import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Landmark } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   beliefAudios,
   audioFilessadeghin,
@@ -195,18 +196,32 @@ export const BenefitAkhlaq = () => {
                           />
                         </button>
 
-                        {openBeliefSession === `belief-session-${i}` ? (
-                          <div className="pb-4 pt-0">
-                            <div
-                              className="motion-list-item space-y-2 text-right text-sm font-semibold leading-7 text-primary"
-                              dir="rtl"
+                        <AnimatePresence initial={false}>
+                          {openBeliefSession === `belief-session-${i}` ? (
+                            <motion.div
+                              key={`belief-session-panel-${i}`}
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{
+                                height: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
+                                opacity: { duration: 0.2, ease: "easeOut" },
+                              }}
+                              className="overflow-hidden"
                             >
-                              {file.points.map((point, index) => (
-                                <p key={point}>
-                                  {index + 1}- {point}
-                                </p>
-                              ))}
-                            </div>
+                          <div className="pb-4 pt-0">
+                            {file.points.length > 0 ? (
+                              <div
+                                className="motion-list-item space-y-2 text-right text-sm font-semibold leading-7 text-primary"
+                                dir="rtl"
+                              >
+                                {file.points.map((point, index) => (
+                                  <p key={point}>
+                                    {index + 1}- {point}
+                                  </p>
+                                ))}
+                              </div>
+                            ) : null}
 
                             <div className="motion-list-item mt-3 text-center">
                               <p className="mb-2 text-sm font-semibold text-primary">
@@ -236,7 +251,7 @@ export const BenefitAkhlaq = () => {
                                 >
                                   <a
                                     href={toDownloadUrl(file.url)}
-                                    download="اصول-عقاید-شیعه-جلسه-اول.mp3"
+                                    download={`${file.description}.mp3`}
                                     rel="noopener noreferrer"
                                   >
                                     دانلود صوت
@@ -245,6 +260,7 @@ export const BenefitAkhlaq = () => {
                               </div>
                             </div>
 
+                            {file.summaries.length > 0 ? (
                             <div className="mt-4 text-right" dir="rtl">
                               <p className="mb-3 text-sm font-bold text-primary">
                                 خلاصه متن محتوا
@@ -295,8 +311,11 @@ export const BenefitAkhlaq = () => {
                                 ))}
                               </div>
                             </div>
+                            ) : null}
                           </div>
-                        ) : null}
+                            </motion.div>
+                          ) : null}
+                        </AnimatePresence>
                       </div>
                     ))}
                     <div className="border-b border-secondary bg-card/70 dark:bg-card px-4 my-3 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40">
@@ -304,31 +323,46 @@ export const BenefitAkhlaq = () => {
                         type="button"
                         onClick={() =>
                           setOpenBeliefSession((current) =>
-                            current === "belief-session-1"
+                            current === "belief-session-2"
                               ? null
-                              : "belief-session-1"
+                              : "belief-session-2"
                           )
                         }
                         className="flex w-full items-center justify-between gap-4 py-4 text-right text-sm font-semibold text-muted-foreground transition-all hover:text-primary"
                       >
-                        <span>جلسه دوم</span>
+                        <span>جلسه سوم</span>
                         <ChevronDown
                           className={[
                             "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
-                            openBeliefSession === "belief-session-1"
+                            openBeliefSession === "belief-session-2"
                               ? "rotate-180"
                               : "",
                           ].join(" ")}
                         />
                       </button>
 
-                      {openBeliefSession === "belief-session-1" ? (
-                        <div className="pb-4 pt-0">
-                          <div className="motion-list-item py-5 text-center text-sm font-semibold text-muted-foreground">
-                            به زودی
-                          </div>
-                        </div>
-                      ) : null}
+                      <AnimatePresence initial={false}>
+                        {openBeliefSession === "belief-session-2" ? (
+                          <motion.div
+                            key="belief-session-panel-2"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{
+                              height: {
+                                duration: 0.34,
+                                ease: [0.22, 1, 0.36, 1],
+                              },
+                              opacity: { duration: 0.2, ease: "easeOut" },
+                            }}
+                            className="overflow-hidden"
+                          >
+                            <div className="pb-4 pt-1 text-center text-sm font-semibold text-muted-foreground">
+                              به زودی
+                            </div>
+                          </motion.div>
+                        ) : null}
+                      </AnimatePresence>
                     </div>
                   </div>
                 </AccordionContent>

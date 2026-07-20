@@ -33,6 +33,14 @@ export const beliefAudios: BeliefAudio[] = [
     ],
     createdAt: "2025-12-28T12:00:00Z",
   },
+  {
+    title: "جلسه دوم",
+    description: "اصول عقاید شیعه - جلسه دوم",
+    url: "https://www.dropbox.com/scl/fi/yfazkgnerhg5zvfh8lsyk/2.mp3?rlkey=ukynfm2fktm4blv11afn4354v&st=v506204q&dl=0",
+    points: [],
+    summaries: [],
+    createdAt: "2026-07-20T12:00:00Z",
+  },
 ];
 
 export const audioGroups: AudioGroup[] = [
