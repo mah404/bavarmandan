@@ -117,17 +117,17 @@ export const CommunitySection = () => {
                     صبوری و رعایت نکات اخلاقی و آیین گفت‌وگو از سوی تمامی عزیزان
                     صمیمانه سپاسگزاریم.
                   </CardContent>
-                  <CardContent className="mx-auto text-center lg:w-[80%] text-md text-muted-foreground font-thin mt-8">
-                    <span className="text-xl text-primary-foreground">*</span>
-                    حضور مجمع باورمندان در شبکه های اجتماعی و مجازی تنها به هدف
-                    اشتراک گذاری محتوای اشخاص و صرفاً جنبه آموزشی داشته فلذا
-                    مجمع باورمندان هیچگونه مسئولیتی در قبال اشخاص، نظرات، مطالب،
-                    و محتوای به اشتراک گذاشته شده و باز نشر داده شده در هیچ‌یک
-                    از شبکه های وابسته به مجمع باورمندان را بر عهده نمی‌گیرد.
-                  </CardContent>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
+            <CardContent className="mx-auto mt-8 text-center text-md font-thin text-muted-foreground lg:w-[80%]">
+              <span className="text-xl text-primary-foreground">*</span>
+              حضور مجمع باورمندان در شبکه های اجتماعی و مجازی تنها به هدف
+              اشتراک گذاری محتوای اشخاص و صرفاً جنبه آموزشی داشته فلذا مجمع
+              باورمندان هیچگونه مسئولیتی در قبال اشخاص، نظرات، مطالب، و محتوای
+              به اشتراک گذاشته شده و باز نشر داده شده در هیچ‌یک از شبکه های
+              وابسته به مجمع باورمندان را بر عهده نمی‌گیرد.
+            </CardContent>
           </Card>
         </Reveal>
       </div>
