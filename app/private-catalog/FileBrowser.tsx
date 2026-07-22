@@ -1,21 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, FileDown, Folder, FolderOpen } from "lucide-react";
+import { Archive, ChevronDown, FileDown, Folder, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export type BrowseItem = {
   name: string;
   type: "folder" | "file";
-  children?: BrowseItem[];
+  children?: BrowseItem[] | Record<string, BrowseItem[] | BrowseItem>;
   sizeBytes?: number;
   downloadUrl?: string;
 };
 
-type BrowseTree = Record<string, BrowseItem[]>;
+type BrowseTree = Record<string, BrowseItem[] | BrowseItem> | BrowseItem[];
 
 type FileBrowserProps = {
   tree: BrowseTree;
+  secretKey: string;
 };
 
 function formatSize(sizeBytes?: number) {
@@ -23,10 +24,70 @@ function formatSize(sizeBytes?: number) {
   return `${(sizeBytes / 1024 / 1024).toFixed(2)} MB`;
 }
 
-function TreeItem({ item, depth = 0 }: { item: BrowseItem; depth?: number }) {
-  const [open, setOpen] = useState(depth < 1);
+function isBrowseItem(value: unknown): value is BrowseItem {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "type" in value
+  );
+}
+
+function normalizeItems(value: unknown, fallbackName?: string): BrowseItem[] {
+  if (!value) return [];
+
+  if (Array.isArray(value)) {
+    return value.filter(isBrowseItem).map((item) => ({
+      ...item,
+      name: item.name,
+      children: item.type === "folder" ? normalizeItems(item.children) : undefined,
+    }));
+  }
+
+  if (isBrowseItem(value)) {
+    return [
+      {
+        ...value,
+        name: value.name || fallbackName || "untitled",
+        children:
+          value.type === "folder" ? normalizeItems(value.children) : undefined,
+      },
+    ];
+  }
+
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>).map(([name, item]) => {
+      if (isBrowseItem(item)) {
+        return {
+          ...item,
+          name: item.name || name,
+          children:
+            item.type === "folder" ? normalizeItems(item.children) : undefined,
+        };
+      }
+
+      return {
+        name,
+        type: "folder" as const,
+        children: normalizeItems(item, name),
+      };
+    });
+  }
+
+  return [];
+}
+
+function TreeItem({
+  item,
+  depth = 0,
+  zipUrl,
+}: {
+  item: BrowseItem;
+  depth?: number;
+  zipUrl?: string;
+}) {
+  const [open, setOpen] = useState(false);
   const isFolder = item.type === "folder";
-  const children = item.children || [];
+  const children = normalizeItems(item.children);
 
   if (!isFolder) {
     return (
@@ -57,29 +118,42 @@ function TreeItem({ item, depth = 0 }: { item: BrowseItem; depth?: number }) {
     );
   }
 
+  const isRoot = depth === 0 && !!zipUrl;
+
   return (
     <div className="space-y-2" style={{ marginLeft: depth * 16 }}>
-      <button
-        type="button"
-        onClick={() => setOpen((current) => !current)}
-        className="flex w-full items-center gap-3 rounded-xl border border-secondary bg-background/50 px-4 py-3 text-left text-sm font-bold text-foreground transition hover:border-primary/40 hover:text-primary"
-      >
-        <ChevronDown
-          className={[
-            "size-4 shrink-0 transition-transform",
-            open ? "rotate-180" : "",
-          ].join(" ")}
-        />
-        {open ? (
-          <FolderOpen className="size-5 shrink-0 text-primary" />
-        ) : (
-          <Folder className="size-5 shrink-0 text-primary" />
-        )}
-        <span className="break-all">{item.name}</span>
-        <span className="ml-auto text-xs font-medium text-muted-foreground">
-          {children.length} items
-        </span>
-      </button>
+      <div className="flex w-full flex-col gap-3 rounded-xl border border-secondary bg-background/50 px-4 py-3 text-left text-sm font-bold text-foreground transition hover:border-primary/40 sm:flex-row sm:items-center">
+        <button
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          className="flex min-w-0 flex-1 items-center gap-3 transition hover:text-primary"
+        >
+          <ChevronDown
+            className={[
+              "size-4 shrink-0 transition-transform",
+              open ? "rotate-180" : "",
+            ].join(" ")}
+          />
+          {open ? (
+            <FolderOpen className="size-5 shrink-0 text-primary" />
+          ) : (
+            <Folder className="size-5 shrink-0 text-primary" />
+          )}
+          <span className="break-all">{item.name}</span>
+          <span className="ml-auto text-xs font-medium text-muted-foreground">
+            {children.length} items
+          </span>
+        </button>
+
+        {isRoot ? (
+          <Button asChild size="sm" className="shrink-0 text-card">
+            <a href={zipUrl} download rel="noopener noreferrer">
+              <Archive className="mr-2 size-4" />
+              Download ZIP
+            </a>
+          </Button>
+        ) : null}
+      </div>
 
       {open ? (
         <div className="space-y-2">
@@ -96,10 +170,10 @@ function TreeItem({ item, depth = 0 }: { item: BrowseItem; depth?: number }) {
   );
 }
 
-export function FileBrowser({ tree }: FileBrowserProps) {
-  const sections = Object.entries(tree);
+export function FileBrowser({ tree, secretKey }: FileBrowserProps) {
+  const rootChildren = normalizeItems(tree);
 
-  if (sections.length === 0) {
+  if (rootChildren.length === 0) {
     return (
       <p className="rounded-xl bg-background/70 p-4 text-sm text-muted-foreground">
         No files found.
@@ -107,23 +181,16 @@ export function FileBrowser({ tree }: FileBrowserProps) {
     );
   }
 
+  const rootFolder: BrowseItem = {
+    name: "media-server",
+    type: "folder",
+    children: rootChildren,
+  };
+
   return (
-    <div className="space-y-5">
-      {sections.map(([sectionName, items]) => (
-        <section key={sectionName} className="rounded-2xl border border-secondary p-4">
-          <h2 className="mb-4 text-lg font-bold capitalize text-primary">
-            {sectionName}
-          </h2>
-          <div className="space-y-2">
-            {items.map((item) => (
-              <TreeItem
-                key={`${sectionName}-${item.name}-${item.downloadUrl || ""}`}
-                item={item}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+    <TreeItem
+      item={rootFolder}
+      zipUrl={`/api/private-download-zip?key=${encodeURIComponent(secretKey)}`}
+    />
   );
 }

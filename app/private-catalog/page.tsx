@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { AUDIO_CATALOG_URL, MEDIA_BROWSE_URL } from "@/lib/media-api";
+import { AUDIO_CATALOG_URL, mediaBrowseUrlWithKey } from "@/lib/media-api";
 import { FileBrowser, type BrowseItem } from "./FileBrowser";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ type PrivateCatalogPageProps = {
   };
 };
 
-type BrowseTree = Record<string, BrowseItem[]>;
+type BrowseTree = Record<string, BrowseItem[]> | BrowseItem[];
 
 async function getCatalog() {
   if (!AUDIO_CATALOG_URL) {
@@ -36,12 +36,14 @@ async function getCatalog() {
   return response.json();
 }
 
-async function getBrowseTree(): Promise<BrowseTree> {
-  if (!MEDIA_BROWSE_URL) {
+async function getBrowseTree(secretKey: string): Promise<BrowseTree> {
+  const browseUrl = mediaBrowseUrlWithKey(secretKey);
+
+  if (!browseUrl) {
     throw new Error("MEDIA_API_BASE is not configured.");
   }
 
-  const response = await fetch(MEDIA_BROWSE_URL, { cache: "no-store" });
+  const response = await fetch(browseUrl, { cache: "no-store" });
 
   if (!response.ok) {
     throw new Error(`Browse fetch failed with status ${response.status}.`);
@@ -71,7 +73,7 @@ export default async function PrivateCatalogPage({
   }
 
   try {
-    browseTree = await getBrowseTree();
+    browseTree = await getBrowseTree(secret);
   } catch (err) {
     browseError = err instanceof Error ? err.message : "Unknown error";
   }
@@ -96,7 +98,7 @@ export default async function PrivateCatalogPage({
                 {browseError}
               </pre>
             ) : (
-              <FileBrowser tree={browseTree} />
+              <FileBrowser tree={browseTree} secretKey={searchParams.key} />
             )}
           </section>
 

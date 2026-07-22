@@ -8,6 +8,14 @@ export const MEDIA_BROWSE_URL = MEDIA_API_BASE
   ? `${MEDIA_API_BASE.replace(/\/$/, "")}/api/browse`
   : "";
 
+export function mediaBrowseUrlWithKey(secretKey?: string) {
+  if (!MEDIA_BROWSE_URL || !secretKey) return MEDIA_BROWSE_URL;
+
+  const url = new URL(MEDIA_BROWSE_URL);
+  url.searchParams.set("key", secretKey);
+  return url.toString();
+}
+
 export type CatalogFile = {
   id?: string;
   title?: string;
