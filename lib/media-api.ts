@@ -4,6 +4,10 @@ export const AUDIO_CATALOG_URL = MEDIA_API_BASE
   ? `${MEDIA_API_BASE.replace(/\/$/, "")}/api/audios`
   : "";
 
+export const MEDIA_BROWSE_URL = MEDIA_API_BASE
+  ? `${MEDIA_API_BASE.replace(/\/$/, "")}/api/browse`
+  : "";
+
 export type CatalogFile = {
   id?: string;
   title?: string;
