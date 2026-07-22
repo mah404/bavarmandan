@@ -15,8 +15,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import Lottie from "lottie-react";
-import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
 import { catalogFiles, toDownloadUrl } from "@/lib/media-api";
@@ -25,6 +23,22 @@ import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 import { akhlaghOrderIndex } from "@/lib/akhlagh-order";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 import { HeartHandshake } from "lucide-react";
+
+const AkhlaghSkeleton = () => (
+  <div className="mt-4 flex w-full flex-col gap-3" aria-label="در حال بارگذاری">
+    {Array.from({ length: 8 }).map((_, index) => (
+      <div
+        key={index}
+        className="h-20 animate-pulse rounded-2xl border border-secondary bg-card/40 dark:bg-card/30"
+      >
+        <div className="flex h-full items-center justify-between px-6">
+          <div className="h-3 w-8 rounded-full bg-muted-foreground/20" />
+          <div className="h-4 w-32 rounded-full bg-muted-foreground/20" />
+        </div>
+      </div>
+    ))}
+  </div>
+);
 
 export const BenefitsCard = () => {
   const SHEET_ID = "benefitsCard";
@@ -157,11 +171,7 @@ const scrollToId = async (id: string, tries = 20) => {
           </SheetHeader>
 
           {isLoading ? (
-            <Lottie
-              animationData={loadingPdfAnim}
-              loop
-              className="text-muted-foreground bg-transparent mt-4"
-            />
+            <AkhlaghSkeleton />
           ) : error ? (
             <p className="mt-4 text-center text-sm text-muted-foreground">
               {error}
