@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import {
   Sheet,
@@ -19,47 +19,85 @@ import { Button } from "@/components/ui/button";
 import { BookOpenText } from "lucide-react";
 import loadingPdfAnim from "@/public/loading.json";
 import Lottie from "lottie-react";
-import { useRouter } from "next/navigation";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
-import { tajridAudios } from "@/data/content";
+import { toDownloadUrl, toPdfViewUrl, toStreamableUrl } from "@/lib/media-api";
+import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 
-// PDF config
-const TOTAL_PDFS = 2;
-const BASE_PATH = "";
+const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
 
+function toPersianNumber(value: number) {
+  return String(value).replace(/\d/g, (digit) => persianDigits[Number(digit)]);
+}
 
-const toStreamable = (u: string) => {
-  if (!u) return u;
-  if (!u.includes("dropbox.com")) return u;
-  const noParam = u.replace(/([?&])(dl|raw)=[01]/g, "").replace(/[?&]$/, "");
-  return noParam + (noParam.includes("?") ? "&raw=1" : "?raw=1");
-};
-interface PdfSection {
-  id: string;
-  pdfUrl: string;
+function normalizeTajridLine(value = "") {
+  return value
+    .replace(/[ي]/g, "ی")
+    .replace(/[ك]/g, "ک")
+    .replace(/[ـ]/g, "-")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractTajridSessionNumber(title = "", fallback: number) {
+  const normalized = normalizeTajridLine(title);
+  const match = normalized.match(/(?:جلسه|session)\s*([0-9۰-۹٠-٩]+)/i);
+  if (!match) return fallback;
+
+  const normalizedDigits = match[1]
+    .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
+    .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
+
+  const parsed = Number(normalizedDigits);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function splitTajridSubtitle(value = "") {
+  const normalized = normalizeTajridLine(value);
+  if (!normalized) return [];
+
+  const matches = Array.from(
+    normalized.matchAll(
+      /(?:^|\s)[0-9۰-۹٠-٩]+\s*[-:]\s*([\s\S]*?)(?=\s+[0-9۰-۹٠-٩]+\s*[-:]|$)/g
+    )
+  );
+
+  if (matches.length) {
+    return matches.map((match) => match[1].trim()).filter(Boolean);
+  }
+
+  return normalized
+    .split(/\s+-\s+|\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function formatTajridSubtitle(audio: { subtitle?: string }) {
+  return splitTajridSubtitle(audio.subtitle || "")
+    .map((line) =>
+      normalizeTajridLine(line)
+        .replace(/^[0-9۰-۹٠-٩]+\s*[-:]\s*/, "")
+        .trim()
+    )
+    .filter(Boolean)
+    .map((line, index) => `${toPersianNumber(index + 1)}-${line}`);
 }
 export const BenefitTajrid = () => {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const { play } = useAudioPlayer();
+  const { catalog, loading, error, load } = useAudioCatalog();
 
-  const sections: PdfSection[] = useMemo(() => {
-    return Array.from({ length: TOTAL_PDFS }, (_, i) => {
-      const n = i + 1;
-      const path = `${BASE_PATH}/${n}.pdf`.replace("//", "/");
-      return { id: `v${n}`, pdfUrl: path };
-    });
-  }, []);
-
-  const toDownloadUrl = (u: string) => u;
+  const sections = useMemo(() => catalog?.tajrid?.pdfs || [], [catalog]);
+  const tajridAudios = useMemo(() => catalog?.tajrid?.audios || [], [catalog]);
 
   return (
     <>
       <HoverLift className="h-full">
       <Card
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true);
+          load();
+        }}
         className="service-tile group flex h-full min-h-[168px] cursor-pointer flex-col justify-between"
       >
         <div className="service-tile-header">
@@ -86,6 +124,10 @@ export const BenefitTajrid = () => {
                   loop
                   className="text-muted-foreground bg-transparent mt-4"
                 />
+              ) : error ? (
+                <p className="mt-4 text-center text-sm text-muted-foreground">
+                  {error}
+                </p>
               ) : (
                 <Accordion type="single" collapsible className="w-full mt-4">
                   {/* PDFs */}
@@ -95,11 +137,12 @@ export const BenefitTajrid = () => {
                       <MotionList className="flex flex-col gap-3">
                       {sections.map((section, index) => {
                         const vol = index + 1;
-                        const label = `کتاب کشف المراد جلد ${vol}`;
+                        const label = section.title || `کتاب کشف المراد جلد ${vol}`;
                         const fileName = `${label}.pdf`;
+                        const pdfUrl = section.url || "";
                         return (
                           <MotionItem
-                            key={section.id}
+                            key={section.id || pdfUrl || index}
                             className="motion-list-item flex flex-col gap-2 md:flex-row md:items-center md:justify-between"
                           >
                             <span className="text-sm text-muted-foreground">
@@ -110,7 +153,7 @@ export const BenefitTajrid = () => {
                                 size="sm"
                                 variant="outline"
                                 onClick={() =>
-                                  window.open(section.pdfUrl, "_blank")
+                                  window.open(toPdfViewUrl(pdfUrl), "_blank")
                                 }
                               >
                                 نمایش
@@ -120,7 +163,7 @@ export const BenefitTajrid = () => {
                                 size="sm"
                                 onClick={() => {
                                   const a = document.createElement("a");
-                                  a.href = section.pdfUrl;
+                                  a.href = pdfUrl;
                                   a.download = fileName; // browsers may honor this for same-origin
                                   document.body.appendChild(a);
                                   a.click();
@@ -138,18 +181,19 @@ export const BenefitTajrid = () => {
                   </AccordionItem>
 
                   {/* Audios */}
-                  {[...tajridAudios].reverse().map((audio, i, arr) => {
-                    const sessionNumber = arr.length - i;
-                    const descriptions = [
-                      audio.DescriptionOne,
-                      audio.DescriptionTwo,
-                      audio.DescriptionThree,
-                      audio.DescriptionFour,
-                      (audio as any).DescriptionFive,
-                      (audio as any).DescriptionSix,
-                    ].filter((d) => d && String(d).trim() !== "") as string[];
+                  {[...tajridAudios]
+                    .map((audio, index) => ({
+                      audio,
+                      sessionNumber: extractTajridSessionNumber(
+                        audio.title,
+                        index + 1
+                      ),
+                    }))
+                    .sort((a, b) => b.sessionNumber - a.sessionNumber)
+                    .map(({ audio, sessionNumber }) => {
+                    const subtitleLines = formatTajridSubtitle(audio);
 
-                    const url = toStreamable(audio.url);
+                    const url = toStreamableUrl(audio.url || "");
 
                     return (
                       <AccordionItem
@@ -161,13 +205,13 @@ export const BenefitTajrid = () => {
                         </AccordionTrigger>
                    <AccordionContent>
   <div className="space-y-4">
-    {descriptions.length > 0 ? (
+    {subtitleLines.length > 0 ? (
       <div
         className="text-sm text-primary leading-relaxed text-right whitespace-pre-line"
         dir="rtl"
       >
-        {descriptions.map((desc, idx) => (
-          <p key={idx}>{desc}</p>
+        {subtitleLines.map((point) => (
+          <p key={point}>{point}</p>
         ))}
       </div>
     ) : (
@@ -185,9 +229,7 @@ export const BenefitTajrid = () => {
           play({
             title: `جلسه ${sessionNumber}`,
             url,
-            description: descriptions.length
-              ? descriptions.join(" | ")
-              : undefined,
+            description: subtitleLines.join(" | "),
           });
         }}
       >

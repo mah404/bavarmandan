@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { getLatestAudios } from "@/lib/getLatestAudios";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
+import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { MotionItem, MotionList } from "./reveal";
 
 const featureMeta = {
@@ -10,9 +12,14 @@ const featureMeta = {
 };
 
 export const FeaturesSection = () => {
-  const latest5 = getLatestAudios(3);
+  const { catalog, load } = useAudioCatalog();
+  const latest5 = getLatestAudios(catalog, 3);
   const { play } = useAudioPlayer();
   const { goTo } = useSheetNav();
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   return (
     <section id="features" className="h-full w-full">

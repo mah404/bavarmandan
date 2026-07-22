@@ -109,10 +109,6 @@ export default function RootLayout({
             `,
           }}
         />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@100..800&display=swap"
-          rel="stylesheet"
-        />
         <meta
           property="og:see_also"
           content="https://www.instagram.com/bavarmandan110/"

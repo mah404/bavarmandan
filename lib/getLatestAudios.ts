@@ -1,139 +1,247 @@
 import {
-  beliefAudios,
-  audioGroups,
-  audioFilessadeghin,
-  audioFilesnew,
-  audioFiles,
-  miscFiles,
-  tajridAudios,
-} from "@/data/content";
+  AudioCatalog,
+  CatalogFile,
+  MaktubatSession,
+  catalogFiles,
+  fileUrl,
+  isAudioUrl,
+  normalizeBeliefTopic,
+  sessionNumberFromText,
+} from "@/lib/media-api";
+import { akhlaghOrderIndex } from "@/lib/akhlagh-order";
 
 export type LatestAudio = {
   title: string;
   url: string;
-  createdAt: string;
+  createdAt?: string;
   description?: string;
-
   sheetId?: string;
   accordionValue?: string;
   itemDomId?: string;
 };
 
-function safeTime(iso: string) {
+type LatestCandidate = LatestAudio & {
+  fallbackRank: number;
+  order: number;
+  sortTime: number;
+};
+
+const dateKeys = [
+  "createdAt",
+  "updatedAt",
+  "uploadedAt",
+  "publishedAt",
+  "date",
+] as const;
+
+function firstDate(item?: Record<string, unknown> | null) {
+  if (!item) return "";
+
+  for (const key of dateKeys) {
+    const value = item[key];
+    if (typeof value === "string" && Number.isFinite(new Date(value).getTime())) {
+      return value;
+    }
+  }
+
+  return "";
+}
+
+function safeTime(iso = "") {
   const t = new Date(iso).getTime();
   return Number.isFinite(t) ? t : -Infinity;
 }
 
-export function getLatestAudios(limit = 5): LatestAudio[] {
-  const merged: LatestAudio[] = [
-    ...beliefAudios
-      .filter((x) => !!x.createdAt)
-      .map((x, i) => ({
-        title: x.title,
-        url: x.url,
-        createdAt: x.createdAt!,
-        description: x.description,
-        sheetId: "akhlagh",
-        accordionValue: "belief",
-        itemDomId: `audio-akhlagh-belief-${i}`,
-      })),
+function sessionRank(session: MaktubatSession | undefined, index: number) {
+  const idNumber = Number(session?.id);
+  const textNumber = sessionNumberFromText(session?.title || "");
+  return Number.isFinite(idNumber) && idNumber > 0
+    ? idNumber
+    : textNumber || index + 1;
+}
 
-...audioGroups.flatMap((group, groupIndex) =>
-  group.files.flatMap((f, fileIndex) => {
-    if (!f.createdAt) return [];
-    return [{
-      title: `${group.subject} - ${f.title}`.trim(),
-      url: f.url,
-      createdAt: f.createdAt!,
-      description: group.subject,
-      sheetId: "benefitsCard",
-      accordionValue: `group-${groupIndex}`,
-      itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`, // ✅
-    }];
-  })
-),
+const aghayedTargets: Record<
+  string,
+  { accordionValue: string; itemDomIdPrefix?: string; fallbackBase: number }
+> = {
+  "maa-al-sadeghin": {
+    accordionValue: "group-1",
+    itemDomIdPrefix: "audio-akhlagh-audioFilessadeghin",
+    fallbackBase: 650_000,
+  },
+  "konkash-dar-aghayed": {
+    accordionValue: "group-2",
+    itemDomIdPrefix: "audio-akhlagh-audioFilesnew",
+    fallbackBase: 640_000,
+  },
+  "shia-va-miras-fatemi": {
+    accordionValue: "group-3",
+    fallbackBase: 630_000,
+  },
+  "goftogooha-ye-qorani": {
+    accordionValue: "group-4",
+    fallbackBase: 620_000,
+  },
+  motafarreghe: {
+    accordionValue: "group-5",
+    fallbackBase: 610_000,
+  },
+};
 
+function pushCandidate(
+  candidates: LatestCandidate[],
+  order: number,
+  fallbackRank: number,
+  audio: LatestAudio
+) {
+  if (!audio.url) return order;
 
+  candidates.push({
+    ...audio,
+    fallbackRank,
+    order,
+    sortTime: safeTime(audio.createdAt),
+  });
 
+  return order + 1;
+}
 
-   
+export function getLatestAudios(
+  catalog: AudioCatalog | null | undefined,
+  limit = 5
+): LatestAudio[] {
+  if (!catalog) return [];
 
-    // 2) مع الصادقین
-    ...audioFilessadeghin
-      .filter((x) => !!x.createdAt)
-      .map((x, i) => ({
-        title: x.title,
-        url: x.url,
-        createdAt: x.createdAt!,
-        description: x.description,
+  const candidates: LatestCandidate[] = [];
+  let order = 0;
 
-        // ✅ THIS IS THE IMPORTANT PART
-        sheetId: "akhlagh",
-        accordionValue: "group-1", // "مع الصادقین" accordion in BenefitAkhlaq
-        itemDomId: `audio-akhlagh-audioFilessadeghin-${i}`,
-      })),
+  const bavardashtTopic = catalog.aghayed?.bavardasht;
+  const beliefSessions = normalizeBeliefTopic(bavardashtTopic);
+  beliefSessions.forEach((session, index) => {
+    const rawSession = bavardashtTopic?.sessions?.[index];
+    const rank = sessionRank(rawSession, index);
 
-    // 3) audioFilesnew (کنکاش در عقاید)
-    // Example: audioFilesnew belongs to sheet "akhlagh" accordion group-1
-    ...audioFilesnew
-      .filter((x) => !!x.createdAt)
-      .map((x, i) => ({
-        title: x.title,
-        url: x.url,
-        createdAt: x.createdAt!,
-        description: x.description,
+    order = pushCandidate(candidates, order, 1_000_000 + rank, {
+      title: session.title,
+      url: session.url,
+      createdAt: firstDate(rawSession) || session.createdAt,
+      description: `اصول عقاید شیعه - ${session.title}`,
+      sheetId: "akhlagh",
+      accordionValue: "belief",
+      itemDomId: `audio-akhlagh-belief-${index}`,
+    });
+  });
 
-        sheetId: "akhlagh",
-        accordionValue: "group-2",
-        itemDomId: `audio-akhlagh-audioFilesnew-${i}`,
-      })),
+  Object.entries(catalog.akhlagh || {})
+    .map(([key, topic], originalIndex) => ({
+      key,
+      topic,
+      originalIndex,
+      subject: topic?.title || key,
+    }))
+    .sort((a, b) => {
+      const byTitle = akhlaghOrderIndex(a.subject) - akhlaghOrderIndex(b.subject);
+      return byTitle || a.originalIndex - b.originalIndex;
+    })
+    .forEach(({ key, topic, subject }, groupIndex) => {
+      catalogFiles(topic).forEach((file, fileIndex) => {
+        const url = fileUrl(file);
+        if (!isAudioUrl(url, file.type)) return;
 
-    // 4) audioFiles (میراث فاطمی + گفتگوها)
-    // (if later you add createdAt)
-    ...audioFiles
-      .filter((x) => !!x.createdAt)
-      .map((x, i) => ({
-        title: x.title,
-        url: x.url,
-        createdAt: x.createdAt!,
-        description: x.description,
-        source: "audioFiles" as const,
+        order = pushCandidate(
+          candidates,
+          order,
+          900_000 - groupIndex * 100 - fileIndex,
+          {
+            title: file.title || subject,
+            url,
+            createdAt: firstDate(file as CatalogFile),
+            description: subject || file.description || file.title || key,
+            sheetId: "benefitsCard",
+            accordionValue: `group-${groupIndex}`,
+            itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`,
+          }
+        );
+      });
+    });
 
-        sheetId: "eteghadat" as const,
-        accordionValue: i < 4 ? "group-2" : "group-3",
-        itemDomId: `audio-eteghadat-audioFiles-${i}`,
-      })),
+  Object.entries(catalog.aghayed || {}).forEach(([key, topic]) => {
+    if (key === "bavardasht") return;
 
-    // 5) miscFiles
-    ...miscFiles
-      .filter((x) => !!x.createdAt)
-      .map((x, i) => ({
-        title: x.title,
-        url: x.url,
-        createdAt: x.createdAt!,
-        description: x.description,
-        source: "miscFiles" as const,
+    const target = aghayedTargets[key] || {
+      accordionValue: key,
+      fallbackBase: 600_000,
+    };
 
-        sheetId: "eteghadat" as const,
-        accordionValue: "group-4",
-        itemDomId: `audio-eteghadat-miscFiles-${i}`,
-      })),
+    catalogFiles(topic).forEach((file, fileIndex) => {
+      const url = fileUrl(file);
+      if (!isAudioUrl(url, file.type)) return;
 
-    // 6) tajridAudios (currently no createdAt in your data, but helper supports it if you add later)
-    ...tajridAudios
-      .filter((x) => !!x.createdAt)
-      .map((x) => ({
-        title: x.DescriptionOne || "تجرید",
-        url: x.url,
-        createdAt: x.createdAt!,
-        description: [x.DescriptionTwo, x.DescriptionThree, x.DescriptionFour]
-          .filter(Boolean)
-          .join(" | "),
-        source: "tajridAudios" as const,
-      })),
-  ];
+      order = pushCandidate(
+        candidates,
+        order,
+        target.fallbackBase - fileIndex,
+        {
+          title: file.title || topic?.title || key,
+          url,
+          createdAt: firstDate(file),
+          description: topic?.title || file.description || file.title || key,
+          sheetId: "akhlagh",
+          accordionValue: target.accordionValue,
+          itemDomId: target.itemDomIdPrefix
+            ? `${target.itemDomIdPrefix}-${fileIndex}`
+            : undefined,
+        }
+      );
+    });
+  });
 
-  return merged
-    .sort((a, b) => safeTime(b.createdAt) - safeTime(a.createdAt))
-    .slice(0, limit);
+  (catalog.maktubat?.sessions || []).forEach((session, index) => {
+    const url = session.audioUrl || "";
+    if (!url) return;
+
+    order = pushCandidate(candidates, order, 800_000 + sessionRank(session, index), {
+      title: session.title || "",
+      url,
+      createdAt: firstDate(session),
+      description: session.subtitle || session.content || session.title,
+      sheetId: "maktobat",
+      accordionValue: session.id,
+      itemDomId: session.id ? `maktobat-item-${session.id}` : undefined,
+    });
+  });
+
+  (catalog.tajrid?.audios || []).forEach((file, index) => {
+    const url = fileUrl(file);
+    if (!isAudioUrl(url, file.type)) return;
+
+    order = pushCandidate(candidates, order, 700_000 - index, {
+      title: file.title || `فایل ${index + 1}`,
+      url,
+      createdAt: firstDate(file),
+      description: file.description || file.title,
+      sheetId: "tajrid",
+      accordionValue: file.id,
+      itemDomId: file.id ? `tajrid-audio-${file.id}` : undefined,
+    });
+  });
+
+  return candidates
+    .sort((a, b) => {
+      const aHasDate = Number.isFinite(a.sortTime);
+      const bHasDate = Number.isFinite(b.sortTime);
+
+      if (aHasDate || bHasDate) {
+        if (aHasDate !== bHasDate) return aHasDate ? -1 : 1;
+        if (a.sortTime !== b.sortTime) return b.sortTime - a.sortTime;
+      }
+
+      if (a.fallbackRank !== b.fallbackRank) {
+        return b.fallbackRank - a.fallbackRank;
+      }
+
+      return b.order - a.order;
+    })
+    .slice(0, limit)
+    .map(({ fallbackRank, order, sortTime, ...audio }) => audio);
 }

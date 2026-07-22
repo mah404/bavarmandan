@@ -19,8 +19,10 @@ import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
-import { audioGroups } from "@/data/content";
+import { catalogFiles, toDownloadUrl } from "@/lib/media-api";
+import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
+import { akhlaghOrderIndex } from "@/lib/akhlagh-order";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 import { HeartHandshake } from "lucide-react";
 
@@ -35,13 +37,12 @@ export const BenefitsCard = () => {
 
   const { play } = useAudioPlayer();
   const { target, clear } = useSheetNav();
-
-  const toDownloadUrl = (u: string) =>
-    u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
+  const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
 
   const fetchDescription = async () => {
     setLoading(true);
     try {
+      await load(true);
       const response = await fetch("/api/benefit?id=eteghadat");
       if (response.ok) await response.json();
     } catch {
@@ -50,6 +51,19 @@ export const BenefitsCard = () => {
       setLoading(false);
     }
   };
+
+  const audioGroups = Object.entries(catalog?.akhlagh || {})
+    .map(([key, topic], originalIndex) => ({
+      key,
+      originalIndex,
+      subject: topic?.title || key,
+      files: catalogFiles(topic),
+    }))
+    .sort((a, b) => {
+      const byTitle = akhlaghOrderIndex(a.subject) - akhlaghOrderIndex(b.subject);
+      return byTitle || a.originalIndex - b.originalIndex;
+    });
+  const isLoading = loading || catalogLoading;
 
   // ✅ wait-until-exists scroll helper
 const scrollToId = async (id: string, tries = 20) => {
@@ -77,6 +91,11 @@ const scrollToId = async (id: string, tries = 20) => {
   }
 };
 
+
+  useEffect(() => {
+    if (!open) return;
+    load(true);
+  }, [open, load]);
 
   useEffect(() => {
     if (!target) return;
@@ -137,12 +156,16 @@ const scrollToId = async (id: string, tries = 20) => {
             <SheetDescription className="mb-4"></SheetDescription>
           </SheetHeader>
 
-          {loading ? (
+          {isLoading ? (
             <Lottie
               animationData={loadingPdfAnim}
               loop
               className="text-muted-foreground bg-transparent mt-4"
             />
+          ) : error ? (
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              {error}
+            </p>
           ) : (
             <Accordion
               type="multiple"
@@ -152,7 +175,7 @@ const scrollToId = async (id: string, tries = 20) => {
             >
               {audioGroups.map((group, groupIndex) => (
                 <AccordionItem
-                  key={groupIndex}
+                  key={group.key}
                   value={`group-${groupIndex}`}
                 >
                   <AccordionTrigger className="text-right">
@@ -176,7 +199,7 @@ const scrollToId = async (id: string, tries = 20) => {
                           <Button
                             onClick={() =>
                               play({
-                                title: file.title,
+                                title: file.title || "",
                                 url: file.url,
                               })
                             }

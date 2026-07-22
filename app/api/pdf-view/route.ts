@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { MEDIA_API_BASE } from "@/lib/media-api";
 
 export async function GET(request: NextRequest) {
   const source = request.nextUrl.searchParams.get("url");
@@ -15,11 +16,8 @@ export async function GET(request: NextRequest) {
     return new Response("Invalid PDF url", { status: 400 });
   }
 
-  const allowedHosts = new Set([
-    "www.dropbox.com",
-    "dropbox.com",
-    "dl.dropboxusercontent.com",
-  ]);
+  const mediaHost = new URL(MEDIA_API_BASE).hostname;
+  const allowedHosts = new Set([mediaHost]);
 
   if (!allowedHosts.has(url.hostname)) {
     return new Response("Unsupported PDF host", { status: 400 });

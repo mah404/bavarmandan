@@ -20,11 +20,25 @@ import { Sparkles } from "lucide-react";
 import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
-import { dropboxAudioMap, goftegooha, Maktobat } from "@/data/content";
+import {
+  fileUrl,
+  MaktubatSession,
+  toDownloadUrl,
+  toPdfViewUrl,
+  toStreamableUrl,
+} from "@/lib/media-api";
+import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 
 const CACHE_KEY = "maktobats_cache_v1";
+type Maktobat = {
+  id: string;
+  title: string;
+  content: string;
+  pdfUrl: string | null;
+  audioUrl?: string | null;
+};
 type CacheShape = { ts: number; items: Maktobat[] };
 
 export const BenefitMaktobat = () => {
@@ -37,6 +51,7 @@ export const BenefitMaktobat = () => {
   const [maktobats, setMaktobats] = useState<Maktobat[]>([]);
   const { play } = useAudioPlayer(); // ← use the global player
   const { target, clear } = useSheetNav();
+  const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
 
   useEffect(() => {
     if (!target) return;
@@ -64,17 +79,6 @@ export const BenefitMaktobat = () => {
     return () => clearTimeout(t);
   }, [target, clear, play]);
 
-  // Make Dropbox URLs streamable (inline) for the player
-  const toStreamable = (u: string) => {
-    if (!u) return u;
-    // strip any existing dl/raw flags, then force raw=1
-    const noParam = u.replace(/([?&])(dl|raw)=[01]/g, "").replace(/[?&]$/, "");
-    return noParam + (noParam.includes("?") ? "&raw=1" : "?raw=1");
-  };
-
-  const toDownloadUrl = (u: string) =>
-    u ? u.replace(/([?&])raw=1/, "$1dl=1").replace(/([?&])dl=0/, "$1dl=1") : u;
-
   // ---------- Cache helpers ----------
   const readCache = (): Maktobat[] | null => {
     try {
@@ -98,7 +102,7 @@ export const BenefitMaktobat = () => {
   };
 
   // ---------- Transform & sort ----------
-  const transformAndSort = (data: any[]): Maktobat[] => {
+  const transformAndSort = (data: MaktubatSession[]): Maktobat[] => {
     const persianOrderMap: Record<string, number> = {
       اول: 1,
       دوم: 2,
@@ -120,22 +124,18 @@ export const BenefitMaktobat = () => {
     };
 
     const sortedData = [...data].sort(
-      (a, b) => extractPersianNumber(a.title) - extractPersianNumber(b.title)
+      (a, b) =>
+        extractPersianNumber(a.title || "") - extractPersianNumber(b.title || "")
     );
 
-    return sortedData.map((item: any) => {
-      const order = String(extractPersianNumber(item.title));
-      const audioUrl = dropboxAudioMap[order]
-        ? dropboxAudioMap[order].replace("&dl=0", "&raw=1")
-        : null;
-
+    return sortedData.map((item, index) => {
       return {
-        id: item.id,
-        title: item.title,
-        content: item.content,
-        pdfUrl: item.pdfUrl,
-        audioUrl,
-      } as Maktobat;
+        id: item.id || `maktobat-${index}`,
+        title: item.title || `مکتوب ${index + 1}`,
+        content: item.subtitle || item.content || "",
+        pdfUrl: item.pdfUrl || null,
+        audioUrl: item.audioUrl || null,
+      };
     });
   };
 
@@ -143,10 +143,8 @@ export const BenefitMaktobat = () => {
   const fetchAndCache = async (showSpinner: boolean) => {
     if (showSpinner) setLoading(true);
     try {
-      const res = await fetch("/api/maktobats", { cache: "no-store" });
-      if (!res.ok) throw new Error(await res.text());
-      const raw = await res.json();
-      const items = transformAndSort(raw);
+      const nextCatalog = await load();
+      const items = transformAndSort(nextCatalog?.maktubat?.sessions || []);
       setMaktobats(items);
       writeCache(items);
     } catch (err) {
@@ -182,6 +180,15 @@ export const BenefitMaktobat = () => {
     }
   };
 
+  const motafarreghe = catalog?.maktubat?.motafarreghe || [];
+  const isLoading = loading || catalogLoading;
+  const toStreamable = toStreamableUrl;
+  const goftegooha: Record<string, string> = {
+    "1": fileUrl(motafarreghe[0] || {}),
+    "2": fileUrl(motafarreghe[1] || {}),
+    "3": fileUrl(motafarreghe[2] || {}),
+  };
+
   return (
     <>
       <HoverLift className="h-full">
@@ -211,12 +218,16 @@ export const BenefitMaktobat = () => {
             </SheetDescription>
           </SheetHeader>
 
-          {loading ? (
+          {isLoading ? (
             <Lottie
               animationData={loadingPdfAnim}
               loop
               className="text-muted-foreground bg-transparent mt-4"
             />
+          ) : error ? (
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              {error}
+            </p>
           ) : (
             <Accordion
               type="single"
@@ -245,17 +256,15 @@ export const BenefitMaktobat = () => {
       <Button
         size="sm"
         variant="outline"
-        onClick={async () => {
-          const res = await fetch(maktobat.pdfUrl);
-          const blob = await res.blob();
-          const url = URL.createObjectURL(blob);
-          window.open(url, "_blank");
+        disabled={!maktobat.pdfUrl}
+        onClick={() => {
+          if (maktobat.pdfUrl) window.open(toPdfViewUrl(maktobat.pdfUrl), "_blank");
         }}
       >
         مشاهده
       </Button>
 
-      <a href={maktobat.pdfUrl} download={`${maktobat.title || "maktobat"}.pdf`}>
+      <a href={maktobat.pdfUrl || "#"} download={`${maktobat.title || "maktobat"}.pdf`}>
         <Button size="sm" className="text-background">
           دانلود
         </Button>
@@ -272,7 +281,7 @@ export const BenefitMaktobat = () => {
         onClick={() =>
           play({
             title: maktobat.title,
-            url: toStreamable(maktobat.audioUrl!),
+            url: toStreamableUrl(maktobat.audioUrl!),
             description: maktobat.content,
           })
         }
