@@ -4,6 +4,13 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET() {
+  if (!AUDIO_CATALOG_URL) {
+    return Response.json(
+      { error: "MEDIA_API_BASE is not configured" },
+      { status: 500 }
+    );
+  }
+
   try {
     const response = await fetch(AUDIO_CATALOG_URL, { cache: "no-store" });
 

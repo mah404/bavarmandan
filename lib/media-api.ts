@@ -1,7 +1,8 @@
-export const MEDIA_API_BASE =
-  process.env.NEXT_PUBLIC_MEDIA_API_BASE || "http://167.233.60.102:3001";
+export const MEDIA_API_BASE = process.env.MEDIA_API_BASE || "";
 
-export const AUDIO_CATALOG_URL = `${MEDIA_API_BASE.replace(/\/$/, "")}/api/audios`;
+export const AUDIO_CATALOG_URL = MEDIA_API_BASE
+  ? `${MEDIA_API_BASE.replace(/\/$/, "")}/api/audios`
+  : "";
 
 export type CatalogFile = {
   id?: string;

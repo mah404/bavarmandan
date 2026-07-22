@@ -16,6 +16,10 @@ export async function GET(request: NextRequest) {
     return new Response("Invalid PDF url", { status: 400 });
   }
 
+  if (!MEDIA_API_BASE) {
+    return new Response("MEDIA_API_BASE is not configured", { status: 500 });
+  }
+
   const mediaHost = new URL(MEDIA_API_BASE).hostname;
   const allowedHosts = new Set([mediaHost]);
 
