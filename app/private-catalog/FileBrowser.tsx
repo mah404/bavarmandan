@@ -86,6 +86,8 @@ function TreeItem({
   zipUrl?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [zipLoading, setZipLoading] = useState(false);
+  const [zipError, setZipError] = useState("");
   const isFolder = item.type === "folder";
   const children = normalizeItems(item.children);
 
@@ -120,6 +122,36 @@ function TreeItem({
 
   const isRoot = depth === 0 && !!zipUrl;
 
+  async function downloadZip() {
+    if (!zipUrl || zipLoading) return;
+
+    setZipLoading(true);
+    setZipError("");
+
+    try {
+      const response = await fetch(zipUrl, { cache: "no-store" });
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Download failed with status ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = "bavarmandan-media.zip";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+      setZipError(error instanceof Error ? error.message : "ZIP download failed.");
+    } finally {
+      setZipLoading(false);
+    }
+  }
+
   return (
     <div className="space-y-2" style={{ marginLeft: depth * 16 }}>
       <div className="flex w-full flex-col gap-3 rounded-xl border border-secondary bg-background/50 px-4 py-3 text-left text-sm font-bold text-foreground transition hover:border-primary/40 sm:flex-row sm:items-center">
@@ -146,14 +178,24 @@ function TreeItem({
         </button>
 
         {isRoot ? (
-          <Button asChild size="sm" className="shrink-0 text-card">
-            <a href={zipUrl} download rel="noopener noreferrer">
-              <Archive className="mr-2 size-4" />
-              Download ZIP
-            </a>
+          <Button
+            type="button"
+            size="sm"
+            className="shrink-0 text-card"
+            disabled={zipLoading}
+            onClick={downloadZip}
+          >
+            <Archive className="mr-2 size-4" />
+            {zipLoading ? "Preparing..." : "Download ZIP"}
           </Button>
         ) : null}
       </div>
+
+      {zipError ? (
+        <p className="rounded-lg bg-destructive/10 px-4 py-2 text-sm text-destructive">
+          {zipError}
+        </p>
+      ) : null}
 
       {open ? (
         <div className="space-y-2">

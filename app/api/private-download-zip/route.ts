@@ -5,13 +5,15 @@ export const revalidate = 0;
 export const runtime = "nodejs";
 
 type BrowseItem = {
-  name: string;
+  name?: string;
   type: "folder" | "file";
-  children?: BrowseItem[];
+  children?: BrowseItem[] | Record<string, BrowseItem[] | BrowseItem>;
   downloadUrl?: string;
 };
 
-type BrowseTree = Record<string, BrowseItem[]> | BrowseItem[];
+type NormalizedBrowseItem = BrowseItem & { name: string };
+
+type BrowseTree = Record<string, BrowseItem[] | BrowseItem> | BrowseItem[];
 
 type ZipEntry = {
   path: string;
@@ -25,14 +27,66 @@ function sanitizePathPart(value: string) {
   return value.replace(/[\\/:*?"<>|]/g, "-").replace(/\s+/g, " ").trim();
 }
 
-function collectFiles(items: BrowseItem[], prefix: string[] = []) {
+function isBrowseItem(value: unknown): value is BrowseItem {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "type" in value
+  );
+}
+
+function normalizeItems(value: unknown, fallbackName?: string): NormalizedBrowseItem[] {
+  if (!value) return [];
+
+  if (Array.isArray(value)) {
+    return value.filter(isBrowseItem).map((item) => ({
+      ...item,
+      name: item.name || fallbackName || "untitled",
+      children: item.type === "folder" ? normalizeItems(item.children) : undefined,
+    }));
+  }
+
+  if (isBrowseItem(value)) {
+    return [
+      {
+        ...value,
+        name: value.name || fallbackName || "untitled",
+        children:
+          value.type === "folder" ? normalizeItems(value.children) : undefined,
+      },
+    ];
+  }
+
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>).map(([name, item]) => {
+      if (isBrowseItem(item)) {
+        return {
+          ...item,
+          name: item.name || name,
+          children:
+            item.type === "folder" ? normalizeItems(item.children) : undefined,
+        };
+      }
+
+      return {
+        name,
+        type: "folder" as const,
+        children: normalizeItems(item, name),
+      };
+    });
+  }
+
+  return [];
+}
+
+function collectFiles(items: NormalizedBrowseItem[], prefix: string[] = []) {
   const files: { path: string; url: string }[] = [];
 
   for (const item of items) {
     const nextPrefix = [...prefix, sanitizePathPart(item.name)];
 
     if (item.type === "folder") {
-      files.push(...collectFiles(item.children || [], nextPrefix));
+      files.push(...collectFiles(normalizeItems(item.children), nextPrefix));
       continue;
     }
 
@@ -170,11 +224,7 @@ export async function GET(request: Request) {
   }
 
   const tree = (await browseResponse.json()) as BrowseTree;
-  const files = Array.isArray(tree)
-    ? collectFiles(tree)
-    : Object.entries(tree).flatMap(([sectionName, items]) =>
-        collectFiles(items, [sectionName])
-      );
+  const files = collectFiles(normalizeItems(tree));
 
   const entries: ZipEntry[] = [];
 
@@ -201,6 +251,7 @@ export async function GET(request: Request) {
     headers: {
       "Content-Type": "application/zip",
       "Content-Disposition": 'attachment; filename="bavarmandan-media.zip"',
+      "Content-Length": String(zip.length),
       "Cache-Control": "no-store",
     },
   });
