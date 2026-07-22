@@ -32,9 +32,23 @@ const connectWithFallback = async () => {
   throw lastError;
 };
 
-const clientPromise =
-  process.env.NODE_ENV === "development"
-    ? (global._mongoClientPromise ??= connectWithFallback())
-    : connectWithFallback();
+export const getMongoClient = () => {
+  if (process.env.NODE_ENV === "development") {
+    global._mongoClientPromise ??= connectWithFallback();
+    return global._mongoClientPromise;
+  }
+
+  return connectWithFallback();
+};
+
+const clientPromise = {
+  then: (...args: Parameters<Promise<MongoClient>["then"]>) =>
+    getMongoClient().then(...args),
+  catch: (...args: Parameters<Promise<MongoClient>["catch"]>) =>
+    getMongoClient().catch(...args),
+  finally: (...args: Parameters<Promise<MongoClient>["finally"]>) =>
+    getMongoClient().finally(...args),
+  [Symbol.toStringTag]: "Promise",
+} as Promise<MongoClient>;
 
 export default clientPromise;

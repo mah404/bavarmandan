@@ -38,7 +38,7 @@ export const BenefitAkhlaq = () => {
   const [loading, setLoading] = useState(false);
   const [accordionValue, setAccordionValue] = useState<string | undefined>();
   const [openBeliefSession, setOpenBeliefSession] = useState<string | null>(
-    "belief-session-0"
+    null
   );
 
   const { play } = useAudioPlayer();

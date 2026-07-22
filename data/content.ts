@@ -38,7 +38,12 @@ export const beliefAudios: BeliefAudio[] = [
     description: "اصول عقاید شیعه - جلسه دوم",
     url: "https://www.dropbox.com/scl/fi/yfazkgnerhg5zvfh8lsyk/2.mp3?rlkey=ukynfm2fktm4blv11afn4354v&st=v506204q&dl=0",
     points: [],
-    summaries: [],
+    summaries: [
+      {
+        title: "قسمت ۱",
+        url: "https://www.dropbox.com/scl/fi/e6d3a8l8e0e41dnxfldr7/2.pdf?rlkey=7rnowyhcava9qzd4vo64h2x60&st=ol0zhuye&dl=0",
+      },
+    ],
     createdAt: "2026-07-20T12:00:00Z",
   },
 ];
