@@ -5,7 +5,7 @@ import type { AudioCatalog } from "@/lib/media-api";
 
 let cachedCatalog: AudioCatalog | null = null;
 let inFlight: Promise<AudioCatalog> | null = null;
-const storageKey = "bavarmandan-audio-catalog-v5";
+const storageKey = "bavarmandan-audio-catalog-v6";
 
 function readStoredCatalog() {
   if (typeof window === "undefined") return null;

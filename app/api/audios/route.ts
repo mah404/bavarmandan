@@ -30,7 +30,12 @@ function mergeFilesTopic(
   const fallbackFiles = fallbackTopic?.files || [];
   const seen = new Set<string>();
   const files = [...liveFiles, ...fallbackFiles].filter((file) => {
-    const key = file.url || file.audioUrl || file.pdfUrl || file.title || "";
+    const key =
+      normalizedTitle(file.title || "") ||
+      file.url ||
+      file.audioUrl ||
+      file.pdfUrl ||
+      "";
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -43,6 +48,35 @@ function mergeFilesTopic(
   };
 }
 
+function mergeTopicRecords(
+  liveTopics: Record<string, MediaTopic | undefined>,
+  fallbackTopics: Record<string, MediaTopic | undefined>
+) {
+  const merged = new Map<string, { key: string; topic: MediaTopic | undefined }>();
+
+  Object.entries(fallbackTopics).forEach(([key, topic]) => {
+    const mergeKey = normalizedTitle(topic?.title || key);
+    merged.set(mergeKey, { key, topic });
+  });
+
+  Object.entries(liveTopics).forEach(([key, topic]) => {
+    const mergeKey = normalizedTitle(topic?.title || key);
+    const existing = merged.get(mergeKey);
+    merged.set(mergeKey, {
+      key: existing?.key || key,
+      topic: mergeFilesTopic(topic, existing?.topic),
+    });
+  });
+
+  return Array.from(merged.values()).reduce<Record<string, MediaTopic | undefined>>(
+    (acc, item) => {
+      acc[item.key] = item.topic;
+      return acc;
+    },
+    {}
+  );
+}
+
 function absoluteMediaUrl(path = "") {
   if (!path) return "";
   if (/^https?:\/\//i.test(path)) return path;
@@ -53,6 +87,15 @@ function absoluteMediaUrl(path = "") {
 
 function normalizeText(value: unknown) {
   return Array.isArray(value) ? value.filter(Boolean).join("  ") : String(value || "");
+}
+
+function normalizedTitle(value = "") {
+  return normalizeText(value)
+    .replace(/[ي]/g, "ی")
+    .replace(/[ك]/g, "ک")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
 }
 
 function normalizeFile(file: CatalogFile, fallbackFolder = "", rootFolder = ""): CatalogFile {
@@ -126,10 +169,10 @@ function mergeSessions(
 
   const sessionKey = (session: MaktubatSession, index: number, prefix: string) => {
     const number =
-      session.id ||
-      sessionNumberFromText(`${session.title || ""} ${normalizeText(session.subtitle)}`);
+      sessionNumberFromText(`${session.title || ""} ${normalizeText(session.subtitle)}`) ||
+      sessionNumberFromText(String(session.id || ""));
 
-    return number ? String(number) : `${prefix}-${index}`;
+    return number ? `session-${number}` : normalizedTitle(session.title) || `${prefix}-${index}`;
   };
 
   const normalizeSession = (session: MaktubatSession) => {
@@ -205,17 +248,10 @@ function mergeCatalog(liveCatalog: AudioCatalog): AudioCatalog {
     aghayed[key] = mergeFilesTopic(liveAghayed[key], fallbackAghayed[key]);
   });
 
-  const fallbackAkhlagh = normalizeAkhlagh(fallbackAudioCatalog.akhlagh);
-  const liveAkhlagh = normalizeAkhlagh(liveCatalog.akhlagh);
-  const akhlaghKeys = new Set([
-    ...Object.keys(fallbackAkhlagh),
-    ...Object.keys(liveAkhlagh),
-  ]);
-
-  const akhlagh: Record<string, MediaTopic | undefined> = {};
-  akhlaghKeys.forEach((key) => {
-    akhlagh[key] = mergeFilesTopic(liveAkhlagh[key], fallbackAkhlagh[key]);
-  });
+  const akhlagh = mergeTopicRecords(
+    normalizeAkhlagh(liveCatalog.akhlagh),
+    normalizeAkhlagh(fallbackAudioCatalog.akhlagh)
+  );
 
   return {
     ...fallbackAudioCatalog,

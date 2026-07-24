@@ -142,7 +142,7 @@ export function toPdfViewUrl(url: string) {
 
 export function sessionNumberFromText(text = "") {
   const normalized = normalizeDigits(text);
-  const numeric = normalized.match(/(?:جلسه|session|قسمت|part)\s*[-:]?\s*(\d+)/i);
+  const numeric = normalized.match(/(?:جلسه|session|قسمت|part|مکتوب)\s*[-:]?\s*(\d+)/i);
   if (numeric) return Number(numeric[1]);
 
   for (const [word, number] of Object.entries(persianNumberWords)) {

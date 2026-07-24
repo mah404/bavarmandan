@@ -32,7 +32,7 @@ import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 
-const CACHE_KEY = "maktobats_cache_v5";
+const CACHE_KEY = "maktobats_cache_v6";
 type Maktobat = {
   id: string;
   title: string;
