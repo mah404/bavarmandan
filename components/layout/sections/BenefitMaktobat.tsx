@@ -22,6 +22,7 @@ import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import {
   fileUrl,
+  isAudioUrl,
   MaktubatSession,
   toDownloadUrl,
   toPdfViewUrl,
@@ -31,7 +32,7 @@ import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 
-const CACHE_KEY = "maktobats_cache_v1";
+const CACHE_KEY = "maktobats_cache_v5";
 type Maktobat = {
   id: string;
   title: string;
@@ -129,12 +130,19 @@ export const BenefitMaktobat = () => {
     );
 
     return sortedData.map((item, index) => {
+      const possibleAudioUrl = fileUrl(item);
+      const content = Array.isArray(item.subtitle)
+        ? item.subtitle.join("\n")
+        : item.subtitle || item.content || "";
+
       return {
         id: item.id || `maktobat-${index}`,
         title: item.title || `مکتوب ${index + 1}`,
-        content: item.subtitle || item.content || "",
+        content,
         pdfUrl: item.pdfUrl || null,
-        audioUrl: item.audioUrl || null,
+        audioUrl:
+          item.audioUrl ||
+          (isAudioUrl(possibleAudioUrl) ? possibleAudioUrl : null),
       };
     });
   };
@@ -143,7 +151,7 @@ export const BenefitMaktobat = () => {
   const fetchAndCache = async (showSpinner: boolean) => {
     if (showSpinner) setLoading(true);
     try {
-      const nextCatalog = await load();
+      const nextCatalog = await load(true);
       const items = transformAndSort(nextCatalog?.maktubat?.sessions || []);
       setMaktobats(items);
       writeCache(items);

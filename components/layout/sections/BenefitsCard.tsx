@@ -193,8 +193,13 @@ const scrollToId = async (id: string, tries = 20) => {
                   </AccordionTrigger>
 
                   <AccordionContent className="justify-center mt-2 text-center">
+                    {group.files.length === 0 ? (
+                      <div className="py-4 text-sm text-muted-foreground">
+                        فعلاً صوتی اضافه نشده.
+                      </div>
+                    ) : (
                     <MotionList className="flex flex-col gap-3">
-                    {group.files.map((file, fileIndex) => (
+                      {group.files.map((file, fileIndex) => (
                       <MotionItem
                         // ✅ IMPORTANT: id must match what you generate in getLatestAudios
                         id={`audio-benefitsCard-${groupIndex}-${fileIndex}`}
@@ -228,8 +233,9 @@ const scrollToId = async (id: string, tries = 20) => {
                           </a>
                         </div>
                       </MotionItem>
-                    ))}
+                      ))}
                     </MotionList>
+                    )}
                   </AccordionContent>
                 </AccordionItem>
               ))}

@@ -52,7 +52,11 @@ function extractTajridSessionNumber(title = "", fallback: number) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-function splitTajridSubtitle(value = "") {
+function splitTajridSubtitle(value: string | string[] = "") {
+  if (Array.isArray(value)) {
+    return value.map((line) => normalizeTajridLine(line)).filter(Boolean);
+  }
+
   const normalized = normalizeTajridLine(value);
   if (!normalized) return [];
 
@@ -72,7 +76,7 @@ function splitTajridSubtitle(value = "") {
     .filter(Boolean);
 }
 
-function formatTajridSubtitle(audio: { subtitle?: string }) {
+function formatTajridSubtitle(audio: { subtitle?: string | string[] }) {
   return splitTajridSubtitle(audio.subtitle || "")
     .map((line) =>
       normalizeTajridLine(line)
@@ -117,19 +121,21 @@ export const BenefitTajrid = () => {
         <SheetContent className="max-h-screen overflow-y-auto">
           <SheetHeader>
             <SheetTitle>دروس شرح کتاب تجرید الاعتقاد</SheetTitle>
-            <SheetDescription>
-              {loading ? (
-                <Lottie
-                  animationData={loadingPdfAnim}
-                  loop
-                  className="text-muted-foreground bg-transparent mt-4"
-                />
-              ) : error ? (
-                <p className="mt-4 text-center text-sm text-muted-foreground">
-                  {error}
-                </p>
-              ) : (
-                <Accordion type="single" collapsible className="w-full mt-4">
+            <SheetDescription className="mb-4"></SheetDescription>
+          </SheetHeader>
+
+          {loading ? (
+            <Lottie
+              animationData={loadingPdfAnim}
+              loop
+              className="text-muted-foreground bg-transparent mt-4"
+            />
+          ) : error ? (
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              {error}
+            </p>
+          ) : (
+            <Accordion type="single" collapsible className="w-full mt-4">
                   {/* PDFs */}
                   <AccordionItem value="tajrid-pdfs">
                     <AccordionTrigger>کتاب شرح تجرید الاعتقاد</AccordionTrigger>
@@ -251,10 +257,8 @@ export const BenefitTajrid = () => {
                       </AccordionItem>
                     );
                   })}
-                </Accordion>
-              )}
-            </SheetDescription>
-          </SheetHeader>
+            </Accordion>
+          )}
         </SheetContent>
       </Sheet>
     </>

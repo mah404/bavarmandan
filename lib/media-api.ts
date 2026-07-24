@@ -24,6 +24,8 @@ export type CatalogFile = {
   url?: string | null;
   audioUrl?: string | null;
   pdfUrl?: string | null;
+  file?: string;
+  folder?: string;
   createdAt?: string;
   type?: string;
 };
@@ -33,17 +35,20 @@ export type CatalogFileWithUrl = CatalogFile & { url: string };
 export type MaktubatSession = {
   id?: string;
   title?: string;
-  subtitle?: string;
+  subtitle?: string | string[];
   content?: string;
+  url?: string | null;
   audioUrl?: string | null;
   pdfUrl?: string | null;
   pdfs?: CatalogFile[];
+  files?: CatalogFile[];
   createdAt?: string;
 };
 
 export type MediaTopic = {
   title?: string;
   description?: string;
+  folder?: string;
   files?: CatalogFile[];
   sessions?: MaktubatSession[];
 };
@@ -60,7 +65,7 @@ export type AudioCatalog = {
     pdfs?: CatalogFile[];
   };
   aghayed?: Record<string, MediaTopic | undefined>;
-  akhlagh?: Record<string, MediaTopic | undefined>;
+  akhlagh?: Record<string, MediaTopic | undefined> | MediaTopic[] | { topics?: MediaTopic[] };
 };
 
 export type BeliefSession = {
@@ -202,11 +207,17 @@ export function normalizeBeliefSessions(files: CatalogFile[] = []): BeliefSessio
     }));
 }
 
-function subtitlePoints(subtitle = "") {
-  return normalizeDigits(subtitle)
+function subtitlePoints(subtitle: string | string[] = "") {
+  const text = Array.isArray(subtitle) ? subtitle.join("  ") : subtitle;
+
+  return normalizeDigits(text)
     .split(/\s+(?=\d+\s*[-ـ])/)
     .map((part) => part.replace(/^\d+\s*[-ـ]\s*/, "").trim())
     .filter(Boolean);
+}
+
+function textValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value.join("  ") : value || "";
 }
 
 export function normalizeBeliefTopic(topic?: MediaTopic): BeliefSession[] {
@@ -214,7 +225,12 @@ export function normalizeBeliefTopic(topic?: MediaTopic): BeliefSession[] {
     return topic.sessions
       .map((session, index) => ({
         title: session.title || `جلسه ${index + 1}`,
-        description: topic.description || session.content || session.subtitle || topic.title || "",
+        description:
+          topic.description ||
+          session.content ||
+          textValue(session.subtitle) ||
+          topic.title ||
+          "",
         url: session.audioUrl || "",
         points: subtitlePoints(session.subtitle),
         summaries:

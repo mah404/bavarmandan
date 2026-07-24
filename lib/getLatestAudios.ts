@@ -60,6 +60,10 @@ function sessionRank(session: MaktubatSession | undefined, index: number) {
     : textNumber || index + 1;
 }
 
+function displayText(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value.join(" | ") : value;
+}
+
 const aghayedTargets: Record<
   string,
   { accordionValue: string; itemDomIdPrefix?: string; fallbackBase: number }
@@ -197,14 +201,14 @@ export function getLatestAudios(
   });
 
   (catalog.maktubat?.sessions || []).forEach((session, index) => {
-    const url = session.audioUrl || "";
-    if (!url) return;
+    const url = fileUrl(session);
+    if (!isAudioUrl(url)) return;
 
     order = pushCandidate(candidates, order, 800_000 + sessionRank(session, index), {
       title: session.title || "",
       url,
       createdAt: firstDate(session),
-      description: session.subtitle || session.content || session.title,
+      description: displayText(session.subtitle) || session.content || session.title,
       sheetId: "maktobat",
       accordionValue: session.id,
       itemDomId: session.id ? `maktobat-item-${session.id}` : undefined,

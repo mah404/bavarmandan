@@ -18,7 +18,7 @@ export const FeaturesSection = () => {
   const { goTo } = useSheetNav();
 
   useEffect(() => {
-    load();
+    load(true);
   }, [load]);
 
   return (
