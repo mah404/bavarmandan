@@ -89,6 +89,12 @@ function normalizeText(value: unknown) {
   return Array.isArray(value) ? value.filter(Boolean).join("  ") : String(value || "");
 }
 
+function numericSessionId(value: unknown) {
+  const text = normalizeText(value).trim();
+  if (!text || !/^[۰-۹٠-٩0-9]+$/.test(text)) return null;
+  return sessionNumberFromText(`session ${text}`) || null;
+}
+
 function normalizedTitle(value = "") {
   return normalizeText(value)
     .replace(/[ي]/g, "ی")
@@ -169,8 +175,9 @@ function mergeSessions(
 
   const sessionKey = (session: MaktubatSession, index: number, prefix: string) => {
     const number =
-      sessionNumberFromText(`${session.title || ""} ${normalizeText(session.subtitle)}`) ||
-      sessionNumberFromText(String(session.id || ""));
+      numericSessionId(session.id) ||
+      sessionNumberFromText(session.title || "") ||
+      sessionNumberFromText(normalizeText(session.subtitle));
 
     return number ? `session-${number}` : normalizedTitle(session.title) || `${prefix}-${index}`;
   };

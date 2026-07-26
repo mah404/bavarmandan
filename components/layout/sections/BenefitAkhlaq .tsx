@@ -229,7 +229,7 @@ export const BenefitAkhlaq = () => {
                     {beliefAudios.map((file, i) => (
                       <div
                         id={`audio-akhlagh-belief-${i}`}
-                        key={file.url}
+                        key={`${file.title}-${file.url || i}`}
                         className={[
                           "border-b border-secondary bg-card/70 dark:bg-card px-4 my-3 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40",
                           highlightId === `audio-akhlagh-belief-${i}`
