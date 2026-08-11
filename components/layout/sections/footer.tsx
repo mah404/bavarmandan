@@ -12,16 +12,28 @@ import {
 
 const socialLinks = [
   {
-    label: "یوتیوب",
-    href: "https://www.youtube.com/@bavarmandan110",
-    icon: "/youtube.png",
-    alt: "youtube",
-  },
-  {
     label: "کلاب‌هاوس",
     href: "https://www.clubhouse.com/house/%D9%85%D8%AC%D9%85%D8%B9-%D8%A8%D8%A7%D9%88%D8%B1%D9%85%D9%86%D8%AF%D8%A7%D9%86?chs=vgJIag5VYG%3AHJqbfkIoYRlofbeOY8p06RDKoa8xs1iz8W4cLx6HAlA&utm_medium=ch_house_settings",
     icon: "/clubhouse-icon.png",
     alt: "clubhouse",
+  },
+  {
+    label: "ویراستی",
+    href: "https://virasty.com/bavarmandan",
+    icon: "/virasty.png",
+    alt: "virasty",
+  },
+  {
+    label: "تلگرام",
+    href: "https://t.me/bavarmandan110",
+    icon: "/telegramicon.png",
+    alt: "telegram",
+  },
+  {
+    label: "یوتیوب",
+    href: "https://www.youtube.com/@bavarmandan110",
+    icon: "/youtube.png",
+    alt: "youtube",
   },
   {
     label: "تیک تاک",
@@ -36,10 +48,16 @@ const socialLinks = [
     alt: "instagram",
   },
   {
-    label: "تلگرام",
-    href: "https://t.me/bavarmandan110",
-    icon: "/telegramicon.png",
-    alt: "telegram",
+    label: "آپارات",
+    href: "https://www.aparat.com/Bavarmandan110",
+    icon:"/aparat.png",
+    alt: "aparat",
+  },
+  {
+    label: "ایتا",
+    href: "https://eitaa.com/Bavarmandan110",
+    icon: "/eitaa.png",
+    alt: "eitaa",
   },
   {
     label: "بله",
@@ -87,7 +105,7 @@ export const FooterSection = () => {
             </MotionList>
 
             <MotionList
-              className="mt-5 grid w-full grid-cols-2 items-center gap-x-3 gap-y-4 rounded-2xl border border-secondary/35 bg-background/10 p-3 backdrop-blur sm:w-auto sm:max-w-none sm:flex sm:flex-wrap sm:justify-center sm:gap-2.5 sm:p-2"
+              className="mt-5 grid w-full grid-cols-3 items-center gap-x-2 gap-y-4 rounded-2xl border border-secondary/35 bg-background/10 p-3 backdrop-blur sm:w-auto sm:max-w-none sm:flex sm:flex-wrap sm:justify-center sm:gap-2.5 sm:p-2"
               delay={0.14}
               dir="rtl"
             >
@@ -96,18 +114,24 @@ export const FooterSection = () => {
                   <MotionButton className="w-full sm:w-auto">
                     <Link
                       href={href}
-                      className="group inline-flex h-14 w-full items-center justify-start gap-2 rounded-xl border border-transparent bg-card/25 px-3 text-sm font-bold text-foreground transition duration-300 hover:border-primary/40 hover:bg-card/60 hover:text-primary sm:h-auto sm:w-auto sm:justify-center sm:py-2"
+                      className="group inline-flex h-14 w-full items-center justify-center gap-2 rounded-xl border border-transparent bg-card/25 px-1.5 text-xs font-bold text-foreground transition duration-300 hover:border-primary/40 hover:bg-card/60 hover:text-primary sm:h-auto sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
                     >
                       <span className="grid size-7 place-items-center rounded-lg bg-background/25 transition duration-300 group-hover:bg-primary/10">
-                        <Image src={icon} alt={alt} width={16} height={16} />
+                        {icon ? (
+                          <Image src={icon} alt={alt} width={16} height={16} />
+                        ) : (
+                          <span className="text-sm font-extrabold text-primary">
+                            {}
+                          </span>
+                        )}
                       </span>
-                      <span className="text-right leading-none">{label}</span>
+                      <span className="min-w-0 text-right leading-none">{label}</span>
                     </Link>
                   </MotionButton>
                 </MotionItem>
               ))}
 
-              <MotionItem className="col-span-2 flex justify-center sm:hidden">
+              <MotionItem className="col-span-3 flex justify-center sm:hidden">
                 <MotionButton className="w-full max-w-xs">
                   <PWAInstallButton
                     fullWidth
