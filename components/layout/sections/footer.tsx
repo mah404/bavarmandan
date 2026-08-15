@@ -19,7 +19,7 @@ const socialLinks = [
   },
   {
     label: "ویراستی",
-    href: "https://virasty.com/bavarmandan",
+    href: "https://virasty.com/bavarmandan110",
     icon: "/virasty.png",
     alt: "virasty",
   },

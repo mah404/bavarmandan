@@ -13,7 +13,7 @@ const featureMeta = {
 
 export const FeaturesSection = () => {
   const { catalog, load } = useAudioCatalog();
-  const latest5 = getLatestAudios(catalog, 3);
+  const latest5 = getLatestAudios(catalog, 5);
   const { play } = useAudioPlayer();
   const { goTo } = useSheetNav();
 
@@ -22,12 +22,12 @@ export const FeaturesSection = () => {
   }, [load]);
 
   return (
-    <section id="features" className="h-full w-full">
+    <section id="features" className="w-full">
       <div
-        className="relative flex h-full min-h-[392px] flex-col justify-between overflow-hidden rounded-[1.75rem] border border-primary/25 bg-card/45 p-6 text-right shadow-[0_18px_44px_rgba(0,0,0,0.08)] backdrop-blur-xl transition duration-300 hover:border-primary/45 dark:bg-card/70"
+        className="relative flex flex-col overflow-hidden rounded-[1.75rem] border border-primary/25 bg-card/45 p-5 text-right shadow-[0_18px_44px_rgba(0,0,0,0.08)] backdrop-blur-xl transition duration-300 hover:border-primary/45 sm:p-6 dark:bg-card/70"
         dir="rtl"
       >
-        <div className="absolute right-0 top-8 h-28 w-1 rounded-l-full bg-primary" />
+        <div className="absolute right-0 top-8 h-24 w-1 rounded-l-full bg-primary" />
         <div className="absolute left-6 top-6 h-px w-20 bg-gradient-to-l from-primary to-transparent" />
 
         <div className="relative z-10">
@@ -40,7 +40,7 @@ export const FeaturesSection = () => {
           </p>
         </div>
 
-        <div className="relative z-10 mt-8">
+        <div className="relative z-10 mt-6">
           {latest5.length === 0 ? (
             <p className="rounded-2xl border border-secondary/50 bg-card/60 p-4 text-center text-base text-muted-foreground">
               هنوز فایل جدیدی ثبت نشده.
@@ -75,10 +75,10 @@ export const FeaturesSection = () => {
                         description: audio.description,
                       });
                     }}
-                    className="group flex w-full items-center justify-between gap-4 rounded-2xl border border-secondary/40 bg-background/25 px-4 py-3 text-right shadow-sm backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-card/70 dark:bg-background/20"
+                    className="group flex w-full items-center justify-between gap-2 rounded-2xl border border-secondary/40 bg-background/25 px-3 py-3 text-right shadow-sm backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-card/70 sm:gap-4 sm:px-4 dark:bg-background/20"
                   >
-                    <span className="h-px w-8 shrink-0 bg-primary/70 transition duration-300 group-hover:w-12" />
-                    <span className="block flex-1 text-xl font-bold leading-9 text-primary transition group-hover:text-foreground md:text-2xl">
+                    <span className="hidden h-px w-8 shrink-0 bg-primary/70 transition duration-300 group-hover:w-12 sm:block" />
+                    <span className="block min-w-0 flex-1 text-base font-bold leading-8 text-primary transition group-hover:text-foreground sm:text-xl md:text-2xl">
                       {audio.description?.trim() ?? audio.title}
                     </span>
                   </button>

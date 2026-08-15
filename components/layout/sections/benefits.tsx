@@ -1,5 +1,6 @@
 import { BenefitAkhlaq } from "./BenefitAkhlaq ";
 import { BenefitMaktobat } from "./BenefitMaktobat";
+import { BenefitTafsir } from "./BenefitTafsir";
 import { BenefitTajrid } from "./BenefitTajrid ";
 import { BenefitsCard } from "./BenefitsCard";
 import { FeaturesSection } from "./features";
@@ -23,7 +24,7 @@ export const BenefitsSection = () => {
           </p>
         </div>
 
-        <div className="grid items-stretch gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+        <div className="grid items-start gap-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div className="order-2 lg:order-1">
             <FeaturesSection />
           </div>
@@ -32,6 +33,9 @@ export const BenefitsSection = () => {
             className="order-1 grid auto-rows-fr gap-5 sm:grid-cols-2 lg:order-2"
             dir="rtl"
           >
+            <MotionItem className="h-full sm:col-span-2">
+              <BenefitTafsir />
+            </MotionItem>
             <MotionItem className="h-full">
               <BenefitAkhlaq />
             </MotionItem>

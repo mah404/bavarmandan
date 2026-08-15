@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
   BookOpen,
-  Instagram,
   MessageCircle,
   Send,
   Youtube,
@@ -45,13 +44,6 @@ const serviceList: ServiceProps[] = [
     icon: Youtube,
     label: "ویدیو",
   },
-  {
-    title: "اینستاگرام",
-    description: "حضور مجمع در شبکه اجتماعی اینستاگرام",
-    link: "https://www.instagram.com/bavarmandan110/",
-    icon: Instagram,
-    label: "اجتماعی",
-  },
 ];
 
 export const ServicesSection = () => {
@@ -92,10 +84,7 @@ export const ServicesSection = () => {
               </HoverLift>
             </MotionItem>
           ))}
-        </MotionList>
-
-        <div className="mt-5 flex justify-center">
-          <MotionItem className="h-full w-full lg:max-w-2xl">
+          <MotionItem className="h-full">
             <Popover>
               <PopoverTrigger asChild>
                 <button
@@ -183,7 +172,7 @@ export const ServicesSection = () => {
               </PopoverContent>
             </Popover>
           </MotionItem>
-        </div>
+        </MotionList>
       </Reveal>
     </section>
   );
