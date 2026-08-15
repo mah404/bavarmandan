@@ -37,10 +37,10 @@ export const BenefitsSection = () => {
               <BenefitTafsir />
             </MotionItem>
             <MotionItem className="h-full">
-              <BenefitAkhlaq />
+              <BenefitMaktobat />
             </MotionItem>
             <MotionItem className="h-full">
-              <BenefitMaktobat />
+              <BenefitAkhlaq />
             </MotionItem>
             <MotionItem className="h-full">
               <BenefitTajrid />

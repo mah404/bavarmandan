@@ -4,6 +4,12 @@ import { useState } from "react";
 import { BookOpen } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -42,9 +48,29 @@ export const BenefitTafsir = () => {
             <SheetDescription className="mb-4"></SheetDescription>
           </SheetHeader>
 
-          <p className="mt-8 text-center text-lg font-semibold text-muted-foreground">
-            به زودی
-          </p>
+          <Accordion type="single" collapsible className="mt-4 w-full" dir="rtl">
+            {["تفسیر ترتیبی", "تفسیر موضوعی"].map((title, index) => (
+              <AccordionItem key={title} value={`tafsir-${index + 1}`}>
+                <AccordionTrigger className="text-right">
+                  {title}
+                </AccordionTrigger>
+                <AccordionContent>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value={`tafsir-${index + 1}-session-1`}>
+                      <AccordionTrigger className="text-right">
+                        جلسه ۱
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <p className="py-4 text-center text-lg font-semibold text-muted-foreground">
+                          به زودی
+                        </p>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </SheetContent>
       </Sheet>
     </>
