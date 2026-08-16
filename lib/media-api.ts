@@ -65,6 +65,7 @@ export type AudioCatalog = {
     pdfs?: CatalogFile[];
   };
   aghayed?: Record<string, MediaTopic | undefined>;
+  tafsir?: MediaTopic;
   akhlagh?: Record<string, MediaTopic | undefined> | MediaTopic[] | { topics?: MediaTopic[] };
 };
 

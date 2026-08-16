@@ -136,6 +136,23 @@ export function getLatestAudios(
     });
   });
 
+  (catalog.tafsir?.sessions || []).forEach((session, index) => {
+    const url = fileUrl(session);
+    if (!isAudioUrl(url)) return;
+
+    const rank = sessionRank(session, index);
+
+    order = pushCandidate(candidates, order, 1_100_000 + rank, {
+      title: session.title || "",
+      url,
+      createdAt: firstDate(session),
+      description: `تفسیر قرآن - ${session.title || `جلسه ${index + 1}`}`,
+      sheetId: "tafsir",
+      accordionValue: "tafsir-tartibi",
+      itemDomId: `tafsir-session-${session.id || index}`,
+    });
+  });
+
   Object.entries(catalog.akhlagh || {})
     .map(([key, topic], originalIndex) => ({
       key,
