@@ -61,6 +61,14 @@ export const BenefitTafsir = () => {
   const { play } = useAudioPlayer();
   const { target, clear } = useSheetNav();
 
+  const flashHighlight = (id: string) => {
+    const element = document.getElementById(id);
+    if (!element) return;
+
+    element.classList.add("nav-highlight");
+    window.setTimeout(() => element.classList.remove("nav-highlight"), 1700);
+  };
+
   useEffect(() => {
     if (open) load(true);
   }, [load, open]);
@@ -104,6 +112,7 @@ export const BenefitTafsir = () => {
           behavior: "smooth",
           block: "center",
         });
+        flashHighlight(target.itemDomId);
       }
       clear();
     }, 350);

@@ -54,6 +54,14 @@ export const BenefitMaktobat = () => {
   const { target, clear } = useSheetNav();
   const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
 
+  const flashHighlight = (id: string) => {
+    const element = document.getElementById(id);
+    if (!element) return;
+
+    element.classList.add("nav-highlight");
+    window.setTimeout(() => element.classList.remove("nav-highlight"), 1700);
+  };
+
   useEffect(() => {
     if (!target) return;
     if (target.sheetId !== SHEET_ID) return;
@@ -69,6 +77,7 @@ export const BenefitMaktobat = () => {
             behavior: "smooth",
             block: "center",
           });
+          flashHighlight(target.itemDomId);
         }
         if (target.autoplay) {
           play(target.autoplay);

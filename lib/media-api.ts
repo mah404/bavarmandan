@@ -134,6 +134,10 @@ export function toDownloadUrl(url: string) {
 }
 
 export function toStreamableUrl(url: string) {
+  if (/^https?:\/\//i.test(url)) {
+    return `/api/stream?url=${encodeURIComponent(url)}`;
+  }
+
   return url;
 }
 

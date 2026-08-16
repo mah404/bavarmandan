@@ -235,6 +235,7 @@ export function getLatestAudios(
   (catalog.tajrid?.audios || []).forEach((file, index) => {
     const url = fileUrl(file);
     if (!isAudioUrl(url, file.type)) return;
+    const session = sessionRank(file, index);
 
     order = pushCandidate(candidates, order, 700_000 - index, {
       title: file.title || `فایل ${index + 1}`,
@@ -242,8 +243,8 @@ export function getLatestAudios(
       createdAt: firstDate(file),
       description: file.description || file.title,
       sheetId: "tajrid",
-      accordionValue: file.id,
-      itemDomId: file.id ? `tajrid-audio-${file.id}` : undefined,
+      accordionValue: `audio-${session}`,
+      itemDomId: `tajrid-audio-${session}`,
     });
   });
 

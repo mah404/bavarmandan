@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import {
   Sheet,
@@ -22,6 +22,7 @@ import Lottie from "lottie-react";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { toDownloadUrl, toPdfViewUrl, toStreamableUrl } from "@/lib/media-api";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
+import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 
 const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
@@ -87,12 +88,45 @@ function formatTajridSubtitle(audio: { subtitle?: string | string[] }) {
     .map((line, index) => `${toPersianNumber(index + 1)}-${line}`);
 }
 export const BenefitTajrid = () => {
+  const SHEET_ID = "tajrid";
   const [open, setOpen] = useState(false);
+  const [accordionValue, setAccordionValue] = useState<string | undefined>();
   const { play } = useAudioPlayer();
   const { catalog, loading, error, load } = useAudioCatalog();
+  const { target, clear } = useSheetNav();
 
   const sections = useMemo(() => catalog?.tajrid?.pdfs || [], [catalog]);
   const tajridAudios = useMemo(() => catalog?.tajrid?.audios || [], [catalog]);
+
+  const flashHighlight = (id: string) => {
+    const element = document.getElementById(id);
+    if (!element) return;
+
+    element.classList.add("nav-highlight");
+    window.setTimeout(() => element.classList.remove("nav-highlight"), 1700);
+  };
+
+  useEffect(() => {
+    if (!target || target.sheetId !== SHEET_ID) return;
+
+    setOpen(true);
+    load();
+    if (target.accordionValue) setAccordionValue(target.accordionValue);
+
+    const timer = window.setTimeout(() => {
+      if (target.itemDomId) {
+        document.getElementById(target.itemDomId)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        flashHighlight(target.itemDomId);
+      }
+      if (target.autoplay) play(target.autoplay);
+      clear();
+    }, 450);
+
+    return () => window.clearTimeout(timer);
+  }, [target, clear, load, play]);
 
   return (
     <>
@@ -135,7 +169,13 @@ export const BenefitTajrid = () => {
               {error}
             </p>
           ) : (
-            <Accordion type="single" collapsible className="w-full mt-4">
+            <Accordion
+              type="single"
+              collapsible
+              value={accordionValue}
+              onValueChange={setAccordionValue}
+              className="w-full mt-4"
+            >
                   {/* PDFs */}
                   <AccordionItem value="tajrid-pdfs">
                     <AccordionTrigger>کتاب شرح تجرید الاعتقاد</AccordionTrigger>
@@ -204,6 +244,7 @@ export const BenefitTajrid = () => {
                     return (
                       <AccordionItem
                         key={`audio-${sessionNumber}`}
+                        id={`tajrid-audio-${sessionNumber}`}
                         value={`audio-${sessionNumber}`}
                       >
                         <AccordionTrigger>
