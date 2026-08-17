@@ -60,6 +60,13 @@ function sessionRank(session: MaktubatSession | undefined, index: number) {
     : textNumber || index + 1;
 }
 
+function maxSessionRank(sessions: MaktubatSession[] = []) {
+  return sessions.reduce(
+    (max, session, index) => Math.max(max, sessionRank(session, index)),
+    0
+  );
+}
+
 function displayText(value: string | string[] | undefined) {
   return Array.isArray(value) ? value.join(" | ") : value;
 }
@@ -121,11 +128,13 @@ export function getLatestAudios(
 
   const bavardashtTopic = catalog.aghayed?.bavardasht;
   const beliefSessions = normalizeBeliefTopic(bavardashtTopic);
+  const maxBeliefRank = maxSessionRank(bavardashtTopic?.sessions || []);
   beliefSessions.forEach((session, index) => {
     const rawSession = bavardashtTopic?.sessions?.[index];
     const rank = sessionRank(rawSession, index);
+    const isNewestBeliefSession = rank === maxBeliefRank;
 
-    order = pushCandidate(candidates, order, 1_000_000 + rank, {
+    order = pushCandidate(candidates, order, (isNewestBeliefSession ? 1_300_000 : 950_000) + rank, {
       title: session.title,
       url: session.url,
       createdAt: firstDate(rawSession) || session.createdAt,
@@ -136,13 +145,16 @@ export function getLatestAudios(
     });
   });
 
-  (catalog.tafsir?.sessions || []).forEach((session, index) => {
+  const tafsirSessions = catalog.tafsir?.sessions || [];
+  const maxTafsirRank = maxSessionRank(tafsirSessions);
+  tafsirSessions.forEach((session, index) => {
     const url = fileUrl(session);
     if (!isAudioUrl(url)) return;
 
     const rank = sessionRank(session, index);
+    const isNewestTafsirSession = rank === maxTafsirRank;
 
-    order = pushCandidate(candidates, order, 1_100_000 + rank, {
+    order = pushCandidate(candidates, order, (isNewestTafsirSession ? 1_250_000 : 1_000_000) + rank, {
       title: session.title || "",
       url,
       createdAt: firstDate(session),
