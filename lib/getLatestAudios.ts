@@ -34,6 +34,8 @@ const dateKeys = [
   "date",
 ] as const;
 
+const priorityFallbackThreshold = 1_250_000;
+
 function firstDate(item?: Record<string, unknown> | null) {
   if (!item) return "";
 
@@ -165,6 +167,33 @@ export function getLatestAudios(
     });
   });
 
+  const thematicTafsirSessions = catalog.tafsirmozooei?.maad?.sessions || [];
+  const maxThematicTafsirRank = maxSessionRank(thematicTafsirSessions);
+  thematicTafsirSessions.forEach((session, index) => {
+    const url = fileUrl(session);
+    if (!isAudioUrl(url)) return;
+
+    const rank = sessionRank(session, index);
+    const isNewestThematicSession = rank === maxThematicTafsirRank;
+
+    order = pushCandidate(
+      candidates,
+      order,
+      (isNewestThematicSession ? 1_500_000 : 1_400_000) + rank,
+      {
+        title: session.title || "",
+        url,
+        createdAt: firstDate(session),
+        description: `تفسیر موضوعی - احسن الحدیث - ${
+          session.title || `جلسه ${index + 1}`
+        }`,
+        sheetId: "tafsir",
+        accordionValue: "tafsir-mozooei",
+        itemDomId: `tafsir-mozooei-session-${session.id || index}`,
+      }
+    );
+  });
+
   Object.entries(catalog.akhlagh || {})
     .map(([key, topic], originalIndex) => ({
       key,
@@ -262,6 +291,16 @@ export function getLatestAudios(
 
   return candidates
     .sort((a, b) => {
+      const aPriority = a.fallbackRank >= priorityFallbackThreshold;
+      const bPriority = b.fallbackRank >= priorityFallbackThreshold;
+
+      if (aPriority || bPriority) {
+        if (aPriority !== bPriority) return aPriority ? -1 : 1;
+        if (a.fallbackRank !== b.fallbackRank) {
+          return b.fallbackRank - a.fallbackRank;
+        }
+      }
+
       const aHasDate = Number.isFinite(a.sortTime);
       const bHasDate = Number.isFinite(b.sortTime);
 
