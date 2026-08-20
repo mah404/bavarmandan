@@ -156,7 +156,7 @@ export const BenefitTafsir = () => {
         flashHighlight(target.itemDomId);
       }
       clear();
-    }, 350);
+    }, 650);
 
     return () => clearTimeout(timer);
   }, [target, clear]);
@@ -384,7 +384,7 @@ export const BenefitTafsir = () => {
                   >
                     <AccordionItem value="tafsir-mozooei-ahsan">
                       <AccordionTrigger className="text-right">
-                        <span className="flex flex-col items-end gap-1 leading-7">
+                        <span className="flex w-full flex-col items-start gap-1 text-right leading-7">
                           <span className="font-bold text-primary">احسن الحدیث</span>
                           <span className="text-sm font-normal text-muted-foreground">
                             سوره واقعه ـ مباحث معاد
@@ -392,8 +392,16 @@ export const BenefitTafsir = () => {
                         </span>
                       </AccordionTrigger>
                       <AccordionContent>
-                        <Accordion type="single" collapsible className="w-full" dir="rtl">
+                        <Accordion
+                          type="single"
+                          collapsible
+                          value={sessionValue}
+                          onValueChange={setSessionValue}
+                          className="w-full"
+                          dir="rtl"
+                        >
                           {thematicTafsirSessions.map((session, index) => {
+                            const itemId = `tafsir-mozooei-session-${session.id || index}`;
                             const audioUrl = session.audioUrl || session.url || "";
                             const pdfs = [
                               ...(session.pdfs || []),
@@ -411,7 +419,8 @@ export const BenefitTafsir = () => {
                             return (
                               <AccordionItem
                                 key={session.id || `${session.title}-${index}`}
-                                value={`tafsir-mozooei-session-${session.id || index}`}
+                                id={itemId}
+                                value={itemId}
                               >
                                 <AccordionTrigger className="text-right">
                                   {session.title || tafsirSessionTitle(index + 1)}
