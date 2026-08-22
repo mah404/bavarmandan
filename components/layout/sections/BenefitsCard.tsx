@@ -22,10 +22,11 @@ import {
   sessionNumberFromText,
   toDownloadUrl,
   type CatalogFileWithUrl,
+  type MaktubatSession,
 } from "@/lib/media-api";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
-import { akhlaghOrderIndex } from "@/lib/akhlagh-order";
+import { akhlaghOrderIndex, normalizePersianText } from "@/lib/akhlagh-order";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 import { HeartHandshake } from "lucide-react";
 
@@ -61,6 +62,51 @@ function sortAkhlaghFiles(files: CatalogFileWithUrl[]) {
     .map(({ file }) => file);
 }
 
+const neshaatTopicTitle = "نشآت وجودی انسان: درجات و درکات";
+const neshaatApiTopicTitle = "نشآت وجودی انسان";
+
+function isNeshaatTopic(title = "") {
+  const normalizedTitle = normalizePersianText(title);
+  return (
+    normalizedTitle === normalizePersianText(neshaatTopicTitle) ||
+    normalizedTitle === normalizePersianText(neshaatApiTopicTitle)
+  );
+}
+
+function akhlaghSessionLabel(file: CatalogFileWithUrl, fallbackIndex: number) {
+  const order = getAkhlaghFileOrder(file, fallbackIndex);
+  return `جلسه ${order}`;
+}
+
+function textValue(value?: string | string[]) {
+  if (Array.isArray(value)) return value.filter(Boolean).join(" ").trim();
+  return (value || "").trim();
+}
+
+function sessionOrder(session: MaktubatSession, fallbackIndex: number) {
+  const source = [session.title, session.id].filter(Boolean).join(" ");
+  return sessionNumberFromText(source) || fallbackIndex + 1;
+}
+
+function sortAkhlaghSessions(sessions: MaktubatSession[] = []) {
+  return sessions
+    .map((session, originalIndex) => ({
+      session,
+      originalIndex,
+      order: sessionOrder(session, originalIndex),
+    }))
+    .sort((a, b) => a.order - b.order || a.originalIndex - b.originalIndex)
+    .map(({ session }) => session);
+}
+
+function akhlaghApiSessionLabel(session: MaktubatSession, fallbackIndex: number) {
+  return textValue(session.title) || `جلسه ${sessionOrder(session, fallbackIndex)}`;
+}
+
+function akhlaghTopicDisplayTitle(title = "") {
+  return isNeshaatTopic(title) ? neshaatTopicTitle : title;
+}
+
 export const BenefitsCard = () => {
   const SHEET_ID = "benefitsCard";
 
@@ -93,7 +139,23 @@ export const BenefitsCard = () => {
       originalIndex,
       subject: topic?.title || key,
       files: sortAkhlaghFiles(catalogFiles(topic)),
+      sessions: sortAkhlaghSessions(topic?.sessions || []),
     }))
+    .concat(
+      Object.entries(catalog?.akhlagh || {}).some(([key, topic]) =>
+        key === "nashaatvojoodi" || isNeshaatTopic(topic?.title)
+      )
+        ? []
+        : [
+            {
+              key: "neshaat-placeholder",
+              originalIndex: -1,
+              subject: neshaatTopicTitle,
+              files: [],
+              sessions: [],
+            },
+          ]
+    )
     .sort((a, b) => {
       const byTitle = akhlaghOrderIndex(a.subject) - akhlaghOrderIndex(b.subject);
       return byTitle || a.originalIndex - b.originalIndex;
@@ -210,11 +272,84 @@ const scrollToId = async (id: string, tries = 20) => {
                   value={`group-${groupIndex}`}
                 >
                   <AccordionTrigger className="text-right">
-                    {group.subject}
+                    {akhlaghTopicDisplayTitle(group.subject)}
                   </AccordionTrigger>
 
                   <AccordionContent className="justify-center mt-2 text-center">
-                    {group.files.length === 0 ? (
+                    {isNeshaatTopic(group.subject) ? (
+                      <Accordion type="multiple" className="w-full">
+                        {group.sessions.map((session, fileIndex) => {
+                          const audioUrl = session.audioUrl || "";
+                          const sessionLabel = akhlaghApiSessionLabel(session, fileIndex);
+                          const subtitle = textValue(session.subtitle);
+
+                          return (
+                          <AccordionItem
+                            key={`${group.key}-${fileIndex}`}
+                            value={`${group.key}-session-${fileIndex}`}
+                          >
+                            <AccordionTrigger className="text-right">
+                              {sessionLabel}
+                            </AccordionTrigger>
+
+                            <AccordionContent className="mt-2 text-center">
+                              <div
+                                id={`audio-benefitsCard-${groupIndex}-${fileIndex}`}
+                                className="scroll-mt-24 rounded-2xl bg-background/20 px-4 py-5"
+                              >
+                                {subtitle ? (
+                                  <div
+                                    dir="rtl"
+                                    className="mb-4 whitespace-pre-line text-center font-semibold leading-8 text-primary"
+                                  >
+                                    {subtitle}
+                                  </div>
+                                ) : null}
+
+                                {audioUrl ? (
+                                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                                    <Button
+                                      onClick={() =>
+                                        play({
+                                          title: sessionLabel,
+                                          url: audioUrl,
+                                        })
+                                      }
+                                      className="w-full sm:w-auto text-card"
+                                    >
+                                      پخش
+                                    </Button>
+
+                                    <a
+                                      href={toDownloadUrl(audioUrl)}
+                                      download={`${sessionLabel}.mp3`}
+                                    >
+                                      <Button variant="outline" className="w-full sm:w-auto">
+                                        دانلود
+                                      </Button>
+                                    </a>
+                                  </div>
+                                ) : (
+                                  <div className="py-2 text-sm text-muted-foreground">
+                                    به زودی
+                                  </div>
+                                )}
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                          );
+                        })}
+
+                        <AccordionItem value={`${group.key}-coming-soon`}>
+                          <AccordionTrigger className="text-right">
+                            جلسه {group.sessions.length + 1}
+                          </AccordionTrigger>
+                          <AccordionContent className="text-center text-sm text-muted-foreground">
+                            به زودی
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    ) : group.files.length === 0 ? (
                       <div className="py-4 text-sm text-muted-foreground">
                         فعلاً صوتی اضافه نشده.
                       </div>
@@ -228,7 +363,7 @@ const scrollToId = async (id: string, tries = 20) => {
                         className="motion-list-item scroll-mt-24"
                       >
                         <div className="font-semibold mb-3 text-primary">
-                          {file.title}
+                          {akhlaghSessionLabel(file, fileIndex)}
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-2 justify-center">

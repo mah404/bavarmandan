@@ -44,6 +44,10 @@ function thematicTafsirLatestRank(rank: number) {
   return latestSectionRankBase + 550 + rank;
 }
 
+function nashaatLatestRank(rank: number) {
+  return latestSectionRankBase + 700 + rank;
+}
+
 function beliefLatestRank(rank: number) {
   return latestSectionRankBase + rank * 90 + 5;
 }
@@ -83,6 +87,16 @@ function maxSessionRank(sessions: MaktubatSession[] = []) {
 
 function displayText(value: string | string[] | undefined) {
   return Array.isArray(value) ? value.join(" | ") : value;
+}
+
+function akhlaghSessionTitle(session: MaktubatSession, index: number) {
+  return session.title || `جلسه ${sessionRank(session, index) || index + 1}`;
+}
+
+function akhlaghDisplaySubject(key: string, subject: string) {
+  return key === "nashaatvojoodi"
+    ? "نشآت وجودی انسان: درجات و درکات"
+    : subject;
 }
 
 const aghayedTargets: Record<
@@ -219,9 +233,37 @@ export function getLatestAudios(
       return byTitle || a.originalIndex - b.originalIndex;
     })
     .forEach(({ key, topic, subject }, groupIndex) => {
+      topic?.sessions?.forEach((session: MaktubatSession, sessionIndex: number) => {
+        const url = fileUrl(session);
+        if (!isAudioUrl(url)) return;
+
+        const displaySubject = akhlaghDisplaySubject(key, subject);
+        const sessionTitle = akhlaghSessionTitle(session, sessionIndex);
+        const latestTitle = `${displaySubject} - ${sessionTitle}`;
+
+        order = pushCandidate(
+          candidates,
+          order,
+          key === "nashaatvojoodi"
+            ? nashaatLatestRank(sessionRank(session, sessionIndex))
+            : 900_000 - groupIndex * 100 - sessionIndex,
+          {
+            title: latestTitle,
+            url,
+            createdAt: firstDate(session),
+            description: latestTitle,
+            sheetId: "benefitsCard",
+            accordionValue: `group-${groupIndex}`,
+            itemDomId: `audio-benefitsCard-${groupIndex}-${sessionIndex}`,
+          }
+        );
+      });
+
       catalogFiles(topic).forEach((file, fileIndex) => {
         const url = fileUrl(file);
         if (!isAudioUrl(url, file.type)) return;
+
+        const displaySubject = akhlaghDisplaySubject(key, subject);
 
         order = pushCandidate(
           candidates,
@@ -231,7 +273,7 @@ export function getLatestAudios(
             title: file.title || subject,
             url,
             createdAt: firstDate(file as CatalogFile),
-            description: subject || file.description || file.title || key,
+            description: displaySubject || file.description || file.title || key,
             sheetId: "benefitsCard",
             accordionValue: `group-${groupIndex}`,
             itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`,
