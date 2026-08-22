@@ -34,7 +34,19 @@ const dateKeys = [
   "date",
 ] as const;
 
-const priorityFallbackThreshold = 1_250_000;
+const latestSectionRankBase = 1_600_000;
+
+function tafsirLatestRank(rank: number) {
+  return latestSectionRankBase + rank * 100;
+}
+
+function thematicTafsirLatestRank(rank: number) {
+  return latestSectionRankBase + 550 + rank;
+}
+
+function beliefLatestRank(rank: number) {
+  return latestSectionRankBase + rank * 90 + 5;
+}
 
 function firstDate(item?: Record<string, unknown> | null) {
   if (!item) return "";
@@ -136,27 +148,30 @@ export function getLatestAudios(
     const rank = sessionRank(rawSession, index);
     const isNewestBeliefSession = rank === maxBeliefRank;
 
-    order = pushCandidate(candidates, order, (isNewestBeliefSession ? 1_300_000 : 950_000) + rank, {
-      title: session.title,
-      url: session.url,
-      createdAt: firstDate(rawSession) || session.createdAt,
-      description: `اصول عقاید شیعه - ${session.title}`,
-      sheetId: "akhlagh",
-      accordionValue: "belief",
-      itemDomId: `audio-akhlagh-belief-${index}`,
-    });
+    order = pushCandidate(
+      candidates,
+      order,
+      isNewestBeliefSession ? beliefLatestRank(rank) : 950_000 + rank,
+      {
+        title: session.title,
+        url: session.url,
+        createdAt: firstDate(rawSession) || session.createdAt,
+        description: `اصول عقاید شیعه - ${session.title}`,
+        sheetId: "akhlagh",
+        accordionValue: "belief",
+        itemDomId: `audio-akhlagh-belief-${index}`,
+      }
+    );
   });
 
   const tafsirSessions = catalog.tafsir?.sessions || [];
-  const maxTafsirRank = maxSessionRank(tafsirSessions);
   tafsirSessions.forEach((session, index) => {
     const url = fileUrl(session);
     if (!isAudioUrl(url)) return;
 
     const rank = sessionRank(session, index);
-    const isNewestTafsirSession = rank === maxTafsirRank;
 
-    order = pushCandidate(candidates, order, (isNewestTafsirSession ? 1_250_000 : 1_000_000) + rank, {
+    order = pushCandidate(candidates, order, tafsirLatestRank(rank), {
       title: session.title || "",
       url,
       createdAt: firstDate(session),
@@ -168,18 +183,16 @@ export function getLatestAudios(
   });
 
   const thematicTafsirSessions = catalog.tafsirmozooei?.maad?.sessions || [];
-  const maxThematicTafsirRank = maxSessionRank(thematicTafsirSessions);
   thematicTafsirSessions.forEach((session, index) => {
     const url = fileUrl(session);
     if (!isAudioUrl(url)) return;
 
     const rank = sessionRank(session, index);
-    const isNewestThematicSession = rank === maxThematicTafsirRank;
 
     order = pushCandidate(
       candidates,
       order,
-      (isNewestThematicSession ? 1_500_000 : 1_400_000) + rank,
+      thematicTafsirLatestRank(rank),
       {
         title: session.title || "",
         url,
@@ -291,16 +304,6 @@ export function getLatestAudios(
 
   return candidates
     .sort((a, b) => {
-      const aPriority = a.fallbackRank >= priorityFallbackThreshold;
-      const bPriority = b.fallbackRank >= priorityFallbackThreshold;
-
-      if (aPriority || bPriority) {
-        if (aPriority !== bPriority) return aPriority ? -1 : 1;
-        if (a.fallbackRank !== b.fallbackRank) {
-          return b.fallbackRank - a.fallbackRank;
-        }
-      }
-
       const aHasDate = Number.isFinite(a.sortTime);
       const bHasDate = Number.isFinite(b.sortTime);
 
