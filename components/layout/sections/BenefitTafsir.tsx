@@ -451,10 +451,12 @@ export const BenefitTafsir = () => {
                                               onClick={() =>
                                                 play({
                                                   title:
-                                                    session.title ||
-                                                    tafsirSessionTitle(index + 1),
+                                                    `سوره واقعه ـ مباحث معاد ـ ${
+                                                      session.title ||
+                                                      tafsirSessionTitle(index + 1)
+                                                    }`,
                                                   url: toStreamableUrl(audioUrl),
-                                                  description: "تفسیر موضوعی",
+                                                  description: "احسن الحدیث",
                                                 })
                                               }
                                               className="w-full text-card sm:w-auto"

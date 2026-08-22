@@ -17,7 +17,12 @@ import {
 } from "@/components/ui/accordion";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
-import { catalogFiles, toDownloadUrl } from "@/lib/media-api";
+import {
+  catalogFiles,
+  sessionNumberFromText,
+  toDownloadUrl,
+  type CatalogFileWithUrl,
+} from "@/lib/media-api";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 import { akhlaghOrderIndex } from "@/lib/akhlagh-order";
@@ -39,6 +44,22 @@ const AkhlaghSkeleton = () => (
     ))}
   </div>
 );
+
+function getAkhlaghFileOrder(file: CatalogFileWithUrl, fallbackIndex: number) {
+  const source = [file.title, file.file, file.id].filter(Boolean).join(" ");
+  return sessionNumberFromText(source) || fallbackIndex + 1;
+}
+
+function sortAkhlaghFiles(files: CatalogFileWithUrl[]) {
+  return files
+    .map((file, originalIndex) => ({
+      file,
+      originalIndex,
+      order: getAkhlaghFileOrder(file, originalIndex),
+    }))
+    .sort((a, b) => a.order - b.order || a.originalIndex - b.originalIndex)
+    .map(({ file }) => file);
+}
 
 export const BenefitsCard = () => {
   const SHEET_ID = "benefitsCard";
@@ -71,7 +92,7 @@ export const BenefitsCard = () => {
       key,
       originalIndex,
       subject: topic?.title || key,
-      files: catalogFiles(topic),
+      files: sortAkhlaghFiles(catalogFiles(topic)),
     }))
     .sort((a, b) => {
       const byTitle = akhlaghOrderIndex(a.subject) - akhlaghOrderIndex(b.subject);
