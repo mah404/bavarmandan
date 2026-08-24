@@ -24,6 +24,7 @@ export type CatalogFile = {
   url?: string | null;
   audioUrl?: string | null;
   pdfUrl?: string | null;
+  downloadUrl?: string | null;
   file?: string;
   folder?: string;
   createdAt?: string;
@@ -40,6 +41,7 @@ export type MaktubatSession = {
   url?: string | null;
   audioUrl?: string | null;
   pdfUrl?: string | null;
+  downloadUrl?: string | null;
   pdfs?: CatalogFile[];
   files?: CatalogFile[];
   createdAt?: string;
@@ -116,7 +118,13 @@ export function normalizeDigits(value: string) {
 }
 
 export function fileUrl(file: CatalogFile | MaktubatSession) {
-  return ("url" in file ? file.url : undefined) || file.audioUrl || file.pdfUrl || "";
+  return (
+    ("url" in file ? file.url : undefined) ||
+    file.audioUrl ||
+    file.pdfUrl ||
+    file.downloadUrl ||
+    ""
+  );
 }
 
 export function isPdfUrl(url = "", type = "") {

@@ -19,8 +19,11 @@ import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
 import {
   catalogFiles,
+  fileUrl,
+  isPdfUrl,
   sessionNumberFromText,
   toDownloadUrl,
+  toPdfViewUrl,
   type CatalogFileWithUrl,
   type MaktubatSession,
 } from "@/lib/media-api";
@@ -105,6 +108,32 @@ function akhlaghApiSessionLabel(session: MaktubatSession, fallbackIndex: number)
 
 function akhlaghTopicDisplayTitle(title = "") {
   return isNeshaatTopic(title) ? neshaatTopicTitle : title;
+}
+
+function nashaatFallbackPdfUrl(audioUrl = "") {
+  const urlWithoutQuery = audioUrl.split("?")[0];
+  if (!urlWithoutQuery.endsWith("/audio.mp3")) return "";
+
+  return urlWithoutQuery.replace(/\/audio\.mp3$/, "/pdfs/part1.pdf");
+}
+
+function nashaatSessionPdfs(session: MaktubatSession): CatalogFileWithUrl[] {
+  const explicitPdfs = [...(session.pdfs || []), ...(session.files || [])]
+    .map((pdf) => ({ ...pdf, url: fileUrl(pdf) }))
+    .filter((pdf): pdf is CatalogFileWithUrl => !!pdf.url && isPdfUrl(pdf.url, pdf.type));
+
+  if (explicitPdfs.length) return explicitPdfs;
+
+  const fallbackUrl = nashaatFallbackPdfUrl(session.audioUrl || "");
+  return fallbackUrl
+    ? [
+        {
+          title: "قسمت 1",
+          url: fallbackUrl,
+          type: "pdf",
+        },
+      ]
+    : [];
 }
 
 export const BenefitsCard = () => {
@@ -280,6 +309,7 @@ const scrollToId = async (id: string, tries = 20) => {
                       <Accordion type="multiple" className="w-full">
                         {group.sessions.map((session, fileIndex) => {
                           const audioUrl = session.audioUrl || "";
+                          const pdfs = nashaatSessionPdfs(session);
                           const sessionLabel = akhlaghApiSessionLabel(session, fileIndex);
                           const subtitle = textValue(session.subtitle);
 
@@ -334,6 +364,56 @@ const scrollToId = async (id: string, tries = 20) => {
                                     به زودی
                                   </div>
                                 )}
+
+                                {pdfs.length ? (
+                                  <div className="mt-5 space-y-3">
+                                    <p className="text-center text-sm font-semibold text-primary">
+                                      خلاصه متن محتوا
+                                    </p>
+
+                                    {pdfs.map((pdf, pdfIndex) => {
+                                      const pdfUrl = fileUrl(pdf);
+
+                                      return (
+                                        <div
+                                          key={`${pdf.title || "pdf"}-${pdfIndex}`}
+                                          className="rounded-xl p-4 shadow-md"
+                                        >
+                                          <p className="mb-3 text-center text-sm font-semibold text-primary">
+                                            {pdf.title || `قسمت ${pdfIndex + 1}`}
+                                          </p>
+
+                                          <div className="flex flex-col justify-center gap-2 sm:flex-row">
+                                            <Button
+                                              size="sm"
+                                              variant="outline"
+                                              onClick={() =>
+                                                window.open(
+                                                  toPdfViewUrl(pdfUrl),
+                                                  "_blank"
+                                                )
+                                              }
+                                            >
+                                              مشاهده
+                                            </Button>
+
+                                            <a
+                                              href={toDownloadUrl(pdfUrl)}
+                                              download={`${pdf.title || "content"}.pdf`}
+                                            >
+                                              <Button
+                                                size="sm"
+                                                className="w-full text-card sm:w-auto"
+                                              >
+                                                دانلود
+                                              </Button>
+                                            </a>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                ) : null}
                               </div>
                             </AccordionContent>
                           </AccordionItem>

@@ -49,7 +49,7 @@ function nashaatLatestRank(rank: number) {
 }
 
 function beliefLatestRank(rank: number) {
-  return latestSectionRankBase + rank * 90 + 5;
+  return latestSectionRankBase + 900 + rank;
 }
 
 function firstDate(item?: Record<string, unknown> | null) {
