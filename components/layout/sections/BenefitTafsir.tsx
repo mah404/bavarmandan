@@ -224,7 +224,7 @@ export const BenefitTafsir = () => {
                     onValueChange={setSessionValue}
                     className="w-full"
                   >
-                    {tafsirSessions.map((session, index) => {
+                    {[...tafsirSessions].reverse().map((session, index) => {
                       const audioUrl = session.audioUrl || session.url || "";
                       const pdfs = [
                         ...(session.pdfs || []),

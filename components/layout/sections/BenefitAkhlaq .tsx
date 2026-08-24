@@ -98,6 +98,9 @@ export const BenefitAkhlaq = () => {
 
   const aghayed = catalog?.aghayed;
   const beliefAudios = normalizeBeliefTopic(aghayed?.bavardasht);
+  const beliefAudiosNewestFirst = beliefAudios
+    .map((file, originalIndex) => ({ file, originalIndex }))
+    .reverse();
   const nextBeliefSessionIndex = beliefAudios.length;
   const nextBeliefSessionValue = `belief-session-${nextBeliefSessionIndex}`;
   const nextBeliefSessionTitle = getSessionTitle(nextBeliefSessionIndex + 1);
@@ -226,13 +229,13 @@ export const BenefitAkhlaq = () => {
                 </AccordionTrigger>
                 <AccordionContent className="justify-center mt-2 text-center">
                   <div className="flex w-full flex-col gap-1">
-                    {beliefAudios.map((file, i) => (
+                    {beliefAudiosNewestFirst.map(({ file, originalIndex }) => (
                       <div
-                        id={`audio-akhlagh-belief-${i}`}
-                        key={`${file.title}-${file.url || i}`}
+                        id={`audio-akhlagh-belief-${originalIndex}`}
+                        key={`${file.title}-${file.url || originalIndex}`}
                         className={[
                           "border-b border-secondary bg-card/70 dark:bg-card px-4 my-3 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40",
-                          highlightId === `audio-akhlagh-belief-${i}`
+                          highlightId === `audio-akhlagh-belief-${originalIndex}`
                             ? "nav-highlight"
                             : "",
                         ].join(" ")}
@@ -241,9 +244,9 @@ export const BenefitAkhlaq = () => {
                           type="button"
                           onClick={() =>
                             setOpenBeliefSession((current) =>
-                              current === `belief-session-${i}`
+                              current === `belief-session-${originalIndex}`
                                 ? null
-                              : `belief-session-${i}`
+                              : `belief-session-${originalIndex}`
                             )
                           }
                           className="flex w-full items-center justify-between gap-4 py-4 text-right text-sm font-semibold text-muted-foreground transition-all hover:text-primary"
@@ -252,7 +255,7 @@ export const BenefitAkhlaq = () => {
                           <ChevronDown
                             className={[
                               "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
-                              openBeliefSession === `belief-session-${i}`
+                              openBeliefSession === `belief-session-${originalIndex}`
                                 ? "rotate-180"
                                 : "",
                             ].join(" ")}
@@ -260,9 +263,9 @@ export const BenefitAkhlaq = () => {
                         </button>
 
                         <AnimatePresence initial={false}>
-                          {openBeliefSession === `belief-session-${i}` ? (
+                          {openBeliefSession === `belief-session-${originalIndex}` ? (
                             <motion.div
-                              key={`belief-session-panel-${i}`}
+                              key={`belief-session-panel-${originalIndex}`}
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
@@ -376,7 +379,7 @@ export const BenefitAkhlaq = () => {
                         </AnimatePresence>
                       </div>
                     ))}
-                    <div className="border-b border-secondary bg-card/70 dark:bg-card px-4 my-3 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40">
+                    <div className="order-first border-b border-secondary bg-card/70 dark:bg-card px-4 my-3 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40">
                       <button
                         type="button"
                         onClick={() =>
