@@ -24,6 +24,7 @@ import {
   sessionNumberFromText,
   toDownloadUrl,
   toPdfViewUrl,
+  toStreamableUrl,
   type CatalogFileWithUrl,
   type MaktubatSession,
 } from "@/lib/media-api";
@@ -333,7 +334,8 @@ const scrollToId = async (id: string, tries = 20) => {
                                       onClick={() =>
                                         play({
                                           title: sessionLabel,
-                                          url: audioUrl,
+                                          url: toStreamableUrl(audioUrl),
+                                          description: akhlaghTopicDisplayTitle(group.subject),
                                         })
                                       }
                                       className="w-full sm:w-auto text-card"
@@ -442,7 +444,8 @@ const scrollToId = async (id: string, tries = 20) => {
                             onClick={() =>
                               play({
                                 title: file.title || "",
-                                url: file.url,
+                                url: toStreamableUrl(file.url),
+                                description: akhlaghTopicDisplayTitle(group.subject),
                               })
                             }
                             className="w-full sm:w-auto text-card"

@@ -40,8 +40,15 @@ function tafsirLatestRank(rank: number) {
   return latestSectionRankBase + rank * 100;
 }
 
+// Highest-priority tier: only the newest thematic-tafsir session lands here,
+// so freshly added content always leads the list. Older sessions fall back
+// to a low tier (see thematicTafsirOldRank) the same way belief sessions do.
 function thematicTafsirLatestRank(rank: number) {
-  return latestSectionRankBase + 550 + rank;
+  return latestSectionRankBase + 1_050 + rank;
+}
+
+function thematicTafsirOldRank(rank: number) {
+  return 940_000 + rank;
 }
 
 function nashaatLatestRank(rank: number) {
@@ -197,16 +204,20 @@ export function getLatestAudios(
   });
 
   const thematicTafsirSessions = catalog.tafsirmozooei?.maad?.sessions || [];
+  const maxThematicTafsirRank = maxSessionRank(thematicTafsirSessions);
   thematicTafsirSessions.forEach((session, index) => {
     const url = fileUrl(session);
     if (!isAudioUrl(url)) return;
 
     const rank = sessionRank(session, index);
+    const isNewestThematicSession = rank === maxThematicTafsirRank;
 
     order = pushCandidate(
       candidates,
       order,
-      thematicTafsirLatestRank(rank),
+      isNewestThematicSession
+        ? thematicTafsirLatestRank(rank)
+        : thematicTafsirOldRank(rank),
       {
         title: session.title || "",
         url,
