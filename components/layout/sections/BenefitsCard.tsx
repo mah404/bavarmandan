@@ -140,7 +140,6 @@ export const BenefitsCard = () => {
   const SHEET_ID = "benefitsCard";
 
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   // ✅ controlled accordion
   const [accordionValues, setAccordionValues] = useState<string[]>([]);
@@ -149,17 +148,9 @@ export const BenefitsCard = () => {
   const { target, clear } = useSheetNav();
   const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
 
-  const fetchDescription = async () => {
-    setLoading(true);
-    try {
-      await load(true);
-      const response = await fetch("/api/benefit?id=eteghadat");
-      if (response.ok) await response.json();
-    } catch {
-      // Description is optional; keep the sheet usable when the endpoint is absent.
-    } finally {
-      setLoading(false);
-    }
+  const fetchDescription = () => {
+    if (!catalog) void load(false).catch(() => undefined);
+    void fetch("/api/benefit?id=eteghadat").catch(() => undefined);
   };
 
   const audioGroups = Object.entries(catalog?.akhlagh || {})
@@ -189,7 +180,7 @@ export const BenefitsCard = () => {
       const byTitle = akhlaghOrderIndex(a.subject) - akhlaghOrderIndex(b.subject);
       return byTitle || a.originalIndex - b.originalIndex;
     });
-  const isLoading = loading || catalogLoading;
+  const isLoading = catalogLoading;
 
   // ✅ wait-until-exists scroll helper
 const scrollToId = async (id: string, tries = 20) => {
@@ -220,7 +211,7 @@ const scrollToId = async (id: string, tries = 20) => {
 
   useEffect(() => {
     if (!open) return;
-    load(true);
+    load(false);
   }, [open, load]);
 
   useEffect(() => {

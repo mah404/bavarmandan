@@ -223,20 +223,25 @@ export const AudioPlayerProvider = ({
 
   // Playback API
   const play = async (track: Track) => {
-    if (!audioRef.current) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+
     const same = current?.url === track.url;
     if (!same) {
       setCurrent(track);
-      audioRef.current.src = track.url;
-      audioRef.current.load();
+      audio.preload = "auto";
+      audio.src = track.url;
       setProgress(0);
     }
+
+    setIsPlaying(true);
+    setIsPlayerVisible(true); // show docked bar
+    setIsMinimized(false); // ensure expanded on new play
+
     try {
-      await audioRef.current.play();
-      setIsPlaying(true);
-      setIsPlayerVisible(true); // show docked bar
-      setIsMinimized(false); // ensure expanded on new play
+      await audio.play();
     } catch (e) {
+      setIsPlaying(false);
       console.error("Audio play failed:", e);
     }
   };
