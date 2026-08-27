@@ -145,6 +145,10 @@ export const BenefitsCard = () => {
   // ✅ controlled accordion
   const [accordionValues, setAccordionValues] = useState<string[]>([]);
 
+  // controlled so a "latest" click can force the target nashaat session open,
+  // otherwise its content never mounts and the glow target is never found.
+  const [nashaatSessionValues, setNashaatSessionValues] = useState<string[]>([]);
+
   const { play } = useAudioPlayer();
   const { target, clear } = useSheetNav();
   const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
@@ -231,6 +235,24 @@ const scrollToId = async (id: string, tries = 20) => {
       });
     }
 
+    // 2b) for nashaat, the session itself is a nested collapsed accordion
+    // item whose content doesn't mount until it's opened — force it open
+    // so the glow target actually exists in the DOM.
+    if (target.itemDomId) {
+      const nashaatMatch = target.itemDomId.match(
+        /^audio-benefitsCard-(\d+)-(\d+)$/
+      );
+      if (nashaatMatch) {
+        const group = audioGroups[Number(nashaatMatch[1])];
+        if (group && isNeshaatTopic(group.subject)) {
+          const sessionValue = `${group.key}-session-${nashaatMatch[2]}`;
+          setNashaatSessionValues((prev) =>
+            prev.includes(sessionValue) ? prev : [...prev, sessionValue]
+          );
+        }
+      }
+    }
+
     // 3) wait for accordion content to mount, then scroll
     if (target.itemDomId) {
       // small delay helps with sheet + accordion animation
@@ -241,7 +263,10 @@ const scrollToId = async (id: string, tries = 20) => {
 
     const t = setTimeout(() => clear(), 1000);
     return () => clearTimeout(t);
-  }, [target, clear]);
+    // `catalog` is included so this reruns once it finishes loading —
+    // audioGroups (used above to detect the nashaat group) is empty until
+    // then, since the catalog fetch only starts after the sheet opens.
+  }, [target, clear, catalog]);
 
   return (
     <>
@@ -298,7 +323,12 @@ const scrollToId = async (id: string, tries = 20) => {
 
                   <AccordionContent className="justify-center mt-2 text-center">
                     {isNeshaatTopic(group.subject) ? (
-                      <Accordion type="multiple" className="w-full">
+                      <Accordion
+                        type="multiple"
+                        className="w-full"
+                        value={nashaatSessionValues}
+                        onValueChange={setNashaatSessionValues}
+                      >
                         {group.sessions.map((session, fileIndex) => {
                           const audioUrl = session.audioUrl || "";
                           const pdfs = nashaatSessionPdfs(session);

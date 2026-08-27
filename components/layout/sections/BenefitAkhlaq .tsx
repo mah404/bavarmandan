@@ -152,26 +152,29 @@ export const BenefitAkhlaq = () => {
     setOpen(true);
     if (target.accordionValue) setAccordionValue(target.accordionValue);
 
-    // wait for sheet + accordion content, then scroll and autoplay
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (target.itemDomId) {
-          document.getElementById(target.itemDomId)?.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
+    // wait for the sheet + accordion transition to mount/expand before
+    // scrolling and highlighting (requestAnimationFrame is unreliable here
+    // since it gets throttled while the sheet is transitioning in).
+    const scrollTimer = setTimeout(() => {
+      if (target.itemDomId) {
+        document.getElementById(target.itemDomId)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
 
-          flashHighlight(target.itemDomId);
-        }
+        flashHighlight(target.itemDomId);
+      }
 
-        if (target.autoplay) {
-          play(target.autoplay);
-        }
-      });
-    });
+      if (target.autoplay) {
+        play(target.autoplay);
+      }
+    }, 500);
 
-    const t = setTimeout(() => clear(), 800);
-    return () => clearTimeout(t);
+    const clearTimer = setTimeout(() => clear(), 800);
+    return () => {
+      clearTimeout(scrollTimer);
+      clearTimeout(clearTimer);
+    };
   }, [target, clear, play]);
 
   return (
