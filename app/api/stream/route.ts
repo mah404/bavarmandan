@@ -10,6 +10,7 @@ function absolutizeUrl(baseUrl: string, value: string): string {
 
 export async function GET(req: NextRequest) {
   const target = req.nextUrl.searchParams.get("url");
+  const range = req.headers.get("range");
 
   if (!target) {
     return new Response("Missing url parameter", { status: 400 });
@@ -30,6 +31,7 @@ export async function GET(req: NextRequest) {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
         Accept: "*/*",
+        ...(range ? { Range: range } : {}),
       },
       cache: "no-store",
     });
@@ -83,15 +85,35 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const body = await upstream.arrayBuffer();
+    const responseHeaders = new Headers();
+    responseHeaders.set("Content-Type", contentType);
+    responseHeaders.set("Access-Control-Allow-Origin", "*");
+    responseHeaders.set(
+      "Accept-Ranges",
+      upstream.headers.get("accept-ranges") || "bytes"
+    );
 
-    return new Response(body, {
-      status: 200,
-      headers: {
-        "Content-Type": contentType,
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "no-store, no-cache, must-revalidate",
-      },
+    const contentLength = upstream.headers.get("content-length");
+    const contentRange = upstream.headers.get("content-range");
+    const etag = upstream.headers.get("etag");
+    const lastModified = upstream.headers.get("last-modified");
+
+    if (contentLength) responseHeaders.set("Content-Length", contentLength);
+    if (contentRange) responseHeaders.set("Content-Range", contentRange);
+    if (etag) responseHeaders.set("ETag", etag);
+    if (lastModified) responseHeaders.set("Last-Modified", lastModified);
+
+    responseHeaders.set(
+      "Cache-Control",
+      contentRange
+        ? "no-store, no-cache, must-revalidate"
+        : "public, max-age=3600, s-maxage=86400"
+    );
+
+    return new Response(upstream.body, {
+      status: upstream.status,
+      statusText: upstream.statusText,
+      headers: responseHeaders,
     });
   } catch (error) {
     console.error("Proxy route error:", error);

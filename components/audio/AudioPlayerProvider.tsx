@@ -130,7 +130,7 @@ export const AudioPlayerProvider = ({
   // Create audio element once
   if (!audioRef.current && typeof window !== "undefined") {
     audioRef.current = new Audio();
-    audioRef.current.preload = "metadata";
+    audioRef.current.preload = "auto";
   }
 
   // Audio events
