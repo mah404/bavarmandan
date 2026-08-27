@@ -8,6 +8,7 @@ import { track } from "@vercel/analytics";
 import { recordPwaEvent } from "@/lib/pwa-events";
 import { cn } from "@/lib/utils";
 
+
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
