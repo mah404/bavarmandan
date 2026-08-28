@@ -36,13 +36,18 @@ const dateKeys = [
 
 const latestSectionRankBase = 1_600_000;
 
+// Newest session in each of these sections gets its own top tier (higher
+// number = higher priority), so freshly added content always leads the
+// list regardless of which section it's in. Older sessions in the same
+// section fall back to a low tier further down.
+function tafsirNewestRank(rank: number) {
+  return latestSectionRankBase + 1_100 + rank;
+}
+
 function tafsirLatestRank(rank: number) {
   return latestSectionRankBase + rank * 100;
 }
 
-// Highest-priority tier: only the newest thematic-tafsir session lands here,
-// so freshly added content always leads the list. Older sessions fall back
-// to a low tier (see thematicTafsirOldRank) the same way belief sessions do.
 function thematicTafsirLatestRank(rank: number) {
   return latestSectionRankBase + 1_050 + rank;
 }
@@ -152,6 +157,56 @@ function pushCandidate(
   return order + 1;
 }
 
+// Persisted "have we ever seen this URL before" ledger, on top of the
+// section ranking above. This is what actually detects new additions
+// generically, from any API/section, without per-section rules: whatever
+// wasn't here on a previous visit gets boosted above everything else. On
+// the very first run ever (nothing recorded yet) it only records what's
+// currently there and changes nothing, so today's ordering is untouched;
+// from the next catalog fetch on, brand-new URLs jump to the top.
+const SEEN_URLS_KEY = "bavarmandan-latest-seen-urls-v1";
+const NEW_CONTENT_RANK_BOOST = 10_000_000;
+
+function readSeenUrls(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+
+  try {
+    const raw = window.localStorage.getItem(SEEN_URLS_KEY);
+    return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function writeSeenUrls(urls: Set<string>) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(SEEN_URLS_KEY, JSON.stringify(Array.from(urls)));
+  } catch {
+    // Storage quota/private mode — just re-detects as "new" next call.
+  }
+}
+
+function promoteNewlyAddedCandidates(candidates: LatestCandidate[]) {
+  const seenUrls = readSeenUrls();
+  const isBootstrap = seenUrls.size === 0;
+  let changed = false;
+
+  candidates.forEach((candidate) => {
+    if (seenUrls.has(candidate.url)) return;
+
+    if (!isBootstrap) {
+      candidate.fallbackRank += NEW_CONTENT_RANK_BOOST;
+    }
+
+    seenUrls.add(candidate.url);
+    changed = true;
+  });
+
+  if (changed) writeSeenUrls(seenUrls);
+}
+
 export function getLatestAudios(
   catalog: AudioCatalog | null | undefined,
   limit = 5
@@ -186,21 +241,28 @@ export function getLatestAudios(
   });
 
   const tafsirSessions = catalog.tafsir?.sessions || [];
+  const maxTafsirRank = maxSessionRank(tafsirSessions);
   tafsirSessions.forEach((session, index) => {
     const url = fileUrl(session);
     if (!isAudioUrl(url)) return;
 
     const rank = sessionRank(session, index);
+    const isNewestTafsirSession = rank === maxTafsirRank;
 
-    order = pushCandidate(candidates, order, tafsirLatestRank(rank), {
-      title: session.title || "",
-      url,
-      createdAt: firstDate(session),
-      description: `تفسیر قرآن - ${session.title || `جلسه ${index + 1}`}`,
-      sheetId: "tafsir",
-      accordionValue: "tafsir-tartibi",
-      itemDomId: `tafsir-session-${session.id || index}`,
-    });
+    order = pushCandidate(
+      candidates,
+      order,
+      isNewestTafsirSession ? tafsirNewestRank(rank) : tafsirLatestRank(rank),
+      {
+        title: session.title || "",
+        url,
+        createdAt: firstDate(session),
+        description: `تفسیر قرآن - ${session.title || `جلسه ${index + 1}`}`,
+        sheetId: "tafsir",
+        accordionValue: "tafsir-tartibi",
+        itemDomId: `tafsir-session-${session.id || index}`,
+      }
+    );
   });
 
   const thematicTafsirSessions = catalog.tafsirmozooei?.maad?.sessions || [];
@@ -354,6 +416,8 @@ export function getLatestAudios(
       itemDomId: `tajrid-audio-${session}`,
     });
   });
+
+  promoteNewlyAddedCandidates(candidates);
 
   return candidates
     .sort((a, b) => {
