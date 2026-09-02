@@ -61,7 +61,7 @@ function nashaatLatestRank(rank: number) {
 }
 
 function beliefLatestRank(rank: number) {
-  return latestSectionRankBase + 900 + rank;
+  return latestSectionRankBase + 1_300 + rank;
 }
 
 function firstDate(item?: Record<string, unknown> | null) {
@@ -257,7 +257,7 @@ export function getLatestAudios(
         title: session.title || "",
         url,
         createdAt: firstDate(session),
-        description: `تفسیر قرآن - ${session.title || `جلسه ${index + 1}`}`,
+        description: `تفسیر ترتیبی - سوره حمد - ${session.title || `جلسه ${index + 1}`}`,
         sheetId: "tafsir",
         accordionValue: "tafsir-tartibi",
         itemDomId: `tafsir-session-${session.id || index}`,

@@ -15,9 +15,10 @@ export const HeroSection = () => {
             dir="rtl"
           >
             <FloatInPlace className="mx-auto mb-8 text-center text-[1.95rem] font-thin leading-tight sm:text-4xl md:text-6xl">
-              <span className="block whitespace-nowrap">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</span>
+              <span className="block whitespace-nowrap">
+                بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+              </span>
             </FloatInPlace>
-
             <span className="text-primary text-xl font-bold leading-relaxed sm:text-2xl">
               رَبَّنَا إِنَّنَا سَمِعْنَا مُنَادِيًا يُنَادِي لِلْإِيمَانِ أَنْ
               آمِنُوا بِرَبِّكُمْ فَآمَنَّا رَبَّنَا فَاغْفِرْ لَنَا ذُنُوبَنَا
@@ -42,53 +43,50 @@ export const HeroSection = () => {
             <span className=" inline-block whitespace-nowrap text-primary pl-1  pr-1">
               « مجمع باورمندان »
             </span>
-            کلاب‌هاوس و با آرزوی سلامتی و توفیقات روزافزون. این تارنما با هدف
-            اطلاع‌ رسانی و به‌اشتراک‌گذاری مطالبی شکل گرفته است که می‌تواند برای
-            شرکت‌کنندگان در جلسات و اتاق‌های مجمع باورمندان مفید واقع شود.
-            امیدواریم تلاش اساتید و همراهان ما در فضای مجازی کلاب‌هاوس، همراه با
-            مطالب ارائه‌شده در این تارنما، زمینه‌ساز دسترسی بهتر و ارتباط مؤثرتر
-            میان دوستان و اعضای مجمع باشد. از حضور، مشارکت، دیدگاه‌ها، پیشنهادها
-            و انتقادات سازنده‌ی شما صمیمانه استقبال می‌کنیم.
+            و با آرزوی سلامتی و توفیقات روزافزون.این تارنما با هدف اطلاع‌رسانی و
+            به‌اشتراک‌گذاری مباحث و محتواهای عقیدتی شکل گرفته است که امیدواریم
+            برای علاقه‌مندان و باورمندان عزیز مفید واقع شود ، و تلاش اساتید و
+            همراهان ما در فضای مجازی، همراه با مطالب ارائه‌شده در این تارنما،
+            زمینه‌ساز دسترسی بهتر و ارتباط مؤثرتر میان دوستان و این مجموعه باشد.
+            از حضور، مشارکت، دیدگاه‌ها، پیشنهادها و انتقادات سازنده‌ی شما
+            صمیمانه استقبال می‌کنیم.
           </p>
 
           <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
             <MotionButton className="w-5/6 md:w-auto">
-            <Button
-              variant="secondary"
-              className="modern-action w-full group/arrow text-md"
-            >
-              <Link
-                className="flex items-center"
-                href="https://www.clubhouse.com/house/%D9%85%D8%AC%D9%85%D8%B9-%D8%A8%D8%A7%D9%88%D8%B1%D9%85%D9%86%D8%AF%D8%A7%D9%86?chs=vgJIag5VYG%3AHJqbfkIoYRlofbeOY8p06RDKoa8xs1iz8W4cLx6HAlA&utm_medium=ch_house_settings"
+              <Button
+                variant="secondary"
+                className="modern-action w-full group/arrow text-md"
               >
-                کلاب هاوس
-                <img
-                  src="/clubhouse-icon.png"
-                  alt="Clubhouse"
-                  className="ml-2 h-6 w-6"
-                />
-              </Link>
-            </Button>
+                <Link
+                  className="flex items-center"
+                  href="https://www.clubhouse.com/house/%D9%85%D8%AC%D9%85%D8%B9-%D8%A8%D8%A7%D9%88%D8%B1%D9%85%D9%86%D8%AF%D8%A7%D9%86?chs=vgJIag5VYG%3AHJqbfkIoYRlofbeOY8p06RDKoa8xs1iz8W4cLx6HAlA&utm_medium=ch_house_settings"
+                >
+                  کلاب هاوس
+                  <img
+                    src="/clubhouse-icon.png"
+                    alt="Clubhouse"
+                    className="ml-2 h-6 w-6"
+                  />
+                </Link>
+              </Button>
             </MotionButton>
 
             <MotionButton className="w-5/6 md:w-auto">
-            <Button
-              asChild
-              variant="secondary"
-              className="modern-action w-full text-md"
-            >
-              <Link
-                href="https://t.me/bavarmandan110"
-                target="_blank"
+              <Button
+                asChild
+                variant="secondary"
+                className="modern-action w-full text-md"
               >
-                تلگرام
-                <img
-                  src="/telegramicon.png"
-                  alt="telegram"
-                  className="ml-2 h-6 w-6"
-                />
-              </Link>
-            </Button>
+                <Link href="https://t.me/bavarmandan110" target="_blank">
+                  تلگرام
+                  <img
+                    src="/telegramicon.png"
+                    alt="telegram"
+                    className="ml-2 h-6 w-6"
+                  />
+                </Link>
+              </Button>
             </MotionButton>
 
             <MotionButton className="w-5/6 md:w-auto">
