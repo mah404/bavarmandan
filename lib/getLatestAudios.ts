@@ -22,6 +22,7 @@ export type LatestAudio = {
 
 type LatestCandidate = LatestAudio & {
   fallbackRank: number;
+  firstSeenAt: number;
   order: number;
   sortTime: number;
 };
@@ -49,7 +50,7 @@ function tafsirLatestRank(rank: number) {
 }
 
 function thematicTafsirLatestRank(rank: number) {
-  return latestSectionRankBase + 1_050 + rank;
+  return latestSectionRankBase + 1_500 + rank;
 }
 
 function thematicTafsirOldRank(rank: number) {
@@ -150,6 +151,7 @@ function pushCandidate(
   candidates.push({
     ...audio,
     fallbackRank,
+    firstSeenAt: 0,
     order,
     sortTime: safeTime(audio.createdAt),
   });
@@ -157,54 +159,51 @@ function pushCandidate(
   return order + 1;
 }
 
-// Persisted "have we ever seen this URL before" ledger, on top of the
-// section ranking above. This is what actually detects new additions
-// generically, from any API/section, without per-section rules: whatever
-// wasn't here on a previous visit gets boosted above everything else. On
-// the very first run ever (nothing recorded yet) it only records what's
-// currently there and changes nothing, so today's ordering is untouched;
-// from the next catalog fetch on, brand-new URLs jump to the top.
-const SEEN_URLS_KEY = "bavarmandan-latest-seen-urls-v1";
-const NEW_CONTENT_RANK_BOOST = 10_000_000;
+const FIRST_SEEN_URLS_KEY = "bavarmandan-latest-first-seen-urls-v2";
 
-function readSeenUrls(): Set<string> {
-  if (typeof window === "undefined") return new Set();
+function readFirstSeenUrls(): Record<string, number> {
+  if (typeof window === "undefined") return {};
 
   try {
-    const raw = window.localStorage.getItem(SEEN_URLS_KEY);
-    return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
+    const raw = window.localStorage.getItem(FIRST_SEEN_URLS_KEY);
+    if (!raw) return {};
+
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    return Object.fromEntries(
+      Object.entries(parsed).filter(
+        ([, value]) => typeof value === "number" && Number.isFinite(value)
+      )
+    ) as Record<string, number>;
   } catch {
-    return new Set();
+    return {};
   }
 }
 
-function writeSeenUrls(urls: Set<string>) {
+function writeFirstSeenUrls(urls: Record<string, number>) {
   if (typeof window === "undefined") return;
 
   try {
-    window.localStorage.setItem(SEEN_URLS_KEY, JSON.stringify(Array.from(urls)));
+    window.localStorage.setItem(FIRST_SEEN_URLS_KEY, JSON.stringify(urls));
   } catch {
-    // Storage quota/private mode — just re-detects as "new" next call.
+    // Storage quota/private mode: fallback ordering still keeps the list usable.
   }
 }
 
-function promoteNewlyAddedCandidates(candidates: LatestCandidate[]) {
-  const seenUrls = readSeenUrls();
-  const isBootstrap = seenUrls.size === 0;
+function attachFirstSeenTimes(candidates: LatestCandidate[]) {
+  const firstSeenUrls = readFirstSeenUrls();
+  const now = Date.now();
   let changed = false;
 
   candidates.forEach((candidate) => {
-    if (seenUrls.has(candidate.url)) return;
-
-    if (!isBootstrap) {
-      candidate.fallbackRank += NEW_CONTENT_RANK_BOOST;
+    if (!firstSeenUrls[candidate.url]) {
+      firstSeenUrls[candidate.url] = now;
+      changed = true;
     }
 
-    seenUrls.add(candidate.url);
-    changed = true;
+    candidate.firstSeenAt = firstSeenUrls[candidate.url];
   });
 
-  if (changed) writeSeenUrls(seenUrls);
+  if (changed) writeFirstSeenUrls(firstSeenUrls);
 }
 
 export function getLatestAudios(
@@ -417,7 +416,7 @@ export function getLatestAudios(
     });
   });
 
-  promoteNewlyAddedCandidates(candidates);
+  attachFirstSeenTimes(candidates);
 
   return candidates
     .sort((a, b) => {
@@ -429,6 +428,10 @@ export function getLatestAudios(
         if (a.sortTime !== b.sortTime) return b.sortTime - a.sortTime;
       }
 
+      if (a.firstSeenAt !== b.firstSeenAt) {
+        return b.firstSeenAt - a.firstSeenAt;
+      }
+
       if (a.fallbackRank !== b.fallbackRank) {
         return b.fallbackRank - a.fallbackRank;
       }
@@ -436,5 +439,5 @@ export function getLatestAudios(
       return b.order - a.order;
     })
     .slice(0, limit)
-    .map(({ fallbackRank, order, sortTime, ...audio }) => audio);
+    .map(({ fallbackRank, firstSeenAt, order, sortTime, ...audio }) => audio);
 }
