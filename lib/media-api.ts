@@ -47,6 +47,19 @@ export type MaktubatSession = {
   createdAt?: string;
 };
 
+export type LatestCatalogItem = {
+  id?: string;
+  title?: string;
+  subtitle?: string | string[] | null;
+  audioUrl?: string | null;
+  pdfs?: CatalogFile[];
+  key?: string;
+  section?: string;
+  collection?: string;
+  collectionTitle?: string;
+  addedAt?: string;
+};
+
 export type MediaTopic = {
   title?: string;
   description?: string;
@@ -56,6 +69,7 @@ export type MediaTopic = {
 };
 
 export type AudioCatalog = {
+  latest?: LatestCatalogItem[];
   maktubat?: {
     title?: string;
     description?: string;
