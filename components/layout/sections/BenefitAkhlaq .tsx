@@ -21,6 +21,8 @@ import { ChevronDown, Landmark } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   catalogFiles,
+  formatSessionTitle,
+  normalizeSessionTitle,
   normalizeBeliefTopic,
   toDownloadUrl,
   toPdfViewUrl,
@@ -29,22 +31,6 @@ import {
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
-
-const persianSessionWords = [
-  "اول",
-  "دوم",
-  "سوم",
-  "چهارم",
-  "پنجم",
-  "ششم",
-  "هفتم",
-  "هشتم",
-  "نهم",
-  "دهم",
-];
-
-const getSessionTitle = (sessionNumber: number) =>
-  `جلسه ${persianSessionWords[sessionNumber - 1] || sessionNumber}`;
 
 const AghayedSkeleton = () => (
   <div className="mt-4 flex w-full flex-col gap-3" aria-label="در حال بارگذاری">
@@ -103,7 +89,7 @@ export const BenefitAkhlaq = () => {
     .reverse();
   const nextBeliefSessionIndex = beliefAudios.length;
   const nextBeliefSessionValue = `belief-session-${nextBeliefSessionIndex}`;
-  const nextBeliefSessionTitle = getSessionTitle(nextBeliefSessionIndex + 1);
+  const nextBeliefSessionTitle = formatSessionTitle(nextBeliefSessionIndex + 1);
   const flatAghayedTopics = [
     {
       key: "maa-al-sadeghin",
@@ -194,7 +180,7 @@ export const BenefitAkhlaq = () => {
           </span>
         </div>
         <div className="service-tile-copy">
-          <h3>اصول عقاید</h3>
+          <h3>اصول عقاید تشیع</h3>
           <p>مجموعه گفتارهای اعتقادی</p>
         </div>
       </Card>
@@ -254,7 +240,9 @@ export const BenefitAkhlaq = () => {
                           }
                           className="flex w-full items-center justify-between gap-4 py-4 text-right text-sm font-semibold text-muted-foreground transition-all hover:text-primary"
                         >
-                          <span>{file.title}</span>
+                          <span>
+                            {normalizeSessionTitle(file.title, originalIndex + 1)}
+                          </span>
                           <ChevronDown
                             className={[
                               "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
@@ -302,7 +290,10 @@ export const BenefitAkhlaq = () => {
                                   size="sm"
                                   onClick={() =>
                                     play({
-                                      title: file.title,
+                                      title: normalizeSessionTitle(
+                                        file.title,
+                                        originalIndex + 1
+                                      ),
                                       url: toStreamableUrl(file.url),
                                       description: file.description,
                                     })
@@ -457,14 +448,14 @@ export const BenefitAkhlaq = () => {
                               ].join(" ")}
                             >
                               <div className="font-semibold mb-2 text-primary">
-                                {file.title}
+                                {normalizeSessionTitle(file.title || "", i + 1)}
                               </div>
 
                               <div className="flex flex-col sm:flex-row gap-2 justify-center">
                                 <Button
                                   onClick={() =>
                                     play({
-                                      title: file.title || "",
+                                      title: normalizeSessionTitle(file.title || "", i + 1),
                                       url: file.url,
                                       description: topic.title,
                                     })

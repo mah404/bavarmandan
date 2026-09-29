@@ -20,7 +20,9 @@ import { Button } from "@/components/ui/button";
 import {
   catalogFiles,
   fileUrl,
+  formatSessionTitle,
   isPdfUrl,
+  normalizeSessionTitle,
   sessionNumberFromText,
   toDownloadUrl,
   toPdfViewUrl,
@@ -32,7 +34,7 @@ import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 import { akhlaghOrderIndex, normalizePersianText } from "@/lib/akhlagh-order";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
-import { HeartHandshake } from "lucide-react";
+import { Headphones, HeartHandshake } from "lucide-react";
 
 const AkhlaghSkeleton = () => (
   <div className="mt-4 flex w-full flex-col gap-3" aria-label="در حال بارگذاری">
@@ -79,7 +81,7 @@ function isNeshaatTopic(title = "") {
 
 function akhlaghSessionLabel(file: CatalogFileWithUrl, fallbackIndex: number) {
   const order = getAkhlaghFileOrder(file, fallbackIndex);
-  return `جلسه ${order}`;
+  return formatSessionTitle(order);
 }
 
 function textValue(value?: string | string[]) {
@@ -104,7 +106,8 @@ function sortAkhlaghSessions(sessions: MaktubatSession[] = []) {
 }
 
 function akhlaghApiSessionLabel(session: MaktubatSession, fallbackIndex: number) {
-  return textValue(session.title) || `جلسه ${sessionOrder(session, fallbackIndex)}`;
+  const order = sessionOrder(session, fallbackIndex);
+  return normalizeSessionTitle(textValue(session.title), order) || formatSessionTitle(order);
 }
 
 function akhlaghTopicDisplayTitle(title = "") {
@@ -359,28 +362,35 @@ const scrollToId = async (id: string, tries = 20) => {
                                 ) : null}
 
                                 {audioUrl ? (
-                                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                                    <Button
-                                      onClick={() =>
-                                        play({
-                                          title: sessionLabel,
-                                          url: toStreamableUrl(audioUrl),
-                                          description: akhlaghTopicDisplayTitle(group.subject),
-                                        })
-                                      }
-                                      className="w-full sm:w-auto text-card"
-                                    >
-                                      پخش
-                                    </Button>
+                                  <div>
+                                    <p className="mb-3 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
+                                      <span>{sessionLabel}</span>
+                                      <Headphones className="size-5 text-muted-foreground" />
+                                    </p>
 
-                                    <a
-                                      href={toDownloadUrl(audioUrl)}
-                                      download={`${sessionLabel}.mp3`}
-                                    >
-                                      <Button variant="outline" className="w-full sm:w-auto">
-                                        دانلود
+                                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                                      <Button
+                                        onClick={() =>
+                                          play({
+                                            title: sessionLabel,
+                                            url: toStreamableUrl(audioUrl),
+                                            description: akhlaghTopicDisplayTitle(group.subject),
+                                          })
+                                        }
+                                        className="w-full sm:w-auto text-card"
+                                      >
+                                        پخش
                                       </Button>
-                                    </a>
+
+                                      <a
+                                        href={toDownloadUrl(audioUrl)}
+                                        download={`${sessionLabel}.mp3`}
+                                      >
+                                        <Button variant="outline" className="w-full sm:w-auto">
+                                          دانلود صوت
+                                        </Button>
+                                      </a>
+                                    </div>
                                   </div>
                                 ) : (
                                   <div className="py-2 text-sm text-muted-foreground">
@@ -445,7 +455,7 @@ const scrollToId = async (id: string, tries = 20) => {
 
                         <AccordionItem value={`${group.key}-coming-soon`}>
                           <AccordionTrigger className="text-right">
-                            جلسه {group.sessions.length + 1}
+                            {formatSessionTitle(group.sessions.length + 1)}
                           </AccordionTrigger>
                           <AccordionContent className="text-center text-sm text-muted-foreground">
                             به زودی
@@ -465,8 +475,9 @@ const scrollToId = async (id: string, tries = 20) => {
                         key={fileIndex}
                         className="motion-list-item scroll-mt-24"
                       >
-                        <div className="font-semibold mb-3 text-primary">
-                          {akhlaghSessionLabel(file, fileIndex)}
+                        <div className="font-semibold mb-3 flex items-center justify-center gap-2 text-primary">
+                          <span>{akhlaghSessionLabel(file, fileIndex)}</span>
+                          <Headphones className="size-5 text-muted-foreground" />
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-2 justify-center">
@@ -488,7 +499,7 @@ const scrollToId = async (id: string, tries = 20) => {
                             download={`${file.title || "audio"}.mp3`}
                           >
                             <Button variant="outline" className="w-full sm:w-auto">
-                              دانلود
+                              دانلود صوت
                             </Button>
                           </a>
                         </div>

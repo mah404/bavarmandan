@@ -16,11 +16,16 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { BookOpenText } from "lucide-react";
+import { BookOpenText, Headphones } from "lucide-react";
 import loadingPdfAnim from "@/public/loading.json";
 import Lottie from "lottie-react";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
-import { toDownloadUrl, toPdfViewUrl, toStreamableUrl } from "@/lib/media-api";
+import {
+  formatSessionTitle,
+  toDownloadUrl,
+  toPdfViewUrl,
+  toStreamableUrl,
+} from "@/lib/media-api";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
@@ -238,6 +243,7 @@ export const BenefitTajrid = () => {
                     .sort((a, b) => b.sessionNumber - a.sessionNumber)
                     .map(({ audio, sessionNumber }) => {
                     const subtitleLines = formatTajridSubtitle(audio);
+                    const sessionTitle = formatSessionTitle(sessionNumber);
 
                     const url = toStreamableUrl(audio.url || "");
 
@@ -248,7 +254,7 @@ export const BenefitTajrid = () => {
                         value={`audio-${sessionNumber}`}
                       >
                         <AccordionTrigger>
-                          جلسه {sessionNumber}
+                          {sessionTitle}
                         </AccordionTrigger>
                    <AccordionContent>
   <div className="space-y-4">
@@ -267,6 +273,11 @@ export const BenefitTajrid = () => {
       </p>
     )}
 
+    <p className="mb-3 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
+      <span>پخش صوت</span>
+      <Headphones className="size-5 text-muted-foreground" />
+    </p>
+
     <div className="flex flex-col sm:flex-row gap-2 justify-center">
       <Button
         className="w-full sm:w-auto text-card"
@@ -274,7 +285,7 @@ export const BenefitTajrid = () => {
           if (!url) return;
 
           play({
-            title: `جلسه ${sessionNumber}`,
+            title: sessionTitle,
             url,
             description: subtitleLines.join(" | "),
           });
@@ -286,7 +297,7 @@ export const BenefitTajrid = () => {
       <Button asChild variant="outline" className="w-full sm:w-auto">
         <a
           href={toDownloadUrl(url)}
-          download={`جلسه-${sessionNumber}.mp3`}
+          download={`${sessionTitle}.mp3`}
           rel="noopener noreferrer"
         >
           دانلود صوت

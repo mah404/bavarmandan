@@ -16,14 +16,17 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { FileText, Sparkles } from "lucide-react";
 import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import {
   fileUrl,
+  formatSessionTitle,
   isAudioUrl,
   MaktubatSession,
+  normalizeSessionTitle,
+  sessionNumberFromText,
   toDownloadUrl,
   toPdfViewUrl,
   toStreamableUrl,
@@ -32,7 +35,7 @@ import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 
-const CACHE_KEY = "maktobats_cache_v6";
+const CACHE_KEY = "maktobats_cache_v7";
 type Maktobat = {
   id: string;
   title: string;
@@ -41,6 +44,15 @@ type Maktobat = {
   audioUrl?: string | null;
 };
 type CacheShape = { ts: number; items: Maktobat[] };
+
+function maktobatTriggerTitle(maktobat: Maktobat) {
+  const content = maktobat.content.trim();
+  return content ? `${maktobat.title} ${content}` : maktobat.title;
+}
+
+function maktobatDocumentTitle(maktobat: Maktobat) {
+  return maktobat.title.replace(/^جلسه\s+/, "مکتوب ");
+}
 
 export const BenefitMaktobat = () => {
   const SHEET_ID = "maktobat";
@@ -113,24 +125,13 @@ export const BenefitMaktobat = () => {
 
   // ---------- Transform & sort ----------
   const transformAndSort = (data: MaktubatSession[]): Maktobat[] => {
-    const persianOrderMap: Record<string, number> = {
-      اول: 1,
-      دوم: 2,
-      سوم: 3,
-      چهارم: 4,
-      پنجم: 5,
-      ششم: 6,
-      هفتم: 7,
-      هشتم: 8,
-      نهم: 9,
-      دهم: 10,
-      یازدهم: 11,
-      دوازدهم: 12,
+    const extractPersianNumber = (title: string) => {
+      return sessionNumberFromText(title) ?? 999;
     };
 
-    const extractPersianNumber = (title: string) => {
-      const match = title?.match(/مکتوب\s+(\S+)/);
-      return match ? persianOrderMap[match[1]] ?? 999 : 999;
+    const sessionTitle = (title: string | undefined, index: number) => {
+      if (!title) return formatSessionTitle(index + 1);
+      return normalizeSessionTitle(title.replace(/^مکتوب\s+/, "جلسه "), index + 1);
     };
 
     const sortedData = [...data].sort(
@@ -146,7 +147,7 @@ export const BenefitMaktobat = () => {
 
       return {
         id: item.id || `maktobat-${index}`,
-        title: item.title || `مکتوب ${index + 1}`,
+        title: sessionTitle(item.title, index),
         content,
         pdfUrl: item.pdfUrl || null,
         audioUrl:
@@ -214,13 +215,16 @@ export const BenefitMaktobat = () => {
         className="service-tile group flex h-full min-h-[168px] cursor-pointer flex-col justify-between"
       >
         <div className="service-tile-header">
-          <span className="service-tile-kicker">مکتوبات</span>
+          <span className="service-tile-kicker">اصول عقاید</span>
           <span className="service-tile-mark" aria-hidden="true">
             <Sparkles className="size-5" />
           </span>
         </div>
         <div className="service-tile-copy">
-          <h3>برهان امکان و وجوب</h3>
+          <h3 className="space-y-1">
+            <span className="block">برهان امکان و وجوب</span>
+            <span className="block">اثبات ذات و صفات الله</span>
+          </h3>
           <p>متن، صوت و فایل‌های مرتبط</p>
         </div>
       </Card>
@@ -230,8 +234,8 @@ export const BenefitMaktobat = () => {
         <SheetContent className="max-h-screen overflow-y-auto">
           <SheetHeader>
             <SheetTitle>برهان امکان و وجوب</SheetTitle>
-            <SheetDescription className="mb-4">
-              لیست کامل مکتوبات
+            <SheetDescription className="mb-4 text-white">
+              اثبات ذات و صفات الله
             </SheetDescription>
           </SheetHeader>
 
@@ -258,34 +262,39 @@ export const BenefitMaktobat = () => {
                   id={`maktobat-item-${maktobat.id}`} // ✅ ADD THIS
                   key={maktobat.id}
                   value={maktobat.id}
-                  className="text-center"
+                  className="text-right"
                 >
-                  <AccordionTrigger className="text-muted-foreground">
-                    {maktobat.title}
+                  <AccordionTrigger className="gap-4 text-right text-muted-foreground">
+                    <span className="block flex-1 text-right leading-8">
+                      {maktobatTriggerTitle(maktobat)}
+                    </span>
                   </AccordionTrigger>
             <AccordionContent>
   <div className="mb-4 pb-2">
-    <p className="text-sm text-primary whitespace-pre-line">
-      {maktobat.content || "متنی برای این مکتوب موجود نیست"}
-    </p>
+    <div className="rounded-xl shadow-md p-4 mt-2">
+      <p className="text-primary text-sm font-semibold mb-2 text-center">
+        <FileText className="ml-1 inline size-4 text-muted-foreground" />
+        {maktobatDocumentTitle(maktobat)}
+      </p>
 
-    <div className="flex justify-center gap-2 mt-2 text-center">
-      <Button
-        size="sm"
-        variant="outline"
-        disabled={!maktobat.pdfUrl}
-        onClick={() => {
-          if (maktobat.pdfUrl) window.open(toPdfViewUrl(maktobat.pdfUrl), "_blank");
-        }}
-      >
-        مشاهده
-      </Button>
-
-      <a href={maktobat.pdfUrl || "#"} download={`${maktobat.title || "maktobat"}.pdf`}>
-        <Button size="sm" className="text-background">
-          دانلود
+      <div className="flex justify-center gap-2 text-center">
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={!maktobat.pdfUrl}
+          onClick={() => {
+            if (maktobat.pdfUrl) window.open(toPdfViewUrl(maktobat.pdfUrl), "_blank");
+          }}
+        >
+          مشاهده
         </Button>
-      </a>
+
+        <a href={maktobat.pdfUrl || "#"} download={`${maktobat.title || "maktobat"}.pdf`}>
+          <Button size="sm" className="text-background">
+            دانلود
+          </Button>
+        </a>
+      </div>
     </div>
     <div className="rounded-xl shadow-md p-4 mt-4">
   <p className="text-primary text-sm font-semibold mb-2 text-center">

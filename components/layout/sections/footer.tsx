@@ -189,7 +189,7 @@ export const FooterSection = () => {
                 <span>مالکیت، طراحی و توسعه</span>
                 <Link
                   target="_blank"
-                  href="#"
+                  href=""
                   className="inline-block whitespace-nowrap font-bold text-primary transition hover:text-foreground"
                 >
                   فرزندان امیرالمومنین (ع)

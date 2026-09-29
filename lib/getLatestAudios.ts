@@ -4,7 +4,9 @@ import {
   MaktubatSession,
   catalogFiles,
   fileUrl,
+  formatSessionTitle,
   isAudioUrl,
+  normalizeSessionTitle,
   normalizeBeliefTopic,
   sessionNumberFromText,
 } from "@/lib/media-api";
@@ -103,7 +105,8 @@ function displayText(value: string | string[] | undefined) {
 }
 
 function akhlaghSessionTitle(session: MaktubatSession, index: number) {
-  return session.title || `جلسه ${sessionRank(session, index) || index + 1}`;
+  const rank = sessionRank(session, index) || index + 1;
+  return normalizeSessionTitle(session.title || "", rank) || formatSessionTitle(rank);
 }
 
 function akhlaghDisplaySubject(key: string, subject: string) {
@@ -247,16 +250,18 @@ export function getLatestAudios(
 
     const rank = sessionRank(session, index);
     const isNewestTafsirSession = rank === maxTafsirRank;
+    const sessionTitle =
+      normalizeSessionTitle(session.title || "", rank) || formatSessionTitle(rank);
 
     order = pushCandidate(
       candidates,
       order,
       isNewestTafsirSession ? tafsirNewestRank(rank) : tafsirLatestRank(rank),
       {
-        title: session.title || "",
+        title: sessionTitle,
         url,
         createdAt: firstDate(session),
-        description: `تفسیر ترتیبی - سوره حمد - ${session.title || `جلسه ${index + 1}`}`,
+        description: `تفسیر ترتیبی - سوره حمد - ${sessionTitle}`,
         sheetId: "tafsir",
         accordionValue: "tafsir-tartibi",
         itemDomId: `tafsir-session-${session.id || index}`,
@@ -272,6 +277,8 @@ export function getLatestAudios(
 
     const rank = sessionRank(session, index);
     const isNewestThematicSession = rank === maxThematicTafsirRank;
+    const sessionTitle =
+      normalizeSessionTitle(session.title || "", rank) || formatSessionTitle(rank);
 
     order = pushCandidate(
       candidates,
@@ -280,12 +287,10 @@ export function getLatestAudios(
         ? thematicTafsirLatestRank(rank)
         : thematicTafsirOldRank(rank),
       {
-        title: session.title || "",
+        title: sessionTitle,
         url,
         createdAt: firstDate(session),
-        description: `تفسیر موضوعی - احسن الحدیث - ${
-          session.title || `جلسه ${index + 1}`
-        }`,
+        description: `تفسیر موضوعی - احسن الحدیث - ${sessionTitle}`,
         sheetId: "tafsir",
         accordionValue: "tafsir-mozooei",
         itemDomId: `tafsir-mozooei-session-${session.id || index}`,
@@ -336,16 +341,20 @@ export function getLatestAudios(
         if (!isAudioUrl(url, file.type)) return;
 
         const displaySubject = akhlaghDisplaySubject(key, subject);
+        const title =
+          normalizeSessionTitle(file.title || "", fileIndex + 1) ||
+          file.title ||
+          subject;
 
         order = pushCandidate(
           candidates,
           order,
           900_000 - groupIndex * 100 - fileIndex,
           {
-            title: file.title || subject,
+            title,
             url,
             createdAt: firstDate(file as CatalogFile),
-            description: displaySubject || file.description || file.title || key,
+            description: displaySubject || file.description || title || key,
             sheetId: "benefitsCard",
             accordionValue: `group-${groupIndex}`,
             itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`,
@@ -365,16 +374,21 @@ export function getLatestAudios(
     catalogFiles(topic).forEach((file, fileIndex) => {
       const url = fileUrl(file);
       if (!isAudioUrl(url, file.type)) return;
+      const title =
+        normalizeSessionTitle(file.title || "", fileIndex + 1) ||
+        file.title ||
+        topic?.title ||
+        key;
 
       order = pushCandidate(
         candidates,
         order,
         target.fallbackBase - fileIndex,
         {
-          title: file.title || topic?.title || key,
+          title,
           url,
           createdAt: firstDate(file),
-          description: topic?.title || file.description || file.title || key,
+          description: topic?.title || file.description || title || key,
           sheetId: "akhlagh",
           accordionValue: target.accordionValue,
           itemDomId: target.itemDomIdPrefix
@@ -404,12 +418,16 @@ export function getLatestAudios(
     const url = fileUrl(file);
     if (!isAudioUrl(url, file.type)) return;
     const session = sessionRank(file, index);
+    const title =
+      normalizeSessionTitle(file.title || "", session) ||
+      file.title ||
+      `فایل ${index + 1}`;
 
     order = pushCandidate(candidates, order, 700_000 - index, {
-      title: file.title || `فایل ${index + 1}`,
+      title,
       url,
       createdAt: firstDate(file),
-      description: file.description || file.title,
+      description: file.description || title,
       sheetId: "tajrid",
       accordionValue: `audio-${session}`,
       itemDomId: `tajrid-audio-${session}`,

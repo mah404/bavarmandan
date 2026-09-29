@@ -118,10 +118,74 @@ const persianNumberWords: Record<string, number> = {
   ده: 10,
   یازدهم: 11,
   دوازدهم: 12,
+  سیزدهم: 13,
+  چهاردهم: 14,
+  پانزدهم: 15,
+  شانزدهم: 16,
+  هفدهم: 17,
+  هجدهم: 18,
+  نوزدهم: 19,
+  بیستم: 20,
+  بیست: 20,
+  "سی‌ام": 30,
+  سی: 30,
+  چهلم: 40,
+  چهل: 40,
+  پنجاهم: 50,
+  پنجاه: 50,
+  شصتم: 60,
+  شصت: 60,
+  هفتادم: 70,
+  هفتاد: 70,
+  هشتادم: 80,
+  هشتاد: 80,
+  نودم: 90,
+  نود: 90,
 };
 
 const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
 const arabicDigits = "٠١٢٣٤٥٦٧٨٩";
+
+const persianOrdinalNumbers: Record<number, string> = {
+  1: "اول",
+  2: "دوم",
+  3: "سوم",
+  4: "چهارم",
+  5: "پنجم",
+  6: "ششم",
+  7: "هفتم",
+  8: "هشتم",
+  9: "نهم",
+  10: "دهم",
+  11: "یازدهم",
+  12: "دوازدهم",
+  13: "سیزدهم",
+  14: "چهاردهم",
+  15: "پانزدهم",
+  16: "شانزدهم",
+  17: "هفدهم",
+  18: "هجدهم",
+  19: "نوزدهم",
+  20: "بیستم",
+  30: "سی‌ام",
+  40: "چهلم",
+  50: "پنجاهم",
+  60: "شصتم",
+  70: "هفتادم",
+  80: "هشتادم",
+  90: "نودم",
+};
+
+const persianCardinalTens: Record<number, string> = {
+  20: "بیست",
+  30: "سی",
+  40: "چهل",
+  50: "پنجاه",
+  60: "شصت",
+  70: "هفتاد",
+  80: "هشتاد",
+  90: "نود",
+};
 
 export function normalizeDigits(value: string) {
   return value.replace(/[۰-۹٠-٩]/g, (digit) => {
@@ -129,6 +193,64 @@ export function normalizeDigits(value: string) {
     if (persianIndex >= 0) return String(persianIndex);
     return String(arabicDigits.indexOf(digit));
   });
+}
+
+export function persianOrdinal(value: number) {
+  if (persianOrdinalNumbers[value]) return persianOrdinalNumbers[value];
+
+  if (value > 20 && value < 100) {
+    const tens = Math.floor(value / 10) * 10;
+    const ones = value % 10;
+    if (persianCardinalTens[tens] && persianOrdinalNumbers[ones]) {
+      return `${persianCardinalTens[tens]} و ${persianOrdinalNumbers[ones]}`;
+    }
+  }
+
+  return String(value).replace(/\d/g, (digit) => persianDigits[Number(digit)]);
+}
+
+export function formatSessionTitle(sessionNumber: number) {
+  return `جلسه ${persianOrdinal(sessionNumber)}`;
+}
+
+function sessionNumberFromPersianWords(text = "") {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  const phrase = normalized.match(
+    /(?:جلسه|session|قسمت|part|مکتوب)\s*[-:]?\s*([آ-ی‌ ]+)/
+  )?.[1];
+  const target = phrase || normalized;
+
+  const entries = Object.entries(persianNumberWords).sort(
+    ([a], [b]) => b.length - a.length
+  );
+
+  for (const [tensWord, tens] of entries) {
+    if (tens < 20 || tens % 10 !== 0) continue;
+
+    for (const [onesWord, ones] of entries) {
+      if (ones < 1 || ones > 9) continue;
+      if (target.includes(`${tensWord} و ${onesWord}`)) return tens + ones;
+    }
+  }
+
+  for (const [word, number] of entries) {
+    if (target.includes(word)) return number;
+  }
+
+  return null;
+}
+
+export function normalizeSessionTitle(title = "", fallbackNumber?: number) {
+  const sessionNumber =
+    sessionNumberFromText(title) ||
+    (typeof fallbackNumber === "number" ? fallbackNumber : null);
+
+  if (!sessionNumber) return title;
+
+  return title.replace(
+    /جلسه\s*[-:]?\s*(?:[0-9۰-۹٠-٩]+|[آ-ی‌]+(?:\s+و\s+[آ-ی‌]+)?)/,
+    formatSessionTitle(sessionNumber)
+  );
 }
 
 export function fileUrl(file: CatalogFile | MaktubatSession) {
@@ -173,11 +295,7 @@ export function sessionNumberFromText(text = "") {
   const numeric = normalized.match(/(?:جلسه|session|قسمت|part|مکتوب)\s*[-:]?\s*(\d+)/i);
   if (numeric) return Number(numeric[1]);
 
-  for (const [word, number] of Object.entries(persianNumberWords)) {
-    if (text.includes(word)) return number;
-  }
-
-  return null;
+  return sessionNumberFromPersianWords(text);
 }
 
 export function normalizeBeliefSessions(files: CatalogFile[] = []): BeliefSession[] {
@@ -196,7 +314,7 @@ export function normalizeBeliefSessions(files: CatalogFile[] = []): BeliefSessio
     if (isAudio) {
       currentSession = explicitSession || currentSession + 1 || index + 1;
       grouped.set(currentSession, {
-        title: file.title || `جلسه ${currentSession}`,
+        title: normalizeSessionTitle(file.title || "", currentSession) || formatSessionTitle(currentSession),
         description: file.description || file.subtitle || file.title || "",
         url,
         points: [],
@@ -208,7 +326,7 @@ export function normalizeBeliefSessions(files: CatalogFile[] = []): BeliefSessio
 
     const targetSession = explicitSession || currentSession || 1;
     const existing = grouped.get(targetSession) || {
-      title: `جلسه ${targetSession}`,
+      title: formatSessionTitle(targetSession),
       description: "",
       url: "",
       points: [],
@@ -230,7 +348,7 @@ export function normalizeBeliefSessions(files: CatalogFile[] = []): BeliefSessio
     .sort(([a], [b]) => a - b)
     .map(([, session], index) => ({
       ...session,
-      title: session.title || `جلسه ${index + 1}`,
+      title: normalizeSessionTitle(session.title, index + 1) || formatSessionTitle(index + 1),
       description: session.description || "اصول عقاید شیعه",
     }));
 }
@@ -252,7 +370,7 @@ export function normalizeBeliefTopic(topic?: MediaTopic): BeliefSession[] {
   if (topic?.sessions?.length) {
     return topic.sessions
       .map((session, index) => ({
-        title: session.title || `جلسه ${index + 1}`,
+        title: normalizeSessionTitle(session.title, index + 1) || formatSessionTitle(index + 1),
         description:
           topic.description ||
           session.content ||

@@ -5,6 +5,8 @@ import { Loader2 } from "lucide-react";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import {
+  formatSessionTitle,
+  normalizeSessionTitle,
   sessionNumberFromText,
   type AudioCatalog,
   type LatestCatalogItem,
@@ -18,7 +20,8 @@ const featureMeta = {
 };
 
 function sessionTitle(item: LatestCatalogItem, fallbackIndex: number) {
-  return item.title || `جلسه ${item.id || fallbackIndex + 1}`;
+  const order = sessionNumber(item, fallbackIndex);
+  return normalizeSessionTitle(item.title || "", order) || formatSessionTitle(order);
 }
 
 function latestTitle(item: LatestCatalogItem, fallbackIndex: number) {

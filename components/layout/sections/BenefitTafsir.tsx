@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/sheet";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import {
+  formatSessionTitle,
+  normalizeSessionTitle,
   type MaktubatSession,
   toDownloadUrl,
   toPdfViewUrl,
@@ -30,26 +32,13 @@ import { HoverLift } from "./reveal";
 
 type TafsirSessionItem = MaktubatSession & { isPlaceholder?: boolean };
 
-const sessionNameByNumber: Record<number, string> = {
-  1: "جلسه اول",
-  2: "جلسه دوم",
-  3: "جلسه سوم",
-  4: "جلسه چهارم",
-  5: "جلسه پنجم",
-  6: "جلسه ششم",
-  7: "جلسه هفتم",
-  8: "جلسه هشتم",
-  9: "جلسه نهم",
-  10: "جلسه دهم",
-};
-
 function tafsirSessionNumber(session: MaktubatSession, index: number) {
   const idNumber = Number(session.id);
   return Number.isFinite(idNumber) && idNumber > 0 ? idNumber : index + 1;
 }
 
 function tafsirSessionTitle(number: number) {
-  return sessionNameByNumber[number] || `جلسه ${number}`;
+  return formatSessionTitle(number);
 }
 
 export const BenefitTafsir = () => {
@@ -247,6 +236,10 @@ export const BenefitTafsir = () => {
                         >
                           {[...tafsirSessions].reverse().map((session, index) => {
                             const audioUrl = session.audioUrl || session.url || "";
+                            const sessionNumber = tafsirSessionNumber(session, index);
+                            const sessionTitle =
+                              normalizeSessionTitle(session.title, sessionNumber) ||
+                              tafsirSessionTitle(sessionNumber);
                             const pdfs = [
                               ...(session.pdfs || []),
                               ...(session.files || []),
@@ -267,7 +260,7 @@ export const BenefitTafsir = () => {
                                 value={`tafsir-session-${session.id || index}`}
                               >
                                 <AccordionTrigger className="text-right">
-                                  {session.title || `جلسه ${index + 1}`}
+                                  {sessionTitle}
                                 </AccordionTrigger>
                                 <AccordionContent>
                                   {session.isPlaceholder ? (
@@ -294,9 +287,7 @@ export const BenefitTafsir = () => {
                                           <Button
                                             onClick={() =>
                                               play({
-                                                title:
-                                                  session.title ||
-                                                  `جلسه ${index + 1}`,
+                                                title: sessionTitle,
                                                 url: toStreamableUrl(audioUrl),
                                                 description: "تفسیر ترتیبی",
                                               })
@@ -427,6 +418,10 @@ export const BenefitTafsir = () => {
                           {thematicTafsirSessions.map((session, index) => {
                             const itemId = `tafsir-mozooei-session-${session.id || index}`;
                             const audioUrl = session.audioUrl || session.url || "";
+                            const sessionNumber = tafsirSessionNumber(session, index);
+                            const sessionTitle =
+                              normalizeSessionTitle(session.title, sessionNumber) ||
+                              tafsirSessionTitle(sessionNumber);
                             const pdfs = [
                               ...(session.pdfs || []),
                               ...(session.files || []),
@@ -447,7 +442,7 @@ export const BenefitTafsir = () => {
                                 value={itemId}
                               >
                                 <AccordionTrigger className="text-right">
-                                  {session.title || tafsirSessionTitle(index + 1)}
+                                  {sessionTitle}
                                 </AccordionTrigger>
                                 <AccordionContent>
                                   {session.isPlaceholder ? (
@@ -475,10 +470,7 @@ export const BenefitTafsir = () => {
                                               onClick={() =>
                                                 play({
                                                   title:
-                                                    `سوره واقعه ـ مباحث معاد ـ ${
-                                                      session.title ||
-                                                      tafsirSessionTitle(index + 1)
-                                                    }`,
+                                                    `سوره واقعه ـ مباحث معاد ـ ${sessionTitle}`,
                                                   url: toStreamableUrl(audioUrl),
                                                   description: "احسن الحدیث",
                                                 })
