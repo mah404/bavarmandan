@@ -11,6 +11,8 @@ import type { AudioCatalog, CatalogFile, MediaTopic, MaktubatSession } from "@/l
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+const publicCatalogUrl = "https://www.bavarmandan.com/api/audios";
+
 function fallbackResponse() {
   return Response.json(fallbackAudioCatalog, {
     headers: {
@@ -291,6 +293,15 @@ function mergeCatalog(liveCatalog: AudioCatalog): AudioCatalog {
   };
 }
 
+async function fetchCatalogFromPublicSite() {
+  if (process.env.NODE_ENV === "production") return null;
+
+  const response = await fetch(publicCatalogUrl, { cache: "no-store" });
+  if (!response.ok) return null;
+
+  return (await response.json()) as AudioCatalog;
+}
+
 export async function GET() {
   if (!AUDIO_CATALOG_URL) {
     return fallbackResponse();
@@ -312,6 +323,21 @@ export async function GET() {
     });
   } catch (error) {
     console.error("GET /api/audios error:", error);
+
+    try {
+      const publicCatalog = await fetchCatalogFromPublicSite();
+      if (publicCatalog) {
+        return Response.json(publicCatalog, {
+          headers: {
+            "Cache-Control": "no-store",
+            "X-Catalog-Source": "public-site",
+          },
+        });
+      }
+    } catch (publicError) {
+      console.error("GET /api/audios public fallback error:", publicError);
+    }
+
     return fallbackResponse();
   }
 }

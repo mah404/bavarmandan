@@ -209,7 +209,7 @@ export const FeaturesSection = () => {
               هنوز محتوای جدیدی ثبت نشده.
             </p>
           ) : (
-            <MotionList className="flex flex-col gap-3">
+            <MotionList className="flex flex-col gap-4">
               {latest5.map((item, index) => {
                 const target = latestTarget(item, catalog, index);
 
