@@ -35,7 +35,7 @@ import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 
-const CACHE_KEY = "maktobats_cache_v7";
+const CACHE_KEY = "maktobats_cache_v8";
 type Maktobat = {
   id: string;
   title: string;
@@ -45,9 +45,17 @@ type Maktobat = {
 };
 type CacheShape = { ts: number; items: Maktobat[] };
 
+function cleanMaktobatContent(content: string) {
+  return content
+    .replace(/الله تبارک و تعالی/g, "الله تعالی")
+    .replace(/ذات الله(?! تعالی)/g, "ذات الله تعالی")
+    .replace(/الله(?! تعالی)/g, "الله تعالی")
+    .replace(/(ذات الله(?: تعالی)?)\s*:\s*/g, "$1 ");
+}
+
 function maktobatTriggerTitle(maktobat: Maktobat) {
-  const content = maktobat.content.trim();
-  return content ? `${maktobat.title} ${content}` : maktobat.title;
+  const content = cleanMaktobatContent(maktobat.content).trim();
+  return content ? `${maktobat.title}: ${content}` : maktobat.title;
 }
 
 function maktobatDocumentTitle(maktobat: Maktobat) {
@@ -148,7 +156,7 @@ export const BenefitMaktobat = () => {
       return {
         id: item.id || `maktobat-${index}`,
         title: sessionTitle(item.title, index),
-        content,
+        content: cleanMaktobatContent(content),
         pdfUrl: item.pdfUrl || null,
         audioUrl:
           item.audioUrl ||
@@ -223,7 +231,7 @@ export const BenefitMaktobat = () => {
         <div className="service-tile-copy">
           <h3 className="space-y-1">
             <span className="block">برهان امکان و وجوب</span>
-            <span className="block">اثبات ذات و صفات الله</span>
+            <span className="block">و اثبات صفات الله</span>
           </h3>
           <p>متن، صوت و فایل‌های مرتبط</p>
         </div>
@@ -235,7 +243,7 @@ export const BenefitMaktobat = () => {
           <SheetHeader>
             <SheetTitle>برهان امکان و وجوب</SheetTitle>
             <SheetDescription className="mb-4 text-white">
-              اثبات ذات و صفات الله
+              و اثبات صفات الله
             </SheetDescription>
           </SheetHeader>
 
@@ -298,7 +306,7 @@ export const BenefitMaktobat = () => {
     </div>
     <div className="rounded-xl shadow-md p-4 mt-4">
   <p className="text-primary text-sm font-semibold mb-2 text-center">
-    🎧 پخش صوت
+    🎧 صوت
   </p>
 
   {maktobat.audioUrl ? (
