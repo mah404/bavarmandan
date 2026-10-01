@@ -127,6 +127,12 @@ export const AudioPlayerProvider = ({
   // Resume prompt
   const savedStateRef = useRef<SavedState | null>(null);
   const [showResumePrompt, setShowResumePrompt] = useState(false);
+  const latestStateRef = useRef<{
+    current: Track | null;
+    progress: number;
+    volume: number;
+    muted: boolean;
+  }>({ current: null, progress: 0, volume: 1, muted: false });
 
   // Create audio element once
   if (!audioRef.current && typeof window !== "undefined") {
@@ -188,13 +194,26 @@ export const AudioPlayerProvider = ({
 
   // Save periodically (throttled)
   const saveTimer = useRef<number | null>(null);
+  const clearSavedState = () => {
+    if (saveTimer.current) {
+      window.clearTimeout(saveTimer.current);
+      saveTimer.current = null;
+    }
+    savedStateRef.current = null;
+    setShowResumePrompt(false);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
+  };
+
   const saveState = (immediate = false) => {
-    if (!current) return;
+    const latest = latestStateRef.current;
+    if (!latest.current) return;
     const snapshot: SavedState = {
-      track: current,
-      progress,
-      volume,
-      muted,
+      track: latest.current,
+      progress: latest.progress,
+      volume: latest.volume,
+      muted: latest.muted,
     };
     const doSave = () => {
       try {
@@ -207,6 +226,7 @@ export const AudioPlayerProvider = ({
   };
 
   useEffect(() => {
+    latestStateRef.current = { current, progress, volume, muted };
     if (current) saveState(); // on progress / volume / mute changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current, progress, volume, muted]);
@@ -246,7 +266,10 @@ export const AudioPlayerProvider = ({
       console.error("Audio play failed:", e);
     }
   };
-  const pause = () => audioRef.current?.pause();
+  const pause = () => {
+    audioRef.current?.pause();
+    saveState(true);
+  };
   const resume = () => {
     setIsPlayerVisible(true);
     setIsMinimized(false);
@@ -302,9 +325,13 @@ export const AudioPlayerProvider = ({
     setCurrent(null);
     setIsPlayerVisible(false);
     setIsMinimized(false);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {}
+    latestStateRef.current = {
+      current: null,
+      progress: 0,
+      volume,
+      muted,
+    };
+    clearSavedState();
   };
 
   const ctxValue = useMemo<AudioCtx>(
@@ -939,7 +966,7 @@ export const AudioPlayerProvider = ({
         <Button
           size="sm"
           variant="ghost"
-          onClick={() => setShowResumePrompt(false)}
+          onClick={clearSavedState}
         >
           <X className="h-4 w-4" />
         </Button>
