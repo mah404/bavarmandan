@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
+import { toPersianDigits } from "@/lib/media-api";
 import {
   FastForward,
   Minus,
@@ -327,7 +328,7 @@ export const AudioPlayerProvider = ({
   );
 
   const fmt = (s: number) => {
-    if (!isFinite(s)) return "00:00";
+    if (!isFinite(s)) return "۰۰:۰۰";
     const h = Math.floor(s / 3600);
     const m = Math.floor((s % 3600) / 60)
       .toString()
@@ -335,8 +336,8 @@ export const AudioPlayerProvider = ({
     const ss = Math.floor(s % 60)
       .toString()
       .padStart(2, "0");
-    if (h > 0) return `${h}:${m}:${ss}`;
-    return `${m}:${ss}`;
+    if (h > 0) return toPersianDigits(`${h}:${m}:${ss}`);
+    return toPersianDigits(`${m}:${ss}`);
   };
 
   const progressPercent =

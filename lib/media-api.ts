@@ -195,6 +195,12 @@ export function normalizeDigits(value: string) {
   });
 }
 
+export function toPersianDigits(value: string | number) {
+  return String(value)
+    .replace(/[0-9]/g, (digit) => persianDigits[Number(digit)])
+    .replace(/[٠-٩]/g, (digit) => persianDigits[arabicDigits.indexOf(digit)]);
+}
+
 export function persianOrdinal(value: number) {
   if (persianOrdinalNumbers[value]) return persianOrdinalNumbers[value];
 
@@ -206,7 +212,7 @@ export function persianOrdinal(value: number) {
     }
   }
 
-  return String(value).replace(/\d/g, (digit) => persianDigits[Number(digit)]);
+  return toPersianDigits(value);
 }
 
 export function formatSessionTitle(sessionNumber: number) {
@@ -336,7 +342,7 @@ export function normalizeBeliefSessions(files: CatalogFile[] = []): BeliefSessio
 
     if (isPdf) {
       existing.summaries.push({
-        title: file.title || `قسمت ${existing.summaries.length + 1}`,
+        title: file.title || `قسمت ${toPersianDigits(existing.summaries.length + 1)}`,
         url,
       });
     }
@@ -382,7 +388,7 @@ export function normalizeBeliefTopic(topic?: MediaTopic): BeliefSession[] {
         summaries:
           session.pdfs
             ?.map((pdf, pdfIndex) => ({
-              title: pdf.title || `قسمت ${pdfIndex + 1}`,
+              title: pdf.title || `قسمت ${toPersianDigits(pdfIndex + 1)}`,
               url: fileUrl(pdf),
             }))
             .filter((pdf) => !!pdf.url) || [],

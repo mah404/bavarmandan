@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Headphones } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,7 @@ import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import {
   formatSessionTitle,
   normalizeSessionTitle,
+  toPersianDigits,
   type MaktubatSession,
   toDownloadUrl,
   toPdfViewUrl,
@@ -180,9 +181,9 @@ export const BenefitTafsir = () => {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent className="h-dvh overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>{tafsir?.title || "تفسیر قرآن"}</SheetTitle>
+            <SheetTitle>{toPersianDigits(tafsir?.title || "تفسیر قرآن")}</SheetTitle>
             <SheetDescription className="mb-4">
-              {tafsir?.description || ""}
+              {toPersianDigits(tafsir?.description || "")}
             </SheetDescription>
           </SheetHeader>
 
@@ -246,7 +247,7 @@ export const BenefitTafsir = () => {
                               ...(session.pdfUrl
                                 ? [
                                     {
-                                      title: "قسمت 1",
+                                      title: "قسمت ۱",
                                       url: session.pdfUrl,
                                     },
                                   ]
@@ -272,15 +273,16 @@ export const BenefitTafsir = () => {
                                     {session.subtitle ? (
                                       <p className="whitespace-pre-line text-sm font-semibold leading-8 text-primary">
                                         {Array.isArray(session.subtitle)
-                                          ? session.subtitle.join("\n")
-                                          : session.subtitle}
+                                          ? toPersianDigits(session.subtitle.join("\n"))
+                                          : toPersianDigits(session.subtitle)}
                                       </p>
                                     ) : null}
 
                                     {audioUrl ? (
                                       <div className="rounded-xl p-4 shadow-md">
-                                        <p className="mb-3 text-center text-sm font-semibold text-primary">
-                                          🎧 پخش صوت
+                                        <p className="mb-3 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
+                                          <span>صوت</span>
+                                          <Headphones className="size-5 text-muted-foreground" />
                                         </p>
 
                                         <div className="flex flex-col justify-center gap-2 sm:flex-row">
@@ -329,7 +331,9 @@ export const BenefitTafsir = () => {
                                               className="rounded-xl p-4 shadow-md"
                                             >
                                               <p className="mb-3 text-center text-sm font-semibold text-primary">
-                                                {pdf.title || `قسمت ${pdfIndex + 1}`}
+                                                {toPersianDigits(
+                                                  pdf.title || `قسمت ${pdfIndex + 1}`
+                                                )}
                                               </p>
 
                                               <div className="flex flex-col justify-center gap-2 sm:flex-row">
@@ -428,7 +432,7 @@ export const BenefitTafsir = () => {
                               ...(session.pdfUrl
                                 ? [
                                     {
-                                      title: "قسمت 1",
+                                      title: "قسمت ۱",
                                       url: session.pdfUrl,
                                     },
                                   ]
@@ -454,15 +458,16 @@ export const BenefitTafsir = () => {
                                       {session.subtitle ? (
                                         <p className="whitespace-pre-line text-sm font-semibold leading-8 text-primary">
                                           {Array.isArray(session.subtitle)
-                                            ? session.subtitle.join("\n")
-                                            : session.subtitle}
+                                            ? toPersianDigits(session.subtitle.join("\n"))
+                                            : toPersianDigits(session.subtitle)}
                                         </p>
                                       ) : null}
 
                                       {audioUrl ? (
                                         <div className="rounded-xl p-4 shadow-md">
-                                          <p className="mb-3 text-center text-sm font-semibold text-primary">
-                                            🎧 پخش صوت
+                                          <p className="mb-3 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
+                                            <span>صوت</span>
+                                            <Headphones className="size-5 text-muted-foreground" />
                                           </p>
 
                                           <div className="flex flex-col justify-center gap-2 sm:flex-row">
@@ -513,8 +518,9 @@ export const BenefitTafsir = () => {
                                                 className="rounded-xl p-4 shadow-md"
                                               >
                                                 <p className="mb-3 text-center text-sm font-semibold text-primary">
-                                                  {pdf.title ||
-                                                    `قسمت ${pdfIndex + 1}`}
+                                                  {toPersianDigits(
+                                                    pdf.title || `قسمت ${pdfIndex + 1}`
+                                                  )}
                                                 </p>
 
                                                 <div className="flex flex-col justify-center gap-2 sm:flex-row">

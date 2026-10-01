@@ -24,6 +24,7 @@ import {
   isPdfUrl,
   normalizeSessionTitle,
   sessionNumberFromText,
+  toPersianDigits,
   toDownloadUrl,
   toPdfViewUrl,
   toStreamableUrl,
@@ -107,11 +108,13 @@ function sortAkhlaghSessions(sessions: MaktubatSession[] = []) {
 
 function akhlaghApiSessionLabel(session: MaktubatSession, fallbackIndex: number) {
   const order = sessionOrder(session, fallbackIndex);
-  return normalizeSessionTitle(textValue(session.title), order) || formatSessionTitle(order);
+  return toPersianDigits(
+    normalizeSessionTitle(textValue(session.title), order) || formatSessionTitle(order)
+  );
 }
 
 function akhlaghTopicDisplayTitle(title = "") {
-  return isNeshaatTopic(title) ? neshaatTopicTitle : title;
+  return toPersianDigits(isNeshaatTopic(title) ? neshaatTopicTitle : title);
 }
 
 function nashaatFallbackPdfUrl(audioUrl = "") {
@@ -132,7 +135,7 @@ function nashaatSessionPdfs(session: MaktubatSession): CatalogFileWithUrl[] {
   return fallbackUrl
     ? [
         {
-          title: "قسمت 1",
+          title: "قسمت ۱",
           url: fallbackUrl,
           type: "pdf",
         },
@@ -357,14 +360,14 @@ const scrollToId = async (id: string, tries = 20) => {
                                     dir="rtl"
                                     className="mb-4 whitespace-pre-line text-center font-semibold leading-8 text-primary"
                                   >
-                                    {subtitle}
+                                    {toPersianDigits(subtitle)}
                                   </div>
                                 ) : null}
 
                                 {audioUrl ? (
                                   <div>
-                                    <p className="mb-3 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
-                                      <span>{sessionLabel}</span>
+                                    <p className="mb-2 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
+                                      <span>صوت</span>
                                       <Headphones className="size-5 text-muted-foreground" />
                                     </p>
 
@@ -413,7 +416,9 @@ const scrollToId = async (id: string, tries = 20) => {
                                           className="rounded-xl p-4 shadow-md"
                                         >
                                           <p className="mb-3 text-center text-sm font-semibold text-primary">
-                                            {pdf.title || `قسمت ${pdfIndex + 1}`}
+                                            {toPersianDigits(
+                                              pdf.title || `قسمت ${pdfIndex + 1}`
+                                            )}
                                           </p>
 
                                           <div className="flex flex-col justify-center gap-2 sm:flex-row">
@@ -475,8 +480,11 @@ const scrollToId = async (id: string, tries = 20) => {
                         key={fileIndex}
                         className="motion-list-item scroll-mt-24"
                       >
-                        <div className="font-semibold mb-3 flex items-center justify-center gap-2 text-primary">
-                          <span>{akhlaghSessionLabel(file, fileIndex)}</span>
+                        <div className="mb-2 text-center font-semibold text-primary">
+                          {akhlaghSessionLabel(file, fileIndex)}
+                        </div>
+                        <div className="mb-3 flex items-center justify-center gap-2 text-sm font-semibold text-primary">
+                          <span>صوت</span>
                           <Headphones className="size-5 text-muted-foreground" />
                         </div>
 

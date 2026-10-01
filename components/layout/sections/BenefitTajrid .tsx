@@ -22,6 +22,7 @@ import Lottie from "lottie-react";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import {
   formatSessionTitle,
+  toPersianDigits,
   toDownloadUrl,
   toPdfViewUrl,
   toStreamableUrl,
@@ -30,10 +31,8 @@ import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
 
-const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
-
 function toPersianNumber(value: number) {
-  return String(value).replace(/\d/g, (digit) => persianDigits[Number(digit)]);
+  return toPersianDigits(value);
 }
 
 function normalizeTajridLine(value = "") {
@@ -188,7 +187,9 @@ export const BenefitTajrid = () => {
                       <MotionList className="flex flex-col gap-3">
                       {sections.map((section, index) => {
                         const vol = index + 1;
-                        const label = section.title || `کتاب کشف المراد جلد ${vol}`;
+                        const label = toPersianDigits(
+                          section.title || `کتاب کشف المراد جلد ${vol}`
+                        );
                         const fileName = `${label}.pdf`;
                         const pdfUrl = section.url || "";
                         return (
@@ -264,7 +265,7 @@ export const BenefitTajrid = () => {
         dir="rtl"
       >
         {subtitleLines.map((point) => (
-          <p key={point}>{point}</p>
+          <p key={point}>{toPersianDigits(point)}</p>
         ))}
       </div>
     ) : (
@@ -274,7 +275,7 @@ export const BenefitTajrid = () => {
     )}
 
     <p className="mb-3 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
-      <span>پخش صوت</span>
+      <span>صوت</span>
       <Headphones className="size-5 text-muted-foreground" />
     </p>
 

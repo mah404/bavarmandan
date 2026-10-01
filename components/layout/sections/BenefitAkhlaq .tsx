@@ -17,13 +17,14 @@ import {
 } from "@/components/ui/accordion";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Landmark } from "lucide-react";
+import { ChevronDown, Headphones, Landmark } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   catalogFiles,
   formatSessionTitle,
   normalizeSessionTitle,
   normalizeBeliefTopic,
+  toPersianDigits,
   toDownloadUrl,
   toPdfViewUrl,
   toStreamableUrl,
@@ -241,7 +242,9 @@ export const BenefitAkhlaq = () => {
                           className="flex w-full items-center justify-between gap-4 py-4 text-right text-sm font-semibold text-muted-foreground transition-all hover:text-primary"
                         >
                           <span>
-                            {normalizeSessionTitle(file.title, originalIndex + 1)}
+                            {toPersianDigits(
+                              normalizeSessionTitle(file.title, originalIndex + 1)
+                            )}
                           </span>
                           <ChevronDown
                             className={[
@@ -274,15 +277,16 @@ export const BenefitAkhlaq = () => {
                               >
                                 {file.points.map((point, index) => (
                                   <p key={point}>
-                                    {index + 1}- {point}
+                                    {toPersianDigits(index + 1)}- {toPersianDigits(point)}
                                   </p>
                                 ))}
                               </div>
                             ) : null}
 
                             <div className="motion-list-item mt-3 text-center">
-                              <p className="mb-2 text-sm font-semibold text-primary">
-                                🎧 پخش صوت
+                              <p className="mb-2 flex items-center justify-center gap-2 text-sm font-semibold text-primary">
+                                <span>صوت</span>
+                                <Headphones className="size-5 text-muted-foreground" />
                               </p>
 
                               <div className="flex flex-col sm:flex-row gap-2 justify-center">
@@ -333,7 +337,7 @@ export const BenefitAkhlaq = () => {
                                     className="motion-list-item"
                                   >
                                     <p className="mb-2 text-sm font-semibold text-primary">
-                                      {summary.title}
+                                      {toPersianDigits(summary.title)}
                                     </p>
 
                                     <div className="flex flex-col sm:flex-row gap-2 justify-center">
@@ -425,7 +429,7 @@ export const BenefitAkhlaq = () => {
 
               {flatAghayedTopics.map((topic) => (
                 <AccordionItem key={topic.key} value={topic.value}>
-                  <AccordionTrigger>{topic.title}</AccordionTrigger>
+                  <AccordionTrigger>{toPersianDigits(topic.title)}</AccordionTrigger>
                   <AccordionContent className="justify-center text-center scroll-mt-24">
                     {topic.files.length === 0 ? (
                       <div className="text-muted-foreground py-4">
@@ -448,7 +452,13 @@ export const BenefitAkhlaq = () => {
                               ].join(" ")}
                             >
                               <div className="font-semibold mb-2 text-primary">
-                                {normalizeSessionTitle(file.title || "", i + 1)}
+                                {toPersianDigits(
+                                  normalizeSessionTitle(file.title || "", i + 1)
+                                )}
+                              </div>
+                              <div className="mb-3 flex items-center justify-center gap-2 text-sm font-semibold text-primary">
+                                <span>صوت</span>
+                                <Headphones className="size-5 text-muted-foreground" />
                               </div>
 
                               <div className="flex flex-col sm:flex-row gap-2 justify-center">

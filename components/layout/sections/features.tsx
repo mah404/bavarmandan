@@ -8,6 +8,7 @@ import {
   formatSessionTitle,
   normalizeSessionTitle,
   sessionNumberFromText,
+  toPersianDigits,
   type AudioCatalog,
   type LatestCatalogItem,
   type MaktubatSession,
@@ -28,20 +29,20 @@ function latestTitle(item: LatestCatalogItem, fallbackIndex: number) {
   const title = sessionTitle(item, fallbackIndex);
 
   if (item.section === "tafsir" && item.collection === "tafsir") {
-    return `تفسیر ترتیبی - سوره حمد - ${title}`;
+    return toPersianDigits(`تفسیر ترتیبی - سوره حمد - ${title}`);
   }
 
   if (item.section === "tafsirmozooei" && item.collection === "maad") {
-    return `تفسیر موضوعی - احسن الحدیث - ${title}`;
+    return toPersianDigits(`تفسیر موضوعی - احسن الحدیث - ${title}`);
   }
 
   if (item.section === "akhlagh" && item.collection === "nashaatvojoodi") {
-    return `نشآت وجودی انسان: درجات و درکات - ${title}`;
+    return toPersianDigits(`نشآت وجودی انسان: درجات و درکات - ${title}`);
   }
 
-  return [item.collectionTitle || item.collection, title]
+  return toPersianDigits([item.collectionTitle || item.collection, title]
     .filter(Boolean)
-    .join(" - ");
+    .join(" - "));
 }
 
 function sessionNumber(item: LatestCatalogItem, fallbackIndex: number) {

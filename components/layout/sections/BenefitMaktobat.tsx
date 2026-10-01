@@ -16,7 +16,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { FileText, Sparkles } from "lucide-react";
+import { FileText, Headphones, Sparkles } from "lucide-react";
 import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
@@ -27,6 +27,7 @@ import {
   MaktubatSession,
   normalizeSessionTitle,
   sessionNumberFromText,
+  toPersianDigits,
   toDownloadUrl,
   toPdfViewUrl,
   toStreamableUrl,
@@ -46,11 +47,11 @@ type Maktobat = {
 type CacheShape = { ts: number; items: Maktobat[] };
 
 function cleanMaktobatContent(content: string) {
-  return content
+  return toPersianDigits(content
     .replace(/الله تبارک و تعالی/g, "الله تعالی")
     .replace(/ذات الله(?! تعالی)/g, "ذات الله تعالی")
     .replace(/الله(?! تعالی)/g, "الله تعالی")
-    .replace(/(ذات الله(?: تعالی)?)\s*:\s*/g, "$1 ");
+    .replace(/(ذات الله(?: تعالی)?)\s*:\s*/g, "$1 "));
 }
 
 function maktobatTriggerContent(maktobat: Maktobat) {
@@ -309,8 +310,9 @@ export const BenefitMaktobat = () => {
       </div>
     </div>
     <div className="rounded-xl shadow-md p-4 mt-4">
-  <p className="text-primary text-sm font-semibold mb-2 text-center">
-    🎧 صوت
+  <p className="text-primary text-sm font-semibold mb-2 flex items-center justify-center gap-2 text-center">
+    <span>صوت</span>
+    <Headphones className="size-5 text-muted-foreground" />
   </p>
 
   {maktobat.audioUrl ? (
@@ -355,8 +357,12 @@ export const BenefitMaktobat = () => {
                   <MotionList className="flex flex-col gap-3">
                   <MotionItem className="motion-list-item">
                   <div className="rounded-xl p-1">
-                    <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
-                      🎧 گفتمان
+                    <p className="mb-2 text-center text-sm font-semibold text-primary">
+                      گفتمان
+                    </p>
+                    <SheetDescription className="text-primary text-sm font-semibold mb-3 flex items-center justify-center gap-2 text-center">
+                      <span>صوت</span>
+                      <Headphones className="size-5 text-muted-foreground" />
                     </SheetDescription>
 
                     <div className="flex gap-2 justify-center">
@@ -388,8 +394,12 @@ export const BenefitMaktobat = () => {
                   </MotionItem>
                   <MotionItem className="motion-list-item">
                   <div className="rounded-xl p-1">
-                    <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
-                      🎧 گفتاری در باب بساطت
+                    <p className="mb-2 text-center text-sm font-semibold text-primary">
+                      گفتاری در باب بساطت
+                    </p>
+                    <SheetDescription className="text-primary text-sm font-semibold mb-3 flex items-center justify-center gap-2 text-center">
+                      <span>صوت</span>
+                      <Headphones className="size-5 text-muted-foreground" />
                     </SheetDescription>
 
                     <div className="flex gap-2 justify-center">
@@ -421,8 +431,12 @@ export const BenefitMaktobat = () => {
                   </MotionItem>
                   <MotionItem className="motion-list-item">
                   <div className="rounded-xl p-1">
-                    <SheetDescription className="text-primary text-sm font-semibold mb-2 text-center">
-                      🎧انکار عقل ، با وهم و گمان
+                    <p className="mb-2 text-center text-sm font-semibold text-primary">
+                      انکار عقل ، با وهم و گمان
+                    </p>
+                    <SheetDescription className="text-primary text-sm font-semibold mb-3 flex items-center justify-center gap-2 text-center">
+                      <span>صوت</span>
+                      <Headphones className="size-5 text-muted-foreground" />
                     </SheetDescription>
 
                     <div className="flex gap-2 justify-center">
