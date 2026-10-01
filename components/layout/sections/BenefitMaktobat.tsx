@@ -53,9 +53,8 @@ function cleanMaktobatContent(content: string) {
     .replace(/(ذات الله(?: تعالی)?)\s*:\s*/g, "$1 ");
 }
 
-function maktobatTriggerTitle(maktobat: Maktobat) {
-  const content = cleanMaktobatContent(maktobat.content).trim();
-  return content ? `${maktobat.title}: ${content}` : maktobat.title;
+function maktobatTriggerContent(maktobat: Maktobat) {
+  return cleanMaktobatContent(maktobat.content).trim();
 }
 
 function maktobatDocumentTitle(maktobat: Maktobat) {
@@ -274,7 +273,12 @@ export const BenefitMaktobat = () => {
                 >
                   <AccordionTrigger className="gap-4 text-right text-muted-foreground">
                     <span className="block flex-1 text-right leading-8">
-                      {maktobatTriggerTitle(maktobat)}
+                      <span className="block">{maktobat.title}:</span>
+                      {maktobatTriggerContent(maktobat) ? (
+                        <span className="mt-2 block">
+                          {maktobatTriggerContent(maktobat)}
+                        </span>
+                      ) : null}
                     </span>
                   </AccordionTrigger>
             <AccordionContent>
