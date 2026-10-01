@@ -147,9 +147,18 @@ export const AudioPlayerProvider = ({
 
     const onLoaded = () => setDuration(audio.duration || 0);
     const onTime = () => setProgress(audio.currentTime || 0);
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-    const onEnd = () => setIsPlaying(false);
+    const onPlay = () => {
+      setIsPlaying(true);
+      window.dispatchEvent(new CustomEvent("bavarmandan:session-audio-play"));
+    };
+    const onPause = () => {
+      setIsPlaying(false);
+      window.dispatchEvent(new CustomEvent("bavarmandan:session-audio-pause"));
+    };
+    const onEnd = () => {
+      setIsPlaying(false);
+      window.dispatchEvent(new CustomEvent("bavarmandan:session-audio-pause"));
+    };
 
     audio.addEventListener("loadedmetadata", onLoaded);
     audio.addEventListener("timeupdate", onTime);
@@ -332,6 +341,7 @@ export const AudioPlayerProvider = ({
       muted,
     };
     clearSavedState();
+    window.dispatchEvent(new CustomEvent("bavarmandan:session-audio-close"));
   };
 
   const ctxValue = useMemo<AudioCtx>(

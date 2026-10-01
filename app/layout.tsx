@@ -8,6 +8,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Navbar } from "@/components/layout/navbar";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AudioPlayerProvider } from "@/components/audio/AudioPlayerProvider";
+import { BackgroundMusicBubble } from "@/components/audio/BackgroundMusicBubble";
 import { PWAInstallIntent } from "@/components/pwa-install-intent";
 import { PWARegister } from "@/components/pwa-register";
 import { Providers } from "./providers";
@@ -212,6 +213,7 @@ export default function RootLayout({
               <PWARegister />
               <Navbar />
               {children}
+              <BackgroundMusicBubble />
               <Suspense fallback={null}>
                 <PWAInstallIntent />
               </Suspense>

@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
@@ -68,6 +70,10 @@ const socialLinks = [
 ];
 
 export const FooterSection = () => {
+  const startBackgroundMusic = () => {
+    window.dispatchEvent(new CustomEvent("bavarmandan:background-music-trigger"));
+  };
+
   return (
     <footer id="contact" className="container py-12 sm:py-16">
       <Reveal className="relative mx-auto max-w-5xl text-center">
@@ -187,13 +193,13 @@ export const FooterSection = () => {
                 dir="rtl"
               >
                 <span>مالکیت، طراحی و توسعه</span>
-                <Link
-                  target="_blank"
-                  href=""
+                <button
+                  type="button"
+                  onClick={startBackgroundMusic}
                   className="inline-block whitespace-nowrap font-bold text-primary transition hover:text-foreground"
                 >
                   فرزندان امیرالمومنین (ع)
-                </Link>
+                </button>
                 <span dir="ltr">© 1404</span>
               </h3>
             </section>
