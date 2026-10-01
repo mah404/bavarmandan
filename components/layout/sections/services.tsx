@@ -123,16 +123,6 @@ export const ServicesSection = () => {
                         <li>
                           <Link
                             className="underline underline-offset-4"
-                            href="https://t.me/firstcreation1"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            کانال تلگرامی خلق اول
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            className="underline underline-offset-4"
                             href="https://www.valiasr-aj.tv/"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -150,6 +140,16 @@ export const ServicesSection = () => {
                             بنیاد بین المللی علوم وحیانی اسراء
                           </Link>
                         </li>
+                        <li>
+                          <Link
+                            className="underline underline-offset-4"
+                            href="https://t.me/firstcreation1"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            کانال تلگرامی خلق اول
+                          </Link>
+                        </li>
                       </ul>
                     </div>
                   </TabsContent>
@@ -159,7 +159,7 @@ export const ServicesSection = () => {
                       <p className="text-sm text-primary">کتب مفید:</p>
                       <Link
                         dir="rtl"
-                        href="/taghvim-shia"
+                        href="/taghvim-shia.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary underline underline-offset-4"

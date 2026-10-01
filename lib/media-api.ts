@@ -38,6 +38,13 @@ export type MaktubatSession = {
   title?: string;
   subtitle?: string | string[];
   content?: string;
+  notesIntro?: string | null;
+  notesSummary?: string | null;
+  notesIntroduction?: string | null;
+  notes?: {
+    intro?: string | null;
+    summary?: string | null;
+  };
   url?: string | null;
   audioUrl?: string | null;
   pdfUrl?: string | null;

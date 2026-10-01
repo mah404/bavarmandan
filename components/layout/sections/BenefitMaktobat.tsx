@@ -32,17 +32,27 @@ import {
   toPdfViewUrl,
   toStreamableUrl,
 } from "@/lib/media-api";
+import {
+  buildMaktubatNotesMap,
+  type MaktubatDetailsResponse,
+} from "@/lib/maktubat-details";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
+import {
+  MaktobatNotesButton,
+  MaktobatNotesDialog,
+  type MaktobatNotesDialogData,
+} from "./MaktobatNotesDialog";
 
-const CACHE_KEY = "maktobats_cache_v8";
+const CACHE_KEY = "maktobats_cache_v10";
 type Maktobat = {
   id: string;
   title: string;
   content: string;
   pdfUrl: string | null;
   audioUrl?: string | null;
+  notes: MaktobatNotesDialogData | null;
 };
 type CacheShape = { ts: number; items: Maktobat[] };
 
@@ -62,6 +72,10 @@ function maktobatDocumentTitle(maktobat: Maktobat) {
   return maktobat.title.replace(/^جلسه\s+/, "مکتوب ");
 }
 
+function normalizedMaktobatId(id: string) {
+  return id.replace(/^0+/, "") || id;
+}
+
 export const BenefitMaktobat = () => {
   const SHEET_ID = "maktobat";
 
@@ -70,6 +84,8 @@ export const BenefitMaktobat = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [maktobats, setMaktobats] = useState<Maktobat[]>([]);
+  const [activeNotes, setActiveNotes] = useState<MaktobatNotesDialogData | null>(null);
+  const [notesTrigger, setNotesTrigger] = useState<HTMLButtonElement | null>(null);
   const { play } = useAudioPlayer(); // ← use the global player
   const { target, clear } = useSheetNav();
   const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
@@ -132,7 +148,10 @@ export const BenefitMaktobat = () => {
   };
 
   // ---------- Transform & sort ----------
-  const transformAndSort = (data: MaktubatSession[]): Maktobat[] => {
+  const transformAndSort = (
+    data: MaktubatSession[],
+    notesById = new Map<string, MaktobatNotesDialogData>()
+  ): Maktobat[] => {
     const extractPersianNumber = (title: string) => {
       return sessionNumberFromText(title) ?? 999;
     };
@@ -153,11 +172,16 @@ export const BenefitMaktobat = () => {
         ? item.subtitle.join("\n")
         : item.subtitle || item.content || "";
 
+      const id = item.id || `maktobat-${index}`;
+      const normalizedId = normalizedMaktobatId(id);
+      const notes = notesById.get(normalizedId) || null;
+
       return {
-        id: item.id || `maktobat-${index}`,
+        id,
         title: sessionTitle(item.title, index),
         content: cleanMaktobatContent(content),
         pdfUrl: item.pdfUrl || null,
+        notes,
         audioUrl:
           item.audioUrl ||
           (isAudioUrl(possibleAudioUrl) ? possibleAudioUrl : null),
@@ -165,12 +189,27 @@ export const BenefitMaktobat = () => {
     });
   };
 
+  const fetchMaktubatNotes = async () => {
+    try {
+      const response = await fetch("/api/maktubat-details", { cache: "no-store" });
+      if (!response.ok) return new Map<string, MaktobatNotesDialogData>();
+      const data = (await response.json()) as MaktubatDetailsResponse;
+      return buildMaktubatNotesMap(data);
+    } catch (err) {
+      console.error("Failed to fetch maktubat notes:", err);
+      return new Map<string, MaktobatNotesDialogData>();
+    }
+  };
+
   // ---------- Fetch + cache ----------
   const fetchAndCache = async (showSpinner: boolean) => {
     if (showSpinner) setLoading(true);
     try {
-      const nextCatalog = await load(true);
-      const items = transformAndSort(nextCatalog?.maktubat?.sessions || []);
+      const [nextCatalog, notesById] = await Promise.all([
+        load(true),
+        fetchMaktubatNotes(),
+      ]);
+      const items = transformAndSort(nextCatalog?.maktubat?.sessions || [], notesById);
       setMaktobats(items);
       writeCache(items);
     } catch (err) {
@@ -215,6 +254,11 @@ export const BenefitMaktobat = () => {
     "3": fileUrl(motafarreghe[2] || {}),
   };
 
+  const openNotes = (notes: MaktobatNotesDialogData, trigger: HTMLButtonElement) => {
+    setNotesTrigger(trigger);
+    setActiveNotes(notes);
+  };
+
   return (
     <>
       <HoverLift className="h-full">
@@ -239,7 +283,21 @@ export const BenefitMaktobat = () => {
       </HoverLift>
 
       <Sheet open={open} onOpenChange={handleOpen}>
-        <SheetContent className="max-h-screen overflow-y-auto">
+        <SheetContent
+          className="max-h-screen overflow-y-auto"
+          onInteractOutside={(event) => {
+            const target = event.target as HTMLElement | null;
+            if (activeNotes && target?.closest(".notes-overlay")) {
+              event.preventDefault();
+            }
+          }}
+          onFocusOutside={(event) => {
+            const target = event.target as HTMLElement | null;
+            if (activeNotes && target?.closest(".notes-overlay")) {
+              event.preventDefault();
+            }
+          }}
+        >
           <SheetHeader>
             <SheetTitle>برهان امکان و وجوب</SheetTitle>
             <SheetDescription className="mb-4 text-white">
@@ -308,6 +366,7 @@ export const BenefitMaktobat = () => {
           </Button>
         </a>
       </div>
+      <MaktobatNotesButton notes={maktobat.notes} onOpen={openNotes} />
     </div>
     <div className="rounded-xl shadow-md p-4 mt-4">
   <p className="text-primary text-sm font-semibold mb-2 flex items-center justify-center gap-2 text-center">
@@ -471,6 +530,14 @@ export const BenefitMaktobat = () => {
               </AccordionItem>
             </Accordion>
           )}
+          <MaktobatNotesDialog
+            notes={activeNotes}
+            trigger={notesTrigger}
+            onClose={() => {
+              setActiveNotes(null);
+              setNotesTrigger(null);
+            }}
+          />
         </SheetContent>
       </Sheet>
     </>

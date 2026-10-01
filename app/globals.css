@@ -442,3 +442,497 @@ html.theme-flow::view-transition-new(root) {
     border-radius: 0.75rem;
     animation: pulseGlow 1.6s ease-in-out;
 }
+
+.notes-trigger-wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 0.8rem;
+}
+
+.notes-trigger {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.38rem 0.5rem 0.38rem 0.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid hsl(var(--primary) / 0.28);
+    background: hsl(var(--primary) / 0.12);
+    color: hsl(var(--primary));
+    font-size: 0.875rem;
+    font-weight: 800;
+    transition: transform 250ms cubic-bezier(.2, 1.4, .4, 1), border-color 250ms ease;
+}
+
+.notes-trigger:hover {
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary));
+}
+
+.notes-trigger:active {
+    transform: scale(0.96);
+}
+
+.notes-trigger::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, hsl(var(--foreground) / 0.12) 50%, transparent 70%);
+    transform: translateX(120%);
+    transition: transform 800ms ease;
+}
+
+.notes-trigger:hover::after {
+    transform: translateX(-120%);
+}
+
+.notes-trigger-icon {
+    position: relative;
+    display: grid;
+    width: 1.625rem;
+    height: 1.625rem;
+    flex: none;
+    place-items: center;
+    border-radius: 0.5rem;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+}
+
+.notes-trigger-ping {
+    position: absolute;
+    top: -0.2rem;
+    left: -0.2rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    border: 2px solid hsl(var(--card));
+    background: hsl(var(--primary));
+}
+
+.notes-trigger-ping::after {
+    content: "";
+    position: absolute;
+    inset: -0.15rem;
+    border-radius: inherit;
+    border: 2px solid hsl(var(--primary));
+    animation: notes-ping 2s cubic-bezier(0, 0, .2, 1) infinite;
+}
+
+@keyframes notes-ping {
+    0% {
+        opacity: 0.9;
+        transform: scale(1);
+    }
+    80%,
+    100% {
+        opacity: 0;
+        transform: scale(2.6);
+    }
+}
+
+.notes-trigger-arrow {
+    width: 0.875rem;
+    height: 0.875rem;
+    transition: transform 300ms cubic-bezier(.2, 1.4, .4, 1);
+}
+
+.notes-trigger:hover .notes-trigger-arrow {
+    transform: translateX(-3px);
+}
+
+.notes-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    pointer-events: auto;
+}
+
+.notes-backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    padding: 0;
+    background: hsl(var(--background) / 0.66);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    pointer-events: auto;
+}
+
+.notes-panel {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: min(27.5rem, 100%);
+    max-height: min(43.75rem, calc(100dvh - 1.5rem));
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    border: 1px solid hsl(var(--primary) / 0.28);
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    box-shadow: 0 40px 80px -30px hsl(var(--background) / 0.75), 0 0 0 1px hsl(var(--primary) / 0.16);
+    transform-origin: center;
+    will-change: transform;
+    pointer-events: auto;
+}
+
+.notes-panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 11.875rem;
+    pointer-events: none;
+    background: radial-gradient(90% 100% at 50% 0%, hsl(var(--primary) / 0.12), transparent 72%);
+}
+
+.notes-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0.55rem;
+    border: 1px solid hsl(var(--primary) / 0.48);
+    border-radius: 1.05rem;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.16);
+    animation: notes-frame-in 520ms ease-out both;
+}
+
+.notes-pattern {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 10.625rem;
+    color: hsl(var(--primary));
+    opacity: 0.07;
+    pointer-events: none;
+    mask: linear-gradient(#000, transparent);
+    -webkit-mask: linear-gradient(#000, transparent);
+}
+
+.notes-corner {
+    position: absolute;
+    z-index: 2;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 0.08rem;
+    background: hsl(var(--primary));
+    pointer-events: none;
+    transform: rotate(45deg);
+    animation: notes-corner-in 300ms ease-out both;
+    animation-delay: 520ms;
+}
+
+.notes-corner-tl {
+    top: 0.35rem;
+    left: 1.65rem;
+}
+
+.notes-corner-tr {
+    top: 0.35rem;
+    right: 1.65rem;
+}
+
+.notes-corner-bl {
+    bottom: 0.35rem;
+    left: 1.65rem;
+}
+
+.notes-corner-br {
+    right: 1.65rem;
+    bottom: 0.35rem;
+}
+
+@keyframes notes-frame-in {
+    from {
+        opacity: 0;
+        clip-path: inset(0 50% 100% 50% round 1.05rem);
+    }
+    to {
+        opacity: 1;
+        clip-path: inset(0 round 1.05rem);
+    }
+}
+
+@keyframes notes-corner-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.notes-grab {
+    display: none;
+}
+
+.notes-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.875rem 2.125rem 0.375rem;
+    text-align: center;
+}
+
+.notes-medal {
+    position: relative;
+    margin-bottom: 0.625rem;
+    display: grid;
+    width: 3.125rem;
+    height: 3.125rem;
+    place-items: center;
+    color: hsl(var(--primary));
+}
+
+.notes-medal-star {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    stroke-width: 1.8;
+    animation: notes-spin 30s linear infinite;
+}
+
+.notes-medal-icon {
+    position: relative;
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+@keyframes notes-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.notes-header h3 {
+    margin: 0;
+    color: hsl(var(--primary));
+    font-size: 1.35rem;
+    font-weight: 900;
+    line-height: 1.5;
+}
+
+.notes-header p {
+    margin: 0.125rem 0 0;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.8rem;
+    line-height: 1.7;
+}
+
+.notes-ornament {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    max-width: 15rem;
+    margin: 0.875rem auto 0;
+    transform-origin: center;
+}
+
+.notes-ornament i {
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary)));
+}
+
+.notes-ornament i:last-child {
+    background: linear-gradient(270deg, transparent, hsl(var(--primary)));
+}
+
+.notes-ornament span {
+    width: 0.75rem;
+    height: 0.75rem;
+    flex: none;
+    background: hsl(var(--primary));
+    transform: rotate(45deg);
+}
+
+.notes-tabs {
+    position: relative;
+    display: inline-flex;
+    margin: 1rem auto 0;
+    padding: 0.25rem;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--primary) / 0.28);
+    background: hsl(var(--background) / 0.35);
+}
+
+.notes-tab-pill {
+    position: absolute;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    right: 0.25rem;
+    width: calc(50% - 0.25rem);
+    border-radius: 999px;
+    background: hsl(var(--primary));
+    box-shadow: 0 6px 14px -8px hsl(var(--primary) / 0.7);
+    transition: transform 420ms cubic-bezier(.2, 1.4, .4, 1);
+}
+
+.notes-tab-pill.is-left {
+    transform: translateX(-100%);
+}
+
+.notes-tab {
+    position: relative;
+    z-index: 1;
+    min-width: 5rem;
+    padding: 0.35rem 1.35rem;
+    border-radius: 999px;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+    font-weight: 800;
+    transition: color 250ms ease;
+}
+
+.notes-tab.is-active {
+    color: hsl(var(--primary-foreground));
+}
+
+.dark .notes-tab.is-active {
+    color: hsl(var(--background));
+}
+
+.notes-body {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1rem 2.375rem 0.5rem;
+    scrollbar-gutter: stable;
+    touch-action: pan-y;
+    mask: linear-gradient(transparent, #000 14px, #000 calc(100% - 18px), transparent);
+    -webkit-mask: linear-gradient(transparent, #000 14px, #000 calc(100% - 18px), transparent);
+}
+
+.notes-body p {
+    margin: 0;
+    color: hsl(var(--foreground));
+    text-align: right;
+    font-size: 0.92rem;
+    line-height: 2.1;
+}
+
+.notes-body p:first-child {
+    font-size: 0.98rem;
+}
+
+.notes-body p + p {
+    position: relative;
+    margin-top: 0.875rem;
+    padding-top: 1rem;
+}
+
+.notes-body p + p::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-left: -0.225rem;
+    background: hsl(var(--primary));
+    opacity: 0.6;
+    transform: rotate(45deg);
+}
+
+.notes-footer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem 1.5rem 1.75rem;
+}
+
+.notes-ok {
+    position: relative;
+    overflow: hidden;
+    border-radius: 999px;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    padding: 0.55rem 1.875rem;
+    font-size: 0.875rem;
+    font-weight: 900;
+    box-shadow: 0 10px 20px -12px hsl(var(--primary) / 0.8);
+    transition: transform 300ms cubic-bezier(.2, 1.5, .4, 1);
+}
+
+.dark .notes-ok {
+    color: hsl(var(--background));
+}
+
+.notes-ok::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 35%, hsl(var(--foreground) / 0.34) 50%, transparent 65%);
+    transform: translateX(130%);
+    transition: transform 900ms ease;
+}
+
+.notes-ok:hover {
+    transform: translateY(-2px) scale(1.03);
+}
+
+.notes-ok:hover::after {
+    transform: translateX(-130%);
+}
+
+@media (max-width: 600px) {
+    .notes-overlay {
+        place-items: end center;
+        padding: 0;
+    }
+
+    .notes-panel {
+        width: 100%;
+        max-height: 82dvh;
+        border-radius: 1.5rem 1.5rem 0 0;
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .notes-grab {
+        position: relative;
+        z-index: 1;
+        display: block;
+        width: 2.75rem;
+        height: 0.32rem;
+        margin: 0.625rem auto -0.25rem;
+        border-radius: 999px;
+        background: hsl(var(--primary) / 0.28);
+        touch-action: none;
+    }
+
+    .notes-header {
+        padding-top: 1.35rem;
+        touch-action: none;
+    }
+
+    .notes-body {
+        padding: 0.875rem 1.625rem 0.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .notes-trigger,
+    .notes-trigger::after,
+    .notes-trigger-arrow,
+    .notes-frame-main,
+    .notes-frame-soft,
+    .notes-corner,
+    .notes-medal-star,
+    .notes-trigger-ping::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
