@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pause, Play, X, Music2 } from "lucide-react";
 
-const MUSIC_URL = "http://167.233.60.102:3001/assets/music/backmusic.mp3";
+const RAW_MUSIC_URL = "http://167.233.60.102:3001/assets/music/backmusic.mp3";
+const MUSIC_URL = `/api/stream?url=${encodeURIComponent(RAW_MUSIC_URL)}`;
 const DEFAULT_VOLUME = 0.6;
 const BAR_COUNT = 4;
 const WAVE_COUNT = 24;
