@@ -38,7 +38,7 @@ import {
 } from "@/lib/maktubat-details";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
-import { HoverLift, MotionItem, MotionList } from "./reveal";
+import { HoverLift } from "./reveal";
 import {
   MaktobatNotesButton,
   MaktobatNotesDialog,
@@ -88,7 +88,7 @@ export const BenefitMaktobat = () => {
   const [notesTrigger, setNotesTrigger] = useState<HTMLButtonElement | null>(null);
   const { play } = useAudioPlayer(); // ← use the global player
   const { target, clear } = useSheetNav();
-  const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
+  const { loading: catalogLoading, error, load } = useAudioCatalog();
 
   const flashHighlight = (id: string) => {
     const element = document.getElementById(id);
@@ -245,14 +245,7 @@ export const BenefitMaktobat = () => {
     }
   };
 
-  const motafarreghe = catalog?.maktubat?.motafarreghe || [];
   const isLoading = loading || catalogLoading;
-  const toStreamable = toStreamableUrl;
-  const goftegooha: Record<string, string> = {
-    "1": fileUrl(motafarreghe[0] || {}),
-    "2": fileUrl(motafarreghe[1] || {}),
-    "3": fileUrl(motafarreghe[2] || {}),
-  };
 
   const openNotes = (notes: MaktobatNotesDialogData, trigger: HTMLButtonElement) => {
     setNotesTrigger(trigger);
@@ -408,126 +401,6 @@ export const BenefitMaktobat = () => {
 </AccordionContent>
                 </AccordionItem>
               ))}
-              <AccordionItem value="group-2">
-                <AccordionTrigger className="text-muted-foreground">
-                  مباحث متفرقه
-                </AccordionTrigger>
-                <AccordionContent>
-                  <MotionList className="flex flex-col gap-3">
-                  <MotionItem className="motion-list-item">
-                  <div className="rounded-xl p-1">
-                    <p className="mb-2 text-center text-sm font-semibold text-primary">
-                      گفتمان
-                    </p>
-                    <SheetDescription className="text-primary text-sm font-semibold mb-3 flex items-center justify-center gap-2 text-center">
-                      <span>صوت</span>
-                      <Headphones className="size-5 text-muted-foreground" />
-                    </SheetDescription>
-
-                    <div className="flex gap-2 justify-center">
-                      {/* Play (same global player as بالا) */}
-                      <Button
-                        onClick={() =>
-                          play({
-                            title: "گفتمان",
-                            url: toStreamable(goftegooha["1"]), // streamable: ...raw=1
-                            description: "مباحث متفرقه",
-                          })
-                        }
-                        className="sm:w-auto w-full text-card"
-                      >
-                        پخش
-                      </Button>
-
-                      {/* Download (matching the first section’s style) */}
-                      <a
-                        href={toDownloadUrl(goftegooha["1"])} // downloadable: ...dl=1
-                        download="گفتمان.mp3"
-                      >
-                        <Button variant="outline" className="sm:w-auto w-full">
-                          دانلود صوت
-                        </Button>
-                      </a>
-                    </div>
-                  </div>
-                  </MotionItem>
-                  <MotionItem className="motion-list-item">
-                  <div className="rounded-xl p-1">
-                    <p className="mb-2 text-center text-sm font-semibold text-primary">
-                      گفتاری در باب بساطت
-                    </p>
-                    <SheetDescription className="text-primary text-sm font-semibold mb-3 flex items-center justify-center gap-2 text-center">
-                      <span>صوت</span>
-                      <Headphones className="size-5 text-muted-foreground" />
-                    </SheetDescription>
-
-                    <div className="flex gap-2 justify-center">
-                      {/* Play (same global player as بالا) */}
-                      <Button
-                        onClick={() =>
-                          play({
-                            title: "گفتاری در باب بساطت",
-                            url: toStreamable(goftegooha["2"]), // streamable: ...raw=1
-                            description: "مباحث متفرقه",
-                          })
-                        }
-                        className="sm:w-auto w-full text-card"
-                      >
-                        پخش
-                      </Button>
-
-                      {/* Download (matching the first section’s style) */}
-                      <a
-                        href={toDownloadUrl(goftegooha["2"])} // downloadable: ...dl=1
-                        download="گفتمان.mp3"
-                      >
-                        <Button variant="outline" className="sm:w-auto w-full">
-                          دانلود صوت
-                        </Button>
-                      </a>
-                    </div>
-                  </div>
-                  </MotionItem>
-                  <MotionItem className="motion-list-item">
-                  <div className="rounded-xl p-1">
-                    <p className="mb-2 text-center text-sm font-semibold text-primary">
-                      انکار عقل ، با وهم و گمان
-                    </p>
-                    <SheetDescription className="text-primary text-sm font-semibold mb-3 flex items-center justify-center gap-2 text-center">
-                      <span>صوت</span>
-                      <Headphones className="size-5 text-muted-foreground" />
-                    </SheetDescription>
-
-                    <div className="flex gap-2 justify-center">
-                      {/* Play (same global player as بالا) */}
-                      <Button
-                        onClick={() =>
-                          play({
-                            title: "انکار عقل ، با وهم و گمان",
-                            url: toStreamable(goftegooha["3"]), // streamable: ...raw=1
-                            description: "مباحث متفرقه",
-                          })
-                        }
-                        className="sm:w-auto w-full text-card"
-                      >
-                        پخش
-                      </Button>
-
-                      {/* Download (matching the first section’s style) */}
-                      <a
-                        href={toDownloadUrl(goftegooha["3"])} // downloadable: ...dl=1
-                        download="گفتمان.mp3"
-                      >
-                        <Button variant="outline" className="sm:w-auto w-full">
-                          دانلود صوت
-                        </Button>
-                      </a>
-                    </div>
-                  </div>
-                  </MotionItem>
-                  </MotionList>
-                </AccordionContent>
-              </AccordionItem>
             </Accordion>
           )}
           <MaktobatNotesDialog
