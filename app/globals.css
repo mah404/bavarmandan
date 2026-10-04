@@ -887,19 +887,23 @@ html.theme-flow::view-transition-new(root) {
 
 @media (max-width: 600px) {
     .notes-overlay {
-        place-items: center;
-        padding: 0.75rem;
-    }
-
-    .notes-panel {
-        width: 100%;
-        height: min(92dvh, calc(100dvh - 1.5rem));
-        max-height: none;
-        border-radius: 1.5rem;
+        display: block;
         overflow-x: hidden;
         overflow-y: auto;
         overscroll-behavior: contain;
         -webkit-overflow-scrolling: touch;
+        padding: max(0.75rem, env(safe-area-inset-top, 0px)) 0.75rem max(0.75rem, env(safe-area-inset-bottom, 0px));
+        touch-action: pan-y;
+    }
+
+    .notes-panel {
+        margin: 0 auto;
+        width: 100%;
+        height: auto;
+        min-height: min(92dvh, calc(100dvh - 1.5rem));
+        max-height: none;
+        border-radius: 1.5rem;
+        overflow: visible;
         padding-bottom: 0;
         touch-action: pan-y;
     }
