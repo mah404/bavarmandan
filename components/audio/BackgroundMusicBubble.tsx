@@ -11,19 +11,25 @@ const WAVE_COUNT = 24;
 
 type AudioMode = "live" | "idle";
 
+function clampVolume(value: number) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.min(1, Math.max(0, value));
+}
+
 function fadeAudio(audio: HTMLAudioElement, to: number, duration = 400) {
-  const from = audio.volume;
+  const from = clampVolume(audio.volume);
+  const target = clampVolume(to);
   const startedAt = performance.now();
 
   return new Promise<void>((resolve) => {
     const step = (now: number) => {
       const progress = Math.min(1, (now - startedAt) / duration);
       const eased = 1 - Math.pow(1 - progress, 3);
-      audio.volume = from + (to - from) * eased;
+      audio.volume = clampVolume(from + (target - from) * eased);
       if (progress < 1) {
         requestAnimationFrame(step);
       } else {
-        audio.volume = to;
+        audio.volume = target;
         resolve();
       }
     };
@@ -71,7 +77,7 @@ export function BackgroundMusicBubble() {
     audio.loop = true;
     audio.preload = "none";
     audio.crossOrigin = "anonymous";
-    audio.volume = 0;
+    audio.volume = clampVolume(0);
     audioRef.current = audio;
 
     return () => {
@@ -89,6 +95,14 @@ export function BackgroundMusicBubble() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("bavarmandan:background-music-state", {
+        detail: { playing, visible },
+      })
+    );
+  }, [playing, visible]);
 
   const measure = () => {
     const bubble = bubbleRef.current;
@@ -174,7 +188,7 @@ export function BackgroundMusicBubble() {
 
     await setupAnalyser();
     try {
-      audio.volume = 0;
+      audio.volume = clampVolume(0);
       await audio.play();
       setPlaying(true);
       await fadeAudio(audio, volume, 450);
@@ -308,6 +322,10 @@ export function BackgroundMusicBubble() {
       startMusic({ reveal: true });
     };
 
+    const onStop = () => {
+      closeMusic();
+    };
+
     const onSessionPlay = () => {
       hideForSessionAudio();
     };
@@ -317,10 +335,12 @@ export function BackgroundMusicBubble() {
     };
 
     window.addEventListener("bavarmandan:background-music-trigger", onTrigger);
+    window.addEventListener("bavarmandan:background-music-stop", onStop);
     window.addEventListener("bavarmandan:session-audio-play", onSessionPlay);
     window.addEventListener("bavarmandan:session-audio-close", onSessionClose);
     return () => {
       window.removeEventListener("bavarmandan:background-music-trigger", onTrigger);
+      window.removeEventListener("bavarmandan:background-music-stop", onStop);
       window.removeEventListener("bavarmandan:session-audio-play", onSessionPlay);
       window.removeEventListener("bavarmandan:session-audio-close", onSessionClose);
     };
@@ -361,7 +381,7 @@ export function BackgroundMusicBubble() {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio && !audio.paused) audio.volume = volume;
+    if (audio && !audio.paused) audio.volume = clampVolume(volume);
   }, [volume]);
 
   useEffect(() => {

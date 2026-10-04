@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { Menu, Music2 } from "lucide-react";
 import React from "react";
 import {
   Sheet,
@@ -28,6 +28,56 @@ const routeList: RouteProps[] = [
   { href: "#rules", label: "تذکرات" },
   { href: "#contact", label: "ارتباط با ما" },
 ];
+
+function BackgroundMusicNavButton() {
+  const [isPlaying, setIsPlaying] = React.useState(false);
+
+  React.useEffect(() => {
+    const onState = (event: Event) => {
+      const detail = (event as CustomEvent<{ playing?: boolean }>).detail;
+      setIsPlaying(!!detail?.playing);
+    };
+
+    window.addEventListener("bavarmandan:background-music-state", onState);
+    return () => {
+      window.removeEventListener("bavarmandan:background-music-state", onState);
+    };
+  }, []);
+
+  const triggerBackgroundMusic = () => {
+    window.dispatchEvent(
+      new CustomEvent(
+        isPlaying
+          ? "bavarmandan:background-music-stop"
+          : "bavarmandan:background-music-trigger"
+      )
+    );
+  };
+
+  return (
+    <button
+      type="button"
+      className={`nav-music-button ${isPlaying ? "is-playing" : ""}`}
+      aria-label="پخش نوای پس‌زمینه"
+      aria-pressed={isPlaying}
+      onClick={triggerBackgroundMusic}
+    >
+      <span className="nav-music-ring" aria-hidden="true" />
+      <span className="nav-music-core">
+        {isPlaying ? (
+          <>
+            <i />
+            <i />
+            <i />
+            <i />
+          </>
+        ) : (
+          <Music2 aria-hidden="true" />
+        )}
+      </span>
+    </button>
+  );
+}
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -121,10 +171,12 @@ export const Navbar = () => {
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
+          <BackgroundMusicNavButton />
           <ToggleTheme />
         </div>
 
-        <div className="flex items-center lg:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
+          <BackgroundMusicNavButton />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <button

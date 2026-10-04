@@ -10,7 +10,7 @@ import {
   type WheelEvent,
 } from "react";
 import { createPortal, flushSync } from "react-dom";
-import { ChevronLeft, FileText, Sparkles } from "lucide-react";
+import { FileText, Sparkles } from "lucide-react";
 import { highlightToParts, splitNotesParagraphs } from "@/lib/notes-highlight";
 
 type NotesTab = "intro" | "summary";
@@ -87,8 +87,7 @@ export function MaktobatNotesButton({ notes, onOpen }: MaktobatNotesButtonProps)
           <FileText className="size-3.5" />
           <span className="notes-trigger-ping" />
         </span>
-        ملاحظات
-        <ChevronLeft className="notes-trigger-arrow" />
+        <span className="notes-trigger-label">ملاحظات</span>
       </button>
     </div>
   );
