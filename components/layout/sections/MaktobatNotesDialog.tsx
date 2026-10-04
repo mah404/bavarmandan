@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   type PointerEvent,
+  type TouchEvent,
   type WheelEvent,
 } from "react";
 import { createPortal, flushSync } from "react-dom";
@@ -106,6 +107,7 @@ export function MaktobatNotesDialog({ notes, trigger, onClose }: MaktobatNotesDi
   const bodyRef = useRef<HTMLElement | null>(null);
   const activeBeforeOpen = useRef<HTMLElement | null>(null);
   const dragStart = useRef({ y: 0, lastY: 0, lastT: 0, velocity: 0 });
+  const touchScrollStart = useRef({ y: 0, scrollTop: 0 });
 
   const reducedMotion = useMemo(
     () =>
@@ -381,6 +383,37 @@ export function MaktobatNotesDialog({ notes, trigger, onClose }: MaktobatNotesDi
     body.scrollTop = nextScroll;
   };
 
+  const onBodyTouchStart = (event: TouchEvent<HTMLElement>) => {
+    const touch = event.touches[0];
+    const body = bodyRef.current;
+    if (!touch || !body) return;
+
+    touchScrollStart.current = {
+      y: touch.clientY,
+      scrollTop: body.scrollTop,
+    };
+  };
+
+  const onBodyTouchMove = (event: TouchEvent<HTMLElement>) => {
+    const touch = event.touches[0];
+    const body = bodyRef.current;
+    if (!touch || !body) return;
+
+    const maxScroll = body.scrollHeight - body.clientHeight;
+    if (maxScroll <= 0) return;
+
+    const deltaY = touchScrollStart.current.y - touch.clientY;
+    const nextScroll = Math.min(
+      Math.max(touchScrollStart.current.scrollTop + deltaY, 0),
+      maxScroll
+    );
+
+    if (nextScroll !== body.scrollTop) {
+      event.preventDefault();
+      body.scrollTop = nextScroll;
+    }
+  };
+
   const onDragStart = (event: PointerEvent<HTMLElement>) => {
     if (!window.matchMedia("(max-width: 600px)").matches) return;
     dragStart.current = {
@@ -508,7 +541,12 @@ export function MaktobatNotesDialog({ notes, trigger, onClose }: MaktobatNotesDi
           ) : null}
         </header>
 
-        <article ref={bodyRef} className="notes-body">
+        <article
+          ref={bodyRef}
+          className="notes-body"
+          onTouchStart={onBodyTouchStart}
+          onTouchMove={onBodyTouchMove}
+        >
           {paragraphs.map((paragraph, paragraphIndex) => (
             <p key={`${activeTab}-${paragraphIndex}`} data-notes-animate>
               {highlightToParts(paragraph).map((part, index) =>
