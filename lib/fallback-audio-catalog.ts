@@ -246,8 +246,8 @@ export const fallbackAudioCatalog: AudioCatalog = {
       },   {
         id: "13",
         title: "مکتوب سیزدهم",
-        subtitle: "اثبات حکمت الله تعالی",
-        content: "اثبات حکمت الله تعالی",
+        subtitle: "اثبات صفت حکمت الله تعالی",
+        content: "اثبات صفت حکمت الله تعالی",
         pdfUrl: null,
         audioUrl: null,
       },

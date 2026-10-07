@@ -217,8 +217,8 @@ function mergeSessions(
       key,
       existing
         ? {
-            ...existing,
             ...normalized,
+            ...existing,
             audioUrl: normalized.audioUrl || existing.audioUrl || null,
             pdfUrl: normalized.pdfUrl || existing.pdfUrl || null,
             pdfs: normalized.pdfs?.length ? normalized.pdfs : existing.pdfs,
