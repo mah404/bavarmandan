@@ -102,8 +102,8 @@ module.exports = {
   	
   		},
   		animation: {
-  			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out',
+  			'accordion-down': 'accordion-down 0.42s cubic-bezier(0.45, 0, 0.2, 1)',
+  			'accordion-up': 'accordion-up 0.38s cubic-bezier(0.45, 0, 0.2, 1)',
   			'collapsible-down': 'collapsible-down 0.2s ease-in-out',
   			'collapsible-up': 'collapsible-up 0.2s ease-in-out',
   		

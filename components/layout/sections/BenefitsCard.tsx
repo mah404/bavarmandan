@@ -43,7 +43,7 @@ const AkhlaghSkeleton = () => (
     {Array.from({ length: 8 }).map((_, index) => (
       <div
         key={index}
-        className="h-20 animate-pulse rounded-2xl border border-secondary bg-card/40 dark:bg-card/30"
+        className="h-20 skeleton-shimmer rounded-2xl border border-secondary bg-card/40 dark:bg-card/30"
       >
         <div className="flex h-full items-center justify-between px-6">
           <div className="h-3 w-8 rounded-full bg-muted-foreground/20" />
@@ -379,70 +379,6 @@ const scrollToId = async (id: string, tries = 20) => {
                                       <Headphones aria-hidden="true" />
                                     </p>
 
-                                    <div className="lesson-segment-switch">
-                                      <button
-                                        type="button"
-                                        className={`lesson-segment-chip ${
-                                          lessonSegment &&
-                                          isLessonActive &&
-                                          isPlaying
-                                            ? "is-active"
-                                            : ""
-                                        }`}
-                                        onClick={() => {
-                                          if (!lessonSegment) {
-                                            notifyLessonSoon();
-                                            return;
-                                          }
-
-                                          play({
-                                            title: sessionLabel,
-                                            url: streamUrl,
-                                            description:
-                                              akhlaghTopicDisplayTitle(group.subject),
-                                            lessonStart: lessonSegment.start,
-                                            lessonEnd: lessonSegment.end,
-                                            segmentMode: "lesson",
-                                            navTarget: {
-                                              sheetId: "benefitsCard",
-                                              accordionValue: `group-${groupIndex}`,
-                                              itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`,
-                                            },
-                                          });
-                                        }}
-                                      >
-                                        درس
-                                      </button>
-
-                                      <button
-                                        type="button"
-                                        className={`lesson-segment-chip ${
-                                          isFullActive && isPlaying
-                                            ? "is-active"
-                                            : ""
-                                        }`}
-                                        onClick={() =>
-                                          play({
-                                            title: sessionLabel,
-                                            url: streamUrl,
-                                            description:
-                                              akhlaghTopicDisplayTitle(group.subject),
-                                            lessonStart:
-                                              lessonSegment?.start ?? null,
-                                            lessonEnd:
-                                              lessonSegment?.end ?? null,
-                                            segmentMode: "full",
-                                            navTarget: {
-                                              sheetId: "benefitsCard",
-                                              accordionValue: `group-${groupIndex}`,
-                                              itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`,
-                                            },
-                                          })
-                                        }
-                                      >
-                                        کامل
-                                      </button>
-                                    </div>
 
                                     <div className="lesson-action-row">
                                       <a

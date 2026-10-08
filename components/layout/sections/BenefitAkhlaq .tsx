@@ -39,7 +39,7 @@ const AghayedSkeleton = () => (
     {Array.from({ length: 6 }).map((_, index) => (
       <div
         key={index}
-        className="h-20 animate-pulse rounded-2xl border border-secondary bg-card/40 dark:bg-card/30"
+        className="h-20 skeleton-shimmer rounded-2xl border border-secondary bg-card/40 dark:bg-card/30"
       >
         <div className="flex h-full items-center justify-between px-6">
           <div className="h-3 w-8 rounded-full bg-muted-foreground/20" />
@@ -301,68 +301,6 @@ export const BenefitAkhlaq = () => {
                                 <Headphones aria-hidden="true" />
                               </p>
 
-                              <div className="lesson-segment-switch">
-                                <button
-                                  type="button"
-                                  className={`lesson-segment-chip ${
-                                    lessonSegment && isLessonActive && isPlaying
-                                      ? "is-active"
-                                      : ""
-                                  }`}
-                                  onClick={() => {
-                                    if (!lessonSegment) {
-                                      notifyLessonSoon();
-                                      return;
-                                    }
-
-                                    play({
-                                      title: normalizeSessionTitle(
-                                        file.title,
-                                        originalIndex + 1
-                                      ),
-                                      url: streamUrl,
-                                      description: file.description,
-                                      lessonStart: lessonSegment.start,
-                                      lessonEnd: lessonSegment.end,
-                                      segmentMode: "lesson",
-                                      navTarget: {
-                                        sheetId: "akhlagh",
-                                        accordionValue: "belief",
-                                        itemDomId: `audio-akhlagh-belief-${originalIndex}`,
-                                      },
-                                    });
-                                  }}
-                                >
-                                  درس
-                                </button>
-
-                                <button
-                                  type="button"
-                                  className={`lesson-segment-chip ${
-                                    isFullActive && isPlaying ? "is-active" : ""
-                                  }`}
-                                  onClick={() =>
-                                    play({
-                                      title: normalizeSessionTitle(
-                                        file.title,
-                                        originalIndex + 1
-                                      ),
-                                      url: streamUrl,
-                                      description: file.description,
-                                      lessonStart: lessonSegment?.start ?? null,
-                                      lessonEnd: lessonSegment?.end ?? null,
-                                      segmentMode: "full",
-                                      navTarget: {
-                                        sheetId: "akhlagh",
-                                        accordionValue: "belief",
-                                        itemDomId: `audio-akhlagh-belief-${originalIndex}`,
-                                      },
-                                    })
-                                  }
-                                >
-                                  کامل
-                                </button>
-                              </div>
 
                               <div className="lesson-action-row">
                                 <a
@@ -551,73 +489,6 @@ export const BenefitAkhlaq = () => {
                                   <Headphones aria-hidden="true" />
                                 </p>
 
-                                <div className="lesson-segment-switch">
-                                  <button
-                                    type="button"
-                                    className={`lesson-segment-chip ${
-                                      lessonSegment &&
-                                      isLessonActive &&
-                                      isPlaying
-                                        ? "is-active"
-                                        : ""
-                                    }`}
-                                    onClick={() => {
-                                      if (!lessonSegment) {
-                                        notifyLessonSoon();
-                                        return;
-                                      }
-
-                                      play({
-                                        title: normalizeSessionTitle(
-                                          file.title || "",
-                                          i + 1
-                                        ),
-                                        url: streamUrl,
-                                        description: topic.title,
-                                        lessonStart: lessonSegment.start,
-                                        lessonEnd: lessonSegment.end,
-                                        segmentMode: "lesson",
-                                        navTarget: {
-                                          sheetId: "akhlagh",
-                                          accordionValue: topic.value,
-                                          itemDomId: itemId,
-                                        },
-                                      });
-                                    }}
-                                  >
-                                    درس
-                                  </button>
-
-                                  <button
-                                    type="button"
-                                    className={`lesson-segment-chip ${
-                                      isFullActive && isPlaying
-                                        ? "is-active"
-                                        : ""
-                                    }`}
-                                    onClick={() =>
-                                      play({
-                                        title: normalizeSessionTitle(
-                                          file.title || "",
-                                          i + 1
-                                        ),
-                                        url: streamUrl,
-                                        description: topic.title,
-                                        lessonStart:
-                                          lessonSegment?.start ?? null,
-                                        lessonEnd: lessonSegment?.end ?? null,
-                                        segmentMode: "full",
-                                        navTarget: {
-                                          sheetId: "akhlagh",
-                                          accordionValue: topic.value,
-                                          itemDomId: itemId,
-                                        },
-                                      })
-                                    }
-                                  >
-                                    کامل
-                                  </button>
-                                </div>
 
                                 <div className="lesson-action-row">
                                   <a

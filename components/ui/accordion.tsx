@@ -16,7 +16,7 @@ const AccordionItem = React.forwardRef<
   <AccordionPrimitive.Item
     ref={ref}
     className={cn(
-      "border-b border-secondary bg-card/70 dark:bg-card px-4 my-4 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40",
+      "border-b border-secondary bg-card/70 dark:bg-card px-4 my-4 border rounded-xl shadow-sm backdrop-blur transition-[color,background-color,border-color,box-shadow] duration-[400ms] ease-[cubic-bezier(0.45,0,0.2,1)] hover:border-primary/40",
       className
     )}
     {...props}
@@ -32,13 +32,13 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "flex flex-1 items-center justify-between py-4 text-sm font-semibold transition-all hover:text-primary text-left [&[data-state=open]>svg]:rotate-180",
+        "flex flex-1 items-center justify-between py-4 text-sm font-semibold transition-colors duration-300 hover:text-primary text-left [&[data-state=open]>svg]:rotate-180",
         className
       )}
       {...props}
     >
       {children}
-      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
+      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-[400ms] ease-[cubic-bezier(0.45,0,0.2,1)]" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ));
@@ -59,7 +59,7 @@ const AccordionContent = React.forwardRef<
       <motion.div
         initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
         animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.45, ease: [0.45, 0, 0.2, 1], delay: 0.08 }}
         className={cn("pb-4 pt-0", className)}
       >
         {children}

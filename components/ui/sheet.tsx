@@ -22,7 +22,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-[80] bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-[80] bg-black/80 data-[state=open]:duration-500 data-[state=closed]:duration-[400ms] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -32,7 +32,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
-  "fixed z-[90] gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+  "fixed z-[90] gap-4 bg-background p-6 shadow-lg ease-[cubic-bezier(0.45,0,0.2,1)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-[400ms] data-[state=open]:duration-[500ms]",
   {
     variants: {
       side: {
@@ -71,7 +71,7 @@ const SheetContent = React.forwardRef<
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
           animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+          transition={{ duration: 0.5, ease: [0.45, 0, 0.2, 1], delay: 0.15 }}
           className="min-h-full"
         >
           {children}

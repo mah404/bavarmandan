@@ -206,7 +206,7 @@ export const BenefitTafsir = () => {
                     {[1, 2, 3].map((item) => (
                       <div
                         key={item}
-                        className="h-20 animate-pulse rounded-xl border border-secondary/40 bg-card/50"
+                        className="h-20 skeleton-shimmer rounded-xl border border-secondary/40 bg-card/50"
                       />
                     ))}
                   </div>
@@ -294,68 +294,6 @@ export const BenefitTafsir = () => {
                                           <Headphones aria-hidden="true" />
                                         </p>
 
-                                        <div className="lesson-segment-switch">
-                                          <button
-                                            type="button"
-                                            className={`lesson-segment-chip ${
-                                              lessonSegment &&
-                                              isLessonActive &&
-                                              isPlaying
-                                                ? "is-active"
-                                                : ""
-                                            }`}
-                                            onClick={() => {
-                                              if (!lessonSegment) {
-                                                notifyLessonSoon();
-                                                return;
-                                              }
-
-                                              play({
-                                                title: sessionTitle,
-                                                url: streamUrl,
-                                                description: "پخش بخش درس",
-                                                lessonStart: lessonSegment.start,
-                                                lessonEnd: lessonSegment.end,
-                                                segmentMode: "lesson",
-                                                navTarget: {
-                                                  sheetId: "tafsir",
-                                                  accordionValue: "tafsir-tartibi",
-                                                  itemDomId: itemId,
-                                                },
-                                              });
-                                            }}
-                                          >
-                                            درس
-                                          </button>
-
-                                          <button
-                                            type="button"
-                                            className={`lesson-segment-chip ${
-                                              isFullActive && isPlaying
-                                                ? "is-active"
-                                                : ""
-                                            }`}
-                                            onClick={() =>
-                                              play({
-                                                title: sessionTitle,
-                                                url: streamUrl,
-                                                description: "تفسیر ترتیبی",
-                                                lessonStart:
-                                                  lessonSegment?.start ?? null,
-                                                lessonEnd:
-                                                  lessonSegment?.end ?? null,
-                                                segmentMode: "full",
-                                                navTarget: {
-                                                  sheetId: "tafsir",
-                                                  accordionValue: "tafsir-tartibi",
-                                                  itemDomId: itemId,
-                                                },
-                                              })
-                                            }
-                                          >
-                                            کامل
-                                          </button>
-                                        </div>
 
                                         <div className="lesson-action-row">
                                           <a
@@ -558,70 +496,6 @@ export const BenefitTafsir = () => {
                                             <Headphones aria-hidden="true" />
                                           </p>
 
-                                          <div className="lesson-segment-switch">
-                                            <button
-                                              type="button"
-                                              className={`lesson-segment-chip ${
-                                                lessonSegment &&
-                                                isLessonActive &&
-                                                isPlaying
-                                                  ? "is-active"
-                                                  : ""
-                                              }`}
-                                              onClick={() => {
-                                                if (!lessonSegment) {
-                                                  notifyLessonSoon();
-                                                  return;
-                                                }
-
-                                                play({
-                                                  title:
-                                                    `سوره واقعه ـ مباحث معاد ـ ${sessionTitle}`,
-                                                  url: streamUrl,
-                                                  description: "پخش بخش درس",
-                                                  lessonStart: lessonSegment.start,
-                                                  lessonEnd: lessonSegment.end,
-                                                  segmentMode: "lesson",
-                                                  navTarget: {
-                                                    sheetId: "tafsir",
-                                                    accordionValue: "tafsir-mozooei",
-                                                    itemDomId: itemId,
-                                                  },
-                                                });
-                                              }}
-                                            >
-                                              درس
-                                            </button>
-
-                                            <button
-                                              type="button"
-                                              className={`lesson-segment-chip ${
-                                                isFullActive && isPlaying
-                                                  ? "is-active"
-                                                  : ""
-                                              }`}
-                                              onClick={() =>
-                                                play({
-                                                  title:
-                                                    `سوره واقعه ـ مباحث معاد ـ ${sessionTitle}`,
-                                                  url: streamUrl,
-                                                  description: "احسن الحدیث",
-                                                  lessonStart:
-                                                    lessonSegment?.start ?? null,
-                                                  lessonEnd:
-                                                    lessonSegment?.end ?? null,
-                                                  segmentMode: "full",
-                                                  navTarget: {
-                                                    sheetId: "tafsir",
-                                                    accordionValue: "tafsir-mozooei",
-                                                    itemDomId: itemId,
-                                                  },
-                                                })
-                                              }
-                                            >
-                                              کامل
-                                            </button>
-                                          </div>
 
                                           <div className="lesson-action-row">
                                             <a

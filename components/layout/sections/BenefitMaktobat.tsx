@@ -17,8 +17,6 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, Headphones, Play, Sparkles } from "lucide-react";
-import Lottie from "lottie-react";
-import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import {
   fileUrl,
@@ -319,11 +317,14 @@ export const BenefitMaktobat = () => {
           </SheetHeader>
 
           {isLoading ? (
-            <Lottie
-              animationData={loadingPdfAnim}
-              loop
-              className="text-muted-foreground bg-transparent mt-4"
-            />
+            <div className="mt-4 flex w-full flex-col gap-3" aria-label="در حال بارگذاری">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="h-16 skeleton-shimmer rounded-2xl border border-secondary bg-card/40 dark:bg-card/30"
+                />
+              ))}
+            </div>
           ) : error ? (
             <p className="mt-4 text-center text-sm text-muted-foreground">
               {error}
@@ -399,74 +400,6 @@ export const BenefitMaktobat = () => {
 
                         {maktobat.audioUrl ? (
                           <>
-                            <div className="lesson-segment-switch">
-                              <button
-                                type="button"
-                                className={`lesson-segment-chip ${
-                                  maktobat.lessonSegment &&
-                                  current?.url ===
-                                    toStreamableUrl(maktobat.audioUrl) &&
-                                  current?.segmentMode === "lesson" &&
-                                  isPlaying
-                                    ? "is-active"
-                                    : ""
-                                }`}
-                                onClick={() => {
-                                  if (!maktobat.lessonSegment) {
-                                    notifyLessonSoon();
-                                    return;
-                                  }
-
-                                  play({
-                                    title: maktobat.title,
-                                    url: toStreamableUrl(maktobat.audioUrl!),
-                                    description: maktobat.content,
-                                    lessonStart:
-                                      maktobat.lessonSegment.start,
-                                    lessonEnd:
-                                      maktobat.lessonSegment.end,
-                                    segmentMode: "lesson",
-                                    navTarget: {
-                                      sheetId: "maktobat",
-                                      accordionValue: maktobat.id,
-                                      itemDomId: `maktobat-item-${maktobat.id}`,
-                                    },
-                                  });
-                                }}
-                              >
-                                درس
-                              </button>
-                              <button
-                                type="button"
-                                className={`lesson-segment-chip ${
-                                  current?.url ===
-                                    toStreamableUrl(maktobat.audioUrl) &&
-                                  current?.segmentMode !== "lesson" &&
-                                  isPlaying
-                                    ? "is-active"
-                                    : ""
-                                }`}
-                                onClick={() =>
-                                  play({
-                                    title: maktobat.title,
-                                    url: toStreamableUrl(maktobat.audioUrl!),
-                                    description: maktobat.content,
-                                    lessonStart:
-                                      maktobat.lessonSegment?.start ?? null,
-                                    lessonEnd:
-                                      maktobat.lessonSegment?.end ?? null,
-                                    segmentMode: "full",
-                                    navTarget: {
-                                      sheetId: "maktobat",
-                                      accordionValue: maktobat.id,
-                                      itemDomId: `maktobat-item-${maktobat.id}`,
-                                    },
-                                  })
-                                }
-                              >
-                                کامل
-                              </button>
-                            </div>
 
                             <div className="lesson-action-row">
                               <a

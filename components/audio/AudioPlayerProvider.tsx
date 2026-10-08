@@ -102,6 +102,7 @@ export const AudioPlayerProvider = ({
   const [isLooping, setIsLooping] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isSpeedMenuOpen, setIsSpeedMenuOpen] = useState(false);
+  const [speedMenuPos, setSpeedMenuPos] = useState({ right: 0, bottom: 0 });
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastLeaving, setToastLeaving] = useState(false);
   const toastTimerRef = useRef<number | null>(null);
@@ -110,6 +111,9 @@ export const AudioPlayerProvider = ({
   // Docked visibility + minimize
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [phase, setPhase] = useState<"minimizing" | "expanding" | null>(null);
+  const [morphVec, setMorphVec] = useState({ x: 0, y: 24 });
+  const phaseTimerRef = useRef<number | null>(null);
   const [playerPosition, setPlayerPosition] = useState<PlayerPosition | null>(
     null
   );
@@ -616,24 +620,10 @@ export const AudioPlayerProvider = ({
     event: React.PointerEvent<HTMLElement>,
     edge: ResizeEdge
   ) => {
+    // Player resizing is disabled.
+    void edge;
     event.preventDefault();
     event.stopPropagation();
-
-    const rect = event.currentTarget.closest(
-      "[data-audio-player-shell]"
-    )?.getBoundingClientRect();
-    if (!rect) return;
-
-    event.currentTarget.setPointerCapture(event.pointerId);
-    resizeRef.current = {
-      edge,
-      startX: event.clientX,
-      startY: event.clientY,
-      originX: rect.left,
-      originY: rect.top,
-      width: rect.width,
-      height: rect.height,
-    };
   };
 
   const resizePlayer = (event: React.PointerEvent<HTMLElement>) => {
@@ -717,8 +707,58 @@ export const AudioPlayerProvider = ({
     });
   };
 
+  const MINI_HEIGHT = 42;
+  const MINI_MARGIN = 16;
+
+  const runPhase = (next: "minimizing" | "expanding", ms: number) => {
+    if (phaseTimerRef.current) window.clearTimeout(phaseTimerRef.current);
+    setPhase(next);
+    phaseTimerRef.current = window.setTimeout(() => {
+      setPhase(null);
+      phaseTimerRef.current = null;
+    }, ms);
+  };
+
+  const minimizePlayer = () => {
+    if (phase) return;
+    const shell = document.querySelector<HTMLElement>(".audio-player-expanded");
+    if (shell) {
+      const rect = shell.getBoundingClientRect();
+      const miniLeft = minimizedPosition?.x ?? MINI_MARGIN;
+      const miniCenterY =
+        (minimizedPosition?.y ?? window.innerHeight - MINI_MARGIN - MINI_HEIGHT) +
+        MINI_HEIGHT / 2;
+      setMorphVec({
+        x: miniLeft - rect.left,
+        y: miniCenterY - (rect.top + rect.height / 2),
+      });
+    }
+    setIsMinimized(true);
+    runPhase("minimizing", 460);
+  };
+
+  const expandPlayer = () => {
+    if (phase) return;
+    const mini = document.querySelector<HTMLElement>(".audio-player-mini");
+    if (mini) {
+      const rect = mini.getBoundingClientRect();
+      const width = playerSize?.width ?? Math.min(896, window.innerWidth - 24);
+      const finalLeft = playerPosition?.x ?? (window.innerWidth - width) / 2;
+      const finalCenterY = playerPosition
+        ? playerPosition.y + 105
+        : window.innerHeight - 12 - 105;
+      setMorphVec({
+        x: rect.left - finalLeft,
+        y: rect.top + rect.height / 2 - finalCenterY,
+      });
+    }
+    setIsMinimized(false);
+    runPhase("expanding", 320);
+  };
+
   // Docked bottom player (expanded)
-  const playerNode = current && isPlayerVisible && !isMinimized ? (
+  const playerNode =
+    current && isPlayerVisible && (!isMinimized || phase === "minimizing") ? (
     <div
       className={`
         fixed z-[10000]
@@ -743,15 +783,19 @@ export const AudioPlayerProvider = ({
     >
       <div
         data-audio-player-shell
-        className="audio-player-shell group/audio-player pointer-events-auto relative mx-auto w-full max-w-4xl touch-none select-none overflow-hidden rounded-xl border cursor-grab active:cursor-grabbing sm:rounded-2xl"
+        className={`audio-player-shell audio-player-expanded ${isMinimized && phase === "minimizing" ? "is-collapsing" : ""} group/audio-player pointer-events-auto relative mx-auto w-full max-w-4xl touch-none select-none overflow-hidden rounded-xl border cursor-grab active:cursor-grabbing sm:rounded-2xl`}
         style={
-          playerSize
-            ? ({
-                width: `${playerSize.width}px`,
-                height: `${playerSize.height}px`,
-                maxWidth: "calc(100vw - 1.5rem)",
-              } as React.CSSProperties)
-            : undefined
+          {
+            "--morph-x": `${morphVec.x}px`,
+            "--morph-y": `${morphVec.y}px`,
+            ...(playerSize
+              ? {
+                  width: `${playerSize.width}px`,
+                  height: `${playerSize.height}px`,
+                  maxWidth: "calc(100vw - 1.5rem)",
+                }
+              : {}),
+          } as React.CSSProperties
         }
         onPointerDownCapture={(e) => startDragging(e, "expanded")}
         onPointerMove={dragPlayer}
@@ -1068,7 +1112,14 @@ export const AudioPlayerProvider = ({
                 <button
                   type="button"
                   className="audio-speed-trigger"
-                  onClick={() => setIsSpeedMenuOpen((value) => !value)}
+                  onClick={(event) => {
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    setSpeedMenuPos({
+                      right: window.innerWidth - (rect.left + rect.width / 2),
+                      bottom: window.innerHeight - rect.top + 9,
+                    });
+                    setIsSpeedMenuOpen((value) => !value);
+                  }}
                   aria-label="تغییر سرعت پخش"
                   aria-haspopup="listbox"
                   aria-expanded={isSpeedMenuOpen}
@@ -1077,12 +1128,20 @@ export const AudioPlayerProvider = ({
                   <span dir="ltr">{playbackRate}x</span>
                 </button>
 
-                {isSpeedMenuOpen ? (
+                {isSpeedMenuOpen
+                  ? createPortal(
                   <div
                     className="audio-speed-menu"
                     role="listbox"
                     aria-label="سرعت پخش"
                     dir="ltr"
+                    style={{
+                      position: "fixed",
+                      right: speedMenuPos.right,
+                      bottom: speedMenuPos.bottom,
+                      zIndex: 10060,
+                      pointerEvents: "auto",
+                    }}
                   >
                     {PLAYBACK_RATES.map((rate) => (
                       <button
@@ -1099,8 +1158,10 @@ export const AudioPlayerProvider = ({
                         {rate}x
                       </button>
                     ))}
-                  </div>
-                ) : null}
+                  </div>,
+                  document.body
+                    )
+                  : null}
               </div>
 
               <Button
@@ -1137,7 +1198,7 @@ export const AudioPlayerProvider = ({
                 size="icon"
                 onClick={() => {
                   setIsSpeedMenuOpen(false);
-                  setIsMinimized(true);
+                  minimizePlayer();
                 }}
                 aria-label="جمع کردن پلیر"
                 title="جمع کردن"
@@ -1164,15 +1225,15 @@ export const AudioPlayerProvider = ({
 
   // Minimized pill (shows when minimized & visible & has current track)
   const minimizedNode =
-    current && isPlayerVisible && isMinimized ? (
+    current && isPlayerVisible && (isMinimized || phase === "expanding") ? (
       <div
         data-audio-player-shell
         className={`
           audio-player-mini
-          fixed z-[10001]
+          ${!isMinimized ? "is-leaving pointer-events-none" : "pointer-events-auto"} fixed z-[10001]
           ${minimizedPosition ? "" : "bottom-4 left-4"}
           audio-player-shell touch-none select-none overflow-visible
-          cursor-grab transition-transform duration-200 hover:-translate-y-0.5 active:scale-95 active:cursor-grabbing
+          cursor-grab transition-transform duration-200 hover:-translate-y-0.5 active:cursor-grabbing
         `}
         style={
           minimizedPosition
@@ -1205,7 +1266,7 @@ export const AudioPlayerProvider = ({
           className="audio-mini-icon"
           onClick={(event) => {
             event.stopPropagation();
-            setIsMinimized(false);
+            expandPlayer();
           }}
           aria-label="باز کردن پلیر"
           data-no-drag

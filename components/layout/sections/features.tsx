@@ -197,7 +197,7 @@ export const FeaturesSection = () => {
               {[1, 2, 3, 4, 5].map((item) => (
                 <div
                   key={item}
-                  className="h-16 animate-pulse rounded-2xl border border-secondary/40 bg-background/25"
+                  className="h-16 skeleton-shimmer rounded-2xl border border-secondary/40 bg-background/25"
                 />
               ))}
             </div>
@@ -226,10 +226,10 @@ export const FeaturesSection = () => {
 
                         if (target) goTo(target);
                       }}
-                      className="group flex w-full items-center justify-between gap-2 rounded-2xl border border-secondary/40 bg-background/25 px-3 py-3 text-right shadow-sm backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-card/70 sm:gap-4 sm:px-4 dark:bg-background/20"
+                      className="group flex w-full items-center justify-between gap-2 rounded-2xl border border-secondary/40 bg-background/25 px-3 py-3 text-right shadow-sm backdrop-blur transition-[transform,border-color,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[3px] hover:border-primary/50 hover:bg-card/70 hover:shadow-[0_10px_30px_-12px_hsl(var(--primary)/0.35)] focus-visible:-translate-y-[3px] focus-visible:border-primary/60 focus-visible:outline-none active:translate-y-0 active:duration-150 sm:gap-4 sm:px-4 dark:bg-background/20"
                     >
-                      <span className="hidden h-px w-8 shrink-0 bg-primary/70 transition duration-300 group-hover:w-12 sm:block" />
-                      <span className="block min-w-0 flex-1 text-base font-bold leading-8 text-primary transition group-hover:text-foreground sm:text-xl md:text-2xl">
+                      <span className="hidden h-px w-8 shrink-0 bg-primary/70 origin-right transition-[transform,background-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-[1.75] group-hover:bg-primary group-focus-visible:scale-x-[1.75] sm:block" />
+                      <span className="block min-w-0 flex-1 text-balance text-base font-bold leading-8 text-primary transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-foreground sm:text-xl md:text-2xl">
                         {latestTitle(item, index)}
                       </span>
                     </button>

@@ -17,8 +17,6 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { BookOpenText, Download, Headphones, Play } from "lucide-react";
-import loadingPdfAnim from "@/public/loading.json";
-import Lottie from "lottie-react";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import {
   formatSessionTitle,
@@ -164,11 +162,14 @@ export const BenefitTajrid = () => {
           </SheetHeader>
 
           {loading ? (
-            <Lottie
-              animationData={loadingPdfAnim}
-              loop
-              className="text-muted-foreground bg-transparent mt-4"
-            />
+            <div className="mt-4 flex w-full flex-col gap-3" aria-label="در حال بارگذاری">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="h-16 skeleton-shimmer rounded-2xl border border-secondary bg-card/40 dark:bg-card/30"
+                />
+              ))}
+            </div>
           ) : error ? (
             <p className="mt-4 text-center text-sm text-muted-foreground">
               {error}
@@ -287,62 +288,6 @@ export const BenefitTajrid = () => {
         <Headphones aria-hidden="true" />
       </p>
 
-      <div className="lesson-segment-switch">
-        <button
-          type="button"
-          className={`lesson-segment-chip ${
-            lessonSegment && isLessonActive && isPlaying ? "is-active" : ""
-          }`}
-          onClick={() => {
-            if (!lessonSegment) {
-              notifyLessonSoon();
-              return;
-            }
-
-            play({
-              title: sessionTitle,
-              url,
-              description: subtitleLines.join(" | "),
-              lessonStart: lessonSegment.start,
-              lessonEnd: lessonSegment.end,
-              segmentMode: "lesson",
-              navTarget: {
-                sheetId: "tajrid",
-                accordionValue: `audio-${sessionNumber}`,
-                itemDomId: `tajrid-audio-${sessionNumber}`,
-              },
-            });
-          }}
-        >
-          درس
-        </button>
-
-        <button
-          type="button"
-          className={`lesson-segment-chip ${
-            isFullActive && isPlaying ? "is-active" : ""
-          }`}
-          onClick={() => {
-            if (!url) return;
-
-            play({
-              title: sessionTitle,
-              url,
-              description: subtitleLines.join(" | "),
-              lessonStart: lessonSegment?.start ?? null,
-              lessonEnd: lessonSegment?.end ?? null,
-              segmentMode: "full",
-              navTarget: {
-                sheetId: "tajrid",
-                accordionValue: `audio-${sessionNumber}`,
-                itemDomId: `tajrid-audio-${sessionNumber}`,
-              },
-            });
-          }}
-        >
-          کامل
-        </button>
-      </div>
 
       <div className="lesson-action-row">
         <a
