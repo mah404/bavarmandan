@@ -16,7 +16,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { BookOpenText, Headphones } from "lucide-react";
+import { BookOpenText, Download, Headphones, Play } from "lucide-react";
 import loadingPdfAnim from "@/public/loading.json";
 import Lottie from "lottie-react";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
@@ -27,6 +27,7 @@ import {
   toPdfViewUrl,
   toStreamableUrl,
 } from "@/lib/media-api";
+import { resolveLessonSegment } from "@/lib/audio-segments";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
@@ -95,7 +96,7 @@ export const BenefitTajrid = () => {
   const SHEET_ID = "tajrid";
   const [open, setOpen] = useState(false);
   const [accordionValue, setAccordionValue] = useState<string | undefined>();
-  const { play } = useAudioPlayer();
+  const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer();
   const { catalog, loading, error, load } = useAudioCatalog();
   const { target, clear } = useSheetNav();
 
@@ -247,6 +248,12 @@ export const BenefitTajrid = () => {
                     const sessionTitle = formatSessionTitle(sessionNumber);
 
                     const url = toStreamableUrl(audio.url || "");
+                    const lessonSegment = resolveLessonSegment(audio);
+                    const isCurrentTrack = current?.url === url;
+                    const isLessonActive =
+                      isCurrentTrack && current?.segmentMode === "lesson";
+                    const isFullActive =
+                      isCurrentTrack && current?.segmentMode !== "lesson";
 
                     return (
                       <AccordionItem
@@ -274,36 +281,105 @@ export const BenefitTajrid = () => {
       </p>
     )}
 
-    <p className="mb-3 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
-      <span>صوت</span>
-      <Headphones className="size-5 text-muted-foreground" />
-    </p>
+    <div className="lesson-audio-card">
+      <p className="lesson-audio-title">
+        <span>صوت</span>
+        <Headphones aria-hidden="true" />
+      </p>
 
-    <div className="flex flex-col sm:flex-row gap-2 justify-center">
-      <Button
-        className="w-full sm:w-auto text-card"
-        onClick={() => {
-          if (!url) return;
+      <div className="lesson-segment-switch">
+        <button
+          type="button"
+          className={`lesson-segment-chip ${
+            lessonSegment && isLessonActive && isPlaying ? "is-active" : ""
+          }`}
+          onClick={() => {
+            if (!lessonSegment) {
+              notifyLessonSoon();
+              return;
+            }
 
-          play({
-            title: sessionTitle,
-            url,
-            description: subtitleLines.join(" | "),
-          });
-        }}
-      >
-        پخش
-      </Button>
+            play({
+              title: sessionTitle,
+              url,
+              description: subtitleLines.join(" | "),
+              lessonStart: lessonSegment.start,
+              lessonEnd: lessonSegment.end,
+              segmentMode: "lesson",
+              navTarget: {
+                sheetId: "tajrid",
+                accordionValue: `audio-${sessionNumber}`,
+                itemDomId: `tajrid-audio-${sessionNumber}`,
+              },
+            });
+          }}
+        >
+          درس
+        </button>
 
-      <Button asChild variant="outline" className="w-full sm:w-auto">
+        <button
+          type="button"
+          className={`lesson-segment-chip ${
+            isFullActive && isPlaying ? "is-active" : ""
+          }`}
+          onClick={() => {
+            if (!url) return;
+
+            play({
+              title: sessionTitle,
+              url,
+              description: subtitleLines.join(" | "),
+              lessonStart: lessonSegment?.start ?? null,
+              lessonEnd: lessonSegment?.end ?? null,
+              segmentMode: "full",
+              navTarget: {
+                sheetId: "tajrid",
+                accordionValue: `audio-${sessionNumber}`,
+                itemDomId: `tajrid-audio-${sessionNumber}`,
+              },
+            });
+          }}
+        >
+          کامل
+        </button>
+      </div>
+
+      <div className="lesson-action-row">
         <a
+          className="lesson-download-action"
           href={toDownloadUrl(url)}
           download={`${sessionTitle}.mp3`}
           rel="noopener noreferrer"
         >
-          دانلود صوت
+          <span>دانلود صوت</span>
+          <Download aria-hidden="true" />
         </a>
-      </Button>
+
+        <button
+          type="button"
+          className="lesson-primary-action"
+          onClick={() => {
+            if (!url) return;
+
+            play({
+              title: sessionTitle,
+              url,
+              description: subtitleLines.join(" | "),
+              lessonStart: lessonSegment?.start ?? null,
+              lessonEnd: lessonSegment?.end ?? null,
+              segmentMode: "full",
+              navTarget: {
+                sheetId: "tajrid",
+                accordionValue: `audio-${sessionNumber}`,
+                itemDomId: `tajrid-audio-${sessionNumber}`,
+              },
+            });
+          }}
+        >
+          <span>پخش</span>
+          <Play aria-hidden="true" />
+        </button>
+      </div>
     </div>
   </div>
 </AccordionContent>

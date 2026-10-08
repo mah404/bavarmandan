@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/accordion";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Headphones, Landmark } from "lucide-react";
+import { ChevronDown, Download, Headphones, Landmark, Play } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   catalogFiles,
@@ -29,6 +29,7 @@ import {
   toPdfViewUrl,
   toStreamableUrl,
 } from "@/lib/media-api";
+import { resolveLessonSegment, type AudioSegmentInput } from "@/lib/audio-segments";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
@@ -59,7 +60,7 @@ export const BenefitAkhlaq = () => {
     null
   );
 
-  const { play } = useAudioPlayer();
+  const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer();
   const { target, clear } = useSheetNav();
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
@@ -219,7 +220,18 @@ export const BenefitAkhlaq = () => {
                 </AccordionTrigger>
                 <AccordionContent className="justify-center mt-2 text-center">
                   <div className="flex w-full flex-col gap-1">
-                    {beliefAudiosNewestFirst.map(({ file, originalIndex }) => (
+                    {beliefAudiosNewestFirst.map(({ file, originalIndex }) => {
+                      const streamUrl = toStreamableUrl(file.url);
+                      const lessonSegment = resolveLessonSegment(
+                        file as AudioSegmentInput
+                      );
+                      const isCurrentTrack = current?.url === streamUrl;
+                      const isLessonActive =
+                        isCurrentTrack && current?.segmentMode === "lesson";
+                      const isFullActive =
+                        isCurrentTrack && current?.segmentMode !== "lesson";
+
+                      return (
                       <div
                         id={`audio-akhlagh-belief-${originalIndex}`}
                         key={`${file.title}-${file.url || originalIndex}`}
@@ -283,44 +295,111 @@ export const BenefitAkhlaq = () => {
                               </div>
                             ) : null}
 
-                            <div className="motion-list-item mt-3 text-center">
-                              <p className="mb-2 flex items-center justify-center gap-2 text-sm font-semibold text-primary">
+                            <div className="lesson-audio-card">
+                              <p className="lesson-audio-title">
                                 <span>صوت</span>
-                                <Headphones className="size-5 text-muted-foreground" />
+                                <Headphones aria-hidden="true" />
                               </p>
 
-                              <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                                <Button
-                                  size="sm"
+                              <div className="lesson-segment-switch">
+                                <button
+                                  type="button"
+                                  className={`lesson-segment-chip ${
+                                    lessonSegment && isLessonActive && isPlaying
+                                      ? "is-active"
+                                      : ""
+                                  }`}
+                                  onClick={() => {
+                                    if (!lessonSegment) {
+                                      notifyLessonSoon();
+                                      return;
+                                    }
+
+                                    play({
+                                      title: normalizeSessionTitle(
+                                        file.title,
+                                        originalIndex + 1
+                                      ),
+                                      url: streamUrl,
+                                      description: file.description,
+                                      lessonStart: lessonSegment.start,
+                                      lessonEnd: lessonSegment.end,
+                                      segmentMode: "lesson",
+                                      navTarget: {
+                                        sheetId: "akhlagh",
+                                        accordionValue: "belief",
+                                        itemDomId: `audio-akhlagh-belief-${originalIndex}`,
+                                      },
+                                    });
+                                  }}
+                                >
+                                  درس
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className={`lesson-segment-chip ${
+                                    isFullActive && isPlaying ? "is-active" : ""
+                                  }`}
                                   onClick={() =>
                                     play({
                                       title: normalizeSessionTitle(
                                         file.title,
                                         originalIndex + 1
                                       ),
-                                      url: toStreamableUrl(file.url),
+                                      url: streamUrl,
                                       description: file.description,
+                                      lessonStart: lessonSegment?.start ?? null,
+                                      lessonEnd: lessonSegment?.end ?? null,
+                                      segmentMode: "full",
+                                      navTarget: {
+                                        sheetId: "akhlagh",
+                                        accordionValue: "belief",
+                                        itemDomId: `audio-akhlagh-belief-${originalIndex}`,
+                                      },
                                     })
                                   }
-                                  className="w-full sm:w-auto text-card"
                                 >
-                                  پخش
-                                </Button>
+                                  کامل
+                                </button>
+                              </div>
 
-                                <Button
-                                  asChild
-                                  size="sm"
-                                  variant="outline"
-                                  className="w-full sm:w-auto"
+                              <div className="lesson-action-row">
+                                <a
+                                  className="lesson-download-action"
+                                  href={toDownloadUrl(file.url)}
+                                  download={`${file.description}.mp3`}
+                                  rel="noopener noreferrer"
                                 >
-                                  <a
-                                    href={toDownloadUrl(file.url)}
-                                    download={`${file.description}.mp3`}
-                                    rel="noopener noreferrer"
-                                  >
-                                    دانلود صوت
-                                  </a>
-                                </Button>
+                                  <span>دانلود صوت</span>
+                                  <Download aria-hidden="true" />
+                                </a>
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    play({
+                                      title: normalizeSessionTitle(
+                                        file.title,
+                                        originalIndex + 1
+                                      ),
+                                      url: streamUrl,
+                                      description: file.description,
+                                      lessonStart: lessonSegment?.start ?? null,
+                                      lessonEnd: lessonSegment?.end ?? null,
+                                      segmentMode: "full",
+                                      navTarget: {
+                                        sheetId: "akhlagh",
+                                        accordionValue: "belief",
+                                        itemDomId: `audio-akhlagh-belief-${originalIndex}`,
+                                      },
+                                    })
+                                  }
+                                  className="lesson-primary-action"
+                                >
+                                  <span>پخش</span>
+                                  <Play aria-hidden="true" />
+                                </button>
                               </div>
                             </div>
 
@@ -376,7 +455,8 @@ export const BenefitAkhlaq = () => {
                           ) : null}
                         </AnimatePresence>
                       </div>
-                    ))}
+                      );
+                    })}
                     <div className="order-first border-b border-secondary bg-card/70 dark:bg-card px-4 my-3 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40">
                       <button
                         type="button"
@@ -439,6 +519,15 @@ export const BenefitAkhlaq = () => {
                       <MotionList className="flex flex-col gap-3">
                         {topic.files.map((file, i) => {
                           const itemId = `${topic.idPrefix}-${i}`;
+                          const streamUrl = toStreamableUrl(file.url);
+                          const lessonSegment = resolveLessonSegment(
+                            file as AudioSegmentInput
+                          );
+                          const isCurrentTrack = current?.url === streamUrl;
+                          const isLessonActive =
+                            isCurrentTrack && current?.segmentMode === "lesson";
+                          const isFullActive =
+                            isCurrentTrack && current?.segmentMode !== "lesson";
 
                           return (
                             <MotionItem
@@ -456,38 +545,115 @@ export const BenefitAkhlaq = () => {
                                   normalizeSessionTitle(file.title || "", i + 1)
                                 )}
                               </div>
-                              <div className="mb-3 flex items-center justify-center gap-2 text-sm font-semibold text-primary">
-                                <span>صوت</span>
-                                <Headphones className="size-5 text-muted-foreground" />
-                              </div>
+                              <div className="lesson-audio-card">
+                                <p className="lesson-audio-title">
+                                  <span>صوت</span>
+                                  <Headphones aria-hidden="true" />
+                                </p>
 
-                              <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                                <Button
-                                  onClick={() =>
-                                    play({
-                                      title: normalizeSessionTitle(file.title || "", i + 1),
-                                      url: file.url,
-                                      description: topic.title,
-                                    })
-                                  }
-                                  className="w-full sm:w-auto text-card"
-                                >
-                                  پخش
-                                </Button>
+                                <div className="lesson-segment-switch">
+                                  <button
+                                    type="button"
+                                    className={`lesson-segment-chip ${
+                                      lessonSegment &&
+                                      isLessonActive &&
+                                      isPlaying
+                                        ? "is-active"
+                                        : ""
+                                    }`}
+                                    onClick={() => {
+                                      if (!lessonSegment) {
+                                        notifyLessonSoon();
+                                        return;
+                                      }
 
-                                <Button
-                                  asChild
-                                  variant="outline"
-                                  className="w-full sm:w-auto"
-                                >
+                                      play({
+                                        title: normalizeSessionTitle(
+                                          file.title || "",
+                                          i + 1
+                                        ),
+                                        url: streamUrl,
+                                        description: topic.title,
+                                        lessonStart: lessonSegment.start,
+                                        lessonEnd: lessonSegment.end,
+                                        segmentMode: "lesson",
+                                        navTarget: {
+                                          sheetId: "akhlagh",
+                                          accordionValue: topic.value,
+                                          itemDomId: itemId,
+                                        },
+                                      });
+                                    }}
+                                  >
+                                    درس
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    className={`lesson-segment-chip ${
+                                      isFullActive && isPlaying
+                                        ? "is-active"
+                                        : ""
+                                    }`}
+                                    onClick={() =>
+                                      play({
+                                        title: normalizeSessionTitle(
+                                          file.title || "",
+                                          i + 1
+                                        ),
+                                        url: streamUrl,
+                                        description: topic.title,
+                                        lessonStart:
+                                          lessonSegment?.start ?? null,
+                                        lessonEnd: lessonSegment?.end ?? null,
+                                        segmentMode: "full",
+                                        navTarget: {
+                                          sheetId: "akhlagh",
+                                          accordionValue: topic.value,
+                                          itemDomId: itemId,
+                                        },
+                                      })
+                                    }
+                                  >
+                                    کامل
+                                  </button>
+                                </div>
+
+                                <div className="lesson-action-row">
                                   <a
+                                    className="lesson-download-action"
                                     href={toDownloadUrl(file.url)}
                                     download={`${file.title || "audio"}.mp3`}
                                     rel="noopener noreferrer"
                                   >
-                                    دانلود
+                                    <span>دانلود صوت</span>
+                                    <Download aria-hidden="true" />
                                   </a>
-                                </Button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      play({
+                                        title: normalizeSessionTitle(file.title || "", i + 1),
+                                        url: streamUrl,
+                                        description: topic.title,
+                                        lessonStart:
+                                          lessonSegment?.start ?? null,
+                                        lessonEnd: lessonSegment?.end ?? null,
+                                        segmentMode: "full",
+                                        navTarget: {
+                                          sheetId: "akhlagh",
+                                          accordionValue: topic.value,
+                                          itemDomId: itemId,
+                                        },
+                                      })
+                                    }
+                                    className="lesson-primary-action"
+                                  >
+                                    <span>پخش</span>
+                                    <Play aria-hidden="true" />
+                                  </button>
+                                </div>
                               </div>
                             </MotionItem>
                           );

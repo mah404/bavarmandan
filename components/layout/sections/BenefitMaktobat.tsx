@@ -16,7 +16,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { FileText, Headphones, Sparkles } from "lucide-react";
+import { Download, FileText, Headphones, Play, Sparkles } from "lucide-react";
 import Lottie from "lottie-react";
 import loadingPdfAnim from "@/public/loading.json";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
@@ -36,6 +36,7 @@ import {
   buildMaktubatNotesMap,
   type MaktubatDetailsResponse,
 } from "@/lib/maktubat-details";
+import { resolveLessonSegment, type AudioLessonSegment } from "@/lib/audio-segments";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift } from "./reveal";
@@ -52,6 +53,7 @@ type Maktobat = {
   content: string;
   pdfUrl: string | null;
   audioUrl?: string | null;
+  lessonSegment?: AudioLessonSegment | null;
   notes: MaktobatNotesDialogData | null;
 };
 type CacheShape = { ts: number; items: Maktobat[] };
@@ -91,7 +93,7 @@ export const BenefitMaktobat = () => {
   const [notesTrigger, setNotesTrigger] = useState<HTMLButtonElement | null>(
     null,
   );
-  const { play } = useAudioPlayer(); // ← use the global player
+  const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer(); // ← use the global player
   const { target, clear } = useSheetNav();
   const { loading: catalogLoading, error, load } = useAudioCatalog();
 
@@ -191,6 +193,7 @@ export const BenefitMaktobat = () => {
         content: cleanMaktobatContent(content),
         pdfUrl: item.pdfUrl || null,
         notes,
+        lessonSegment: resolveLessonSegment(item),
         audioUrl:
           item.audioUrl ||
           (isAudioUrl(possibleAudioUrl) ? possibleAudioUrl : null),
@@ -388,41 +391,121 @@ export const BenefitMaktobat = () => {
                           onOpen={openNotes}
                         />
                       </div>
-                      <div className="rounded-xl shadow-md p-4 mt-4">
-                        <p className="text-primary text-sm font-semibold mb-2 flex items-center justify-center gap-2 text-center">
+                      <div className="lesson-audio-card">
+                        <p className="lesson-audio-title">
                           <span>صوت</span>
-                          <Headphones className="size-5 text-muted-foreground" />
+                          <Headphones aria-hidden="true" />
                         </p>
 
                         {maktobat.audioUrl ? (
-                          <div className="flex gap-2 justify-center">
-                            <Button
-                              onClick={() =>
-                                play({
-                                  title: maktobat.title,
-                                  url: toStreamableUrl(maktobat.audioUrl!),
-                                  description: maktobat.content,
-                                })
-                              }
-                              className="sm:w-auto w-full text-card"
-                            >
-                              پخش
-                            </Button>
+                          <>
+                            <div className="lesson-segment-switch">
+                              <button
+                                type="button"
+                                className={`lesson-segment-chip ${
+                                  maktobat.lessonSegment &&
+                                  current?.url ===
+                                    toStreamableUrl(maktobat.audioUrl) &&
+                                  current?.segmentMode === "lesson" &&
+                                  isPlaying
+                                    ? "is-active"
+                                    : ""
+                                }`}
+                                onClick={() => {
+                                  if (!maktobat.lessonSegment) {
+                                    notifyLessonSoon();
+                                    return;
+                                  }
 
-                            <a
-                              href={toDownloadUrl(maktobat.audioUrl!)}
-                              download={`${maktobat.title || "audio"}.mp3`}
-                            >
-                              <Button
-                                variant="outline"
-                                className="sm:w-auto w-full"
+                                  play({
+                                    title: maktobat.title,
+                                    url: toStreamableUrl(maktobat.audioUrl!),
+                                    description: maktobat.content,
+                                    lessonStart:
+                                      maktobat.lessonSegment.start,
+                                    lessonEnd:
+                                      maktobat.lessonSegment.end,
+                                    segmentMode: "lesson",
+                                    navTarget: {
+                                      sheetId: "maktobat",
+                                      accordionValue: maktobat.id,
+                                      itemDomId: `maktobat-item-${maktobat.id}`,
+                                    },
+                                  });
+                                }}
                               >
-                                دانلود صوت
-                              </Button>
-                            </a>
-                          </div>
+                                درس
+                              </button>
+                              <button
+                                type="button"
+                                className={`lesson-segment-chip ${
+                                  current?.url ===
+                                    toStreamableUrl(maktobat.audioUrl) &&
+                                  current?.segmentMode !== "lesson" &&
+                                  isPlaying
+                                    ? "is-active"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  play({
+                                    title: maktobat.title,
+                                    url: toStreamableUrl(maktobat.audioUrl!),
+                                    description: maktobat.content,
+                                    lessonStart:
+                                      maktobat.lessonSegment?.start ?? null,
+                                    lessonEnd:
+                                      maktobat.lessonSegment?.end ?? null,
+                                    segmentMode: "full",
+                                    navTarget: {
+                                      sheetId: "maktobat",
+                                      accordionValue: maktobat.id,
+                                      itemDomId: `maktobat-item-${maktobat.id}`,
+                                    },
+                                  })
+                                }
+                              >
+                                کامل
+                              </button>
+                            </div>
+
+                            <div className="lesson-action-row">
+                              <a
+                                className="lesson-download-action"
+                                href={toDownloadUrl(maktobat.audioUrl)}
+                                download={`${maktobat.title || "audio"}.mp3`}
+                              >
+                                <span>دانلود صوت</span>
+                                <Download aria-hidden="true" />
+                              </a>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  play({
+                                    title: maktobat.title,
+                                    url: toStreamableUrl(maktobat.audioUrl!),
+                                    description: maktobat.content,
+                                    lessonStart:
+                                      maktobat.lessonSegment?.start ?? null,
+                                    lessonEnd:
+                                      maktobat.lessonSegment?.end ?? null,
+                                    segmentMode: "full",
+                                    navTarget: {
+                                      sheetId: "maktobat",
+                                      accordionValue: maktobat.id,
+                                      itemDomId: `maktobat-item-${maktobat.id}`,
+                                    },
+                                  })
+                                }
+                                className="lesson-primary-action"
+                              >
+                                <span>پخش</span>
+                                <Play aria-hidden="true" />
+                              </button>
+                            </div>
+                          </>
                         ) : (
-                          <p className="text-gray-500 text-sm text-center">
+                          <p className="text-center text-sm text-muted-foreground">
                             فایل صوتی موجود نیست
                           </p>
                         )}

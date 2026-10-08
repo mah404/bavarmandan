@@ -12,6 +12,11 @@ import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { toPersianDigits } from "@/lib/media-api";
 import {
+  useSheetNav,
+  type SheetNavTarget,
+} from "@/components/layout/sections/SheetNavProvider";
+import {
+  ChevronUp,
   FastForward,
   Minus,
   Pause,
@@ -29,6 +34,10 @@ type Track = {
   url: string;
   description?: string;
   cover?: string;
+  lessonStart?: number | null;
+  lessonEnd?: number | null;
+  segmentMode?: "lesson" | "full";
+  navTarget?: SheetNavTarget | null;
 };
 
 type SavedState = {
@@ -36,6 +45,7 @@ type SavedState = {
   progress: number;
   volume: number;
   muted: boolean;
+  playbackRate?: number;
   // (legacy fields kept for compatibility)
   pos?: { x: number; y: number } | null;
   width?: number;
@@ -61,6 +71,7 @@ type AudioCtx = {
   setVolume: (v: number) => void;
   toggleMute: () => void;
   close: () => void;
+  notifyLessonSoon: () => void;
 };
 
 const AudioPlayerContext = createContext<AudioCtx | null>(null);
@@ -71,6 +82,8 @@ export const useAudioPlayer = () => {
 };
 
 const STORAGE_KEY = "globalAudioState_v1";
+const LESSON_SOON_MESSAGE = "امکان پخش بخش‌های منتخب به‌زودی فراهم می‌شود.";
+const PLAYBACK_RATES = [0.5, 0.75, 1, 1.5, 2] as const;
 
 export const AudioPlayerProvider = ({
   children,
@@ -78,6 +91,7 @@ export const AudioPlayerProvider = ({
   children: React.ReactNode;
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { goTo } = useSheetNav();
 
   const [current, setCurrent] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -86,6 +100,12 @@ export const AudioPlayerProvider = ({
   const [volume, setVolumeState] = useState(1);
   const [muted, setMuted] = useState(false);
   const [isLooping, setIsLooping] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [isSpeedMenuOpen, setIsSpeedMenuOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastLeaving, setToastLeaving] = useState(false);
+  const toastTimerRef = useRef<number | null>(null);
+  const toastExitTimerRef = useRef<number | null>(null);
 
   // Docked visibility + minimize
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
@@ -116,6 +136,7 @@ export const AudioPlayerProvider = ({
     height: number;
   } | null>(null);
   const suppressClickRef = useRef(false);
+  const segmentFrameRef = useRef<number | null>(null);
 
   // Scrub
   const [isScrubbing, setIsScrubbing] = useState(false);
@@ -132,7 +153,8 @@ export const AudioPlayerProvider = ({
     progress: number;
     volume: number;
     muted: boolean;
-  }>({ current: null, progress: 0, volume: 1, muted: false });
+    playbackRate: number;
+  }>({ current: null, progress: 0, volume: 1, muted: false, playbackRate: 1 });
 
   // Create audio element once
   if (!audioRef.current && typeof window !== "undefined") {
@@ -183,8 +205,50 @@ export const AudioPlayerProvider = ({
     if (audioRef.current) audioRef.current.muted = muted;
   }, [muted]);
   useEffect(() => {
+    if (audioRef.current) audioRef.current.playbackRate = playbackRate;
+  }, [playbackRate]);
+  useEffect(() => {
     if (audioRef.current) audioRef.current.loop = isLooping;
   }, [isLooping]);
+
+  useEffect(() => {
+    if (segmentFrameRef.current) {
+      cancelAnimationFrame(segmentFrameRef.current);
+      segmentFrameRef.current = null;
+    }
+
+    const audio = audioRef.current;
+    const lessonStart = current?.lessonStart ?? null;
+    const lessonEnd = current?.lessonEnd ?? null;
+    const hasLessonSegment =
+      current?.segmentMode === "lesson" &&
+      typeof lessonStart === "number" &&
+      typeof lessonEnd === "number" &&
+      lessonEnd > lessonStart;
+
+    if (!audio || !isPlaying || !hasLessonSegment) return;
+
+    const tick = () => {
+      if (audio.currentTime >= lessonEnd) {
+        audio.pause();
+        audio.currentTime = lessonEnd;
+        setProgress(lessonEnd);
+        segmentFrameRef.current = null;
+        return;
+      }
+
+      segmentFrameRef.current = requestAnimationFrame(tick);
+    };
+
+    segmentFrameRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (segmentFrameRef.current) {
+        cancelAnimationFrame(segmentFrameRef.current);
+        segmentFrameRef.current = null;
+      }
+    };
+  }, [current, isPlaying]);
 
   // Mount + load saved state
   useEffect(() => {
@@ -195,10 +259,17 @@ export const AudioPlayerProvider = ({
         const parsed = JSON.parse(raw) as SavedState;
         if (parsed?.track?.url) {
           savedStateRef.current = parsed;
-          setShowResumePrompt(true);
+      setShowResumePrompt(true);
         }
       }
     } catch {}
+
+    return () => {
+      if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+      if (toastExitTimerRef.current) {
+        window.clearTimeout(toastExitTimerRef.current);
+      }
+    };
   }, []);
 
   // Save periodically (throttled)
@@ -223,6 +294,7 @@ export const AudioPlayerProvider = ({
       progress: latest.progress,
       volume: latest.volume,
       muted: latest.muted,
+      playbackRate: latest.playbackRate,
     };
     const doSave = () => {
       try {
@@ -235,10 +307,10 @@ export const AudioPlayerProvider = ({
   };
 
   useEffect(() => {
-    latestStateRef.current = { current, progress, volume, muted };
+    latestStateRef.current = { current, progress, volume, muted, playbackRate };
     if (current) saveState(); // on progress / volume / mute changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current, progress, volume, muted]);
+  }, [current, progress, volume, muted, playbackRate]);
 
   // Save on unload/pagehide
   useEffect(() => {
@@ -256,12 +328,41 @@ export const AudioPlayerProvider = ({
     const audio = audioRef.current;
     if (!audio) return;
 
-    const same = current?.url === track.url;
+    const lessonStart = track.lessonStart ?? null;
+    const lessonEnd = track.lessonEnd ?? null;
+    const hasLessonSegment =
+      track.segmentMode === "lesson" &&
+      typeof lessonStart === "number" &&
+      typeof lessonEnd === "number" &&
+      lessonEnd > lessonStart;
+    const same =
+      current?.url === track.url &&
+      current?.segmentMode === track.segmentMode &&
+      current?.lessonStart === track.lessonStart &&
+      current?.lessonEnd === track.lessonEnd;
+
     if (!same) {
       setCurrent(track);
       audio.preload = "auto";
       audio.src = track.url;
-      setProgress(0);
+      audio.playbackRate = playbackRate;
+      audio.load();
+      setProgress(hasLessonSegment ? lessonStart : 0);
+    }
+
+    if (hasLessonSegment) {
+      const seekToLessonStart = () => {
+        audio.currentTime = lessonStart;
+        setProgress(lessonStart);
+      };
+
+      if (audio.readyState >= 1) {
+        seekToLessonStart();
+      } else {
+        audio.addEventListener("loadedmetadata", seekToLessonStart, {
+          once: true,
+        });
+      }
     }
 
     setIsPlaying(true);
@@ -307,6 +408,25 @@ export const AudioPlayerProvider = ({
   const setVolume = (v: number) => setVolumeState(Math.max(0, Math.min(v, 1)));
   const toggleMute = () => setMuted((m) => !m);
   const skipBy = (seconds: number) => seek(progress + seconds);
+  const showToast = (message: string) => {
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    if (toastExitTimerRef.current) {
+      window.clearTimeout(toastExitTimerRef.current);
+    }
+
+    setToastLeaving(false);
+    setToastMessage(message);
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastLeaving(true);
+      toastTimerRef.current = null;
+      toastExitTimerRef.current = window.setTimeout(() => {
+        setToastMessage(null);
+        setToastLeaving(false);
+        toastExitTimerRef.current = null;
+      }, 620);
+    }, 2350);
+  };
+  const notifyLessonSoon = () => showToast(LESSON_SOON_MESSAGE);
   const shareCurrent = async () => {
     if (!current) return;
     try {
@@ -322,7 +442,18 @@ export const AudioPlayerProvider = ({
     } catch {}
   };
 
+  const goToCurrentSource = () => {
+    if (!current?.navTarget) return;
+
+    document.getElementById("mohtava")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+    goTo(current.navTarget);
+  };
+
   const close = () => {
+    setIsSpeedMenuOpen(false);
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = "";
@@ -339,6 +470,7 @@ export const AudioPlayerProvider = ({
       progress: 0,
       volume,
       muted,
+      playbackRate,
     };
     clearSavedState();
     window.dispatchEvent(new CustomEvent("bavarmandan:session-audio-close"));
@@ -360,8 +492,9 @@ export const AudioPlayerProvider = ({
       setVolume,
       toggleMute,
       close,
+      notifyLessonSoon,
     }),
-    [current, isPlaying, duration, progress, volume, muted]
+    [current, isPlaying, duration, progress, volume, muted, playbackRate]
   );
 
   const fmt = (s: number) => {
@@ -379,6 +512,28 @@ export const AudioPlayerProvider = ({
 
   const progressPercent =
     duration > 0 ? Math.min(100, Math.max(0, (progress / duration) * 100)) : 0;
+  const lessonStart = current?.lessonStart ?? null;
+  const lessonEnd = current?.lessonEnd ?? null;
+  const hasLessonInfo =
+    typeof lessonStart === "number" &&
+    typeof lessonEnd === "number" &&
+    lessonEnd > lessonStart;
+  const lessonStartPercent =
+    hasLessonInfo && duration > 0
+      ? Math.min(100, Math.max(0, (lessonStart / duration) * 100))
+      : 0;
+  const lessonEndPercent =
+    hasLessonInfo && duration > 0
+      ? Math.min(100, Math.max(0, (lessonEnd / duration) * 100))
+      : 0;
+  const lessonPlaybackPercent =
+    hasLessonInfo && lessonEnd > lessonStart
+      ? Math.min(
+          100,
+          Math.max(0, ((progress - lessonStart) / (lessonEnd - lessonStart)) * 100)
+        )
+      : 0;
+  const isLessonMode = current?.segmentMode === "lesson";
 
   const clampPosition = (x: number, y: number, width: number, height: number) => {
     if (typeof window === "undefined") return { x, y };
@@ -533,6 +688,35 @@ export const AudioPlayerProvider = ({
     resizeRef.current = null;
   };
 
+  const playCurrentSegment = (segmentMode: "lesson" | "full") => {
+    if (!current) return;
+    if (segmentMode === "lesson" && !hasLessonInfo) {
+      notifyLessonSoon();
+      return;
+    }
+
+    const sameSegment =
+      (segmentMode === "lesson" && isLessonMode) ||
+      (segmentMode === "full" && !isLessonMode);
+
+    if (sameSegment && isPlaying) {
+      pause();
+      return;
+    }
+
+    if (sameSegment && !isPlaying) {
+      resume();
+      return;
+    }
+
+    play({
+      ...current,
+      lessonStart: hasLessonInfo ? lessonStart : null,
+      lessonEnd: hasLessonInfo ? lessonEnd : null,
+      segmentMode,
+    });
+  };
+
   // Docked bottom player (expanded)
   const playerNode = current && isPlayerVisible && !isMinimized ? (
     <div
@@ -646,162 +830,222 @@ export const AudioPlayerProvider = ({
           onPointerUp={stopResizing}
           onPointerCancel={stopResizing}
         />
-        <div
-          className="flex h-5 touch-none items-center justify-center"
-          title="Drag player"
-        >
-          <span className="h-1 w-10 rounded-full bg-primary/45" />
+        <div className="audio-player-grab" title="Drag player">
+          <span />
         </div>
-        <div className="px-2 pb-2 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
-          <div className="grid grid-cols-[2.75rem_1fr] items-center gap-2 sm:grid-cols-[3.5rem_1fr] sm:gap-3 md:grid-cols-[5rem_1fr] md:gap-4">
-            <div className="grid size-11 place-items-center overflow-hidden rounded-xl border border-primary/25 bg-primary/10 p-0.5 shadow-[0_10px_22px_rgba(0,0,0,0.16)] sm:size-14 md:size-20">
+        <div className="audio-player-content">
+          <div className="audio-player-head" dir="rtl">
+            <div className="audio-player-brand">
               <img
                 src={current.cover || "/mainicon.jpg"}
                 alt=""
                 draggable={false}
-                className="size-full rounded-lg object-cover"
               />
             </div>
 
-            <div className="min-w-0" dir="rtl">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 text-right">
-                  <div className="truncate text-sm font-extrabold leading-6 text-foreground sm:text-base sm:leading-7 md:text-xl">
-                    {current.title}
-                  </div>
-                  {current.description && (
-                    <div className="hidden truncate text-sm font-bold text-primary/85 sm:block md:text-base">
-                      {current.description}
-                    </div>
-                  )}
-                </div>
-                <div className="audio-player-muted shrink-0 text-left text-[11px] font-bold tabular-nums sm:text-xs md:text-sm">
-                  <span>{fmt(isScrubbing ? scrubValue : progress)}</span>
-                  <span className="mx-1 text-primary/70">/</span>
-                  <span>{fmt(duration)}</span>
-                </div>
-              </div>
+            <button
+              type="button"
+              className="audio-player-copy"
+              onClick={goToCurrentSource}
+              disabled={!current.navTarget}
+              aria-label="رفتن به محل این فایل"
+              data-no-drag
+            >
+              <h3>{current.title}</h3>
+              {current.description ? <p>{current.description}</p> : null}
+            </button>
 
-              <input
-                className="audio-progress-range mt-2 w-full sm:mt-3"
-                dir="ltr"
-                style={{
-                  background: `linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary)) ${
-                    duration > 0
-                      ? Math.min(
-                          100,
-                          Math.max(
-                            0,
-                            ((isScrubbing ? scrubValue : progress) /
-                              duration) *
-                              100
-                          )
-                        )
-                      : 0
-                  }%, hsl(var(--muted) / 0.42) ${
-                    duration > 0
-                      ? Math.min(
-                          100,
-                          Math.max(
-                            0,
-                            ((isScrubbing ? scrubValue : progress) /
-                              duration) *
-                              100
-                          )
-                        )
-                      : 0
-                  }%, hsl(var(--muted) / 0.42) 100%)`,
-                }}
-                type="range"
-                min={0}
-                max={duration || 0}
-                step={1}
-                value={Math.min(
-                  isScrubbing ? scrubValue : progress,
-                  duration || 0
-                )}
-                onPointerDown={(e) => {
-                  setIsScrubbing(true);
-                  setScrubValue(Number(e.currentTarget.value));
-                }}
-                onChange={(e) => {
-                  const next = Number(e.target.value);
-                  setScrubValue(next);
-                  seek(next);
-                }}
-                onPointerUp={(e) => {
-                  seek(Number(e.currentTarget.value));
-                  setIsScrubbing(false);
-                }}
-                onPointerCancel={() => setIsScrubbing(false)}
-                aria-label="Seek"
-                data-no-drag
-              />
+            <div className="audio-player-time" dir="ltr">
+              <span>{fmt(isScrubbing ? scrubValue : progress)}</span>
+              <span className="audio-time-slash">/</span>
+              <span>{fmt(duration)}</span>
             </div>
           </div>
 
-          <div className="mt-2 flex items-center justify-between gap-2 sm:mt-3">
-            <div className="flex items-center justify-center gap-1 sm:gap-1.5">
+          <div className="audio-progress-wrap">
+            {hasLessonInfo ? (
+              <>
+                <span
+                  className="audio-lesson-range"
+                  style={{
+                    left: `${lessonStartPercent}%`,
+                    width: `${Math.max(0, lessonEndPercent - lessonStartPercent)}%`,
+                  }}
+                />
+                <span
+                  className="audio-lesson-marker"
+                  style={{ left: `${lessonStartPercent}%` }}
+                />
+                <span
+                  className="audio-lesson-marker"
+                  style={{ left: `${lessonEndPercent}%` }}
+                />
+              </>
+            ) : null}
+            <input
+              className="audio-progress-range"
+              dir="ltr"
+              style={{
+                background: `linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary)) ${progressPercent}%, hsl(var(--muted) / 0.42) ${progressPercent}%, hsl(var(--muted) / 0.42) 100%)`,
+              }}
+              type="range"
+              min={0}
+              max={duration || 0}
+              step={1}
+              value={Math.min(isScrubbing ? scrubValue : progress, duration || 0)}
+              onPointerDown={(e) => {
+                setIsScrubbing(true);
+                setScrubValue(Number(e.currentTarget.value));
+              }}
+              onChange={(e) => {
+                const next = Number(e.target.value);
+                setScrubValue(next);
+                seek(next);
+              }}
+              onPointerUp={(e) => {
+                seek(Number(e.currentTarget.value));
+                setIsScrubbing(false);
+              }}
+              onPointerCancel={() => setIsScrubbing(false)}
+              aria-label="جابه‌جایی در صوت"
+              data-no-drag
+            />
+          </div>
+
+          <div className="audio-sections">
+            <div className="audio-sections-title">
+              <span />
+              <i />
+              <b>بخش‌های جلسه</b>
+              <i />
+              <span />
+            </div>
+
+            <div className="audio-section-items" dir="rtl">
+              <button
+                type="button"
+                className={`audio-section-item ${
+                  hasLessonInfo && isLessonMode ? "is-active" : ""
+                }`}
+                onClick={() => playCurrentSegment("lesson")}
+                data-no-drag
+              >
+                <span className="audio-section-play">
+                  {hasLessonInfo && isLessonMode && isPlaying ? (
+                    <Pause aria-hidden="true" />
+                  ) : (
+                    <Play aria-hidden="true" />
+                  )}
+                </span>
+                <span className="audio-section-text">
+                  <strong>درس</strong>
+                  <small dir={hasLessonInfo ? "ltr" : "rtl"}>
+                    {hasLessonInfo
+                      ? `${fmt(lessonStart || 0)} - ${fmt(lessonEnd || 0)}`
+                      : "به‌زودی"}
+                  </small>
+                </span>
+                <span
+                  className="audio-section-progress"
+                  style={{
+                    "--segment-progress": `${
+                      hasLessonInfo && isLessonMode ? lessonPlaybackPercent : 0
+                    }%`,
+                  } as React.CSSProperties}
+                />
+              </button>
+
+              <span className="audio-section-separator" aria-hidden="true" />
+
+              <button
+                type="button"
+                className={`audio-section-item ${!isLessonMode ? "is-active" : ""}`}
+                onClick={() => playCurrentSegment("full")}
+                data-no-drag
+              >
+                <span className="audio-section-play">
+                  {!isLessonMode && isPlaying ? (
+                    <Pause aria-hidden="true" />
+                  ) : (
+                    <Play aria-hidden="true" />
+                  )}
+                </span>
+                <span className="audio-section-text">
+                  <strong>کامل</strong>
+                  <small dir="ltr">۰۰:۰۰ - {fmt(duration)}</small>
+                </span>
+                <span
+                  className="audio-section-progress"
+                  style={{
+                    "--segment-progress": `${!isLessonMode ? progressPercent : 0}%`,
+                  } as React.CSSProperties}
+                />
+              </button>
+            </div>
+          </div>
+
+          <div className="audio-player-divider" />
+
+          <div className="audio-player-controls">
+            <div className="audio-transport-controls">
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => skipBy(-40)}
-                aria-label="Back 40 seconds"
-                className="h-8 w-8 rounded-full text-primary hover:bg-primary/10 hover:text-primary sm:h-10 sm:w-10"
-                title="40 seconds back"
+                onClick={() => skipBy(-10)}
+                aria-label="ده ثانیه عقب"
+                title="ده ثانیه عقب"
+                data-no-drag
               >
-                <Rewind className="h-5 w-5" />
+                <Rewind />
               </Button>
 
               {isPlaying ? (
                 <Button
                   size="icon"
                   onClick={pause}
-                  aria-label="Pause"
-                  className="size-10 rounded-xl shadow-[0_10px_22px_hsl(var(--primary)/0.18)] sm:size-12"
+                  aria-label="توقف پخش"
+                  data-no-drag
+                  className="audio-main-play"
                 >
-                  <Pause className="h-6 w-6 text-card" />
+                  <Pause />
                 </Button>
               ) : (
                 <Button
                   size="icon"
                   onClick={resume}
-                  aria-label="Resume"
-                  className="size-10 rounded-xl shadow-[0_10px_22px_hsl(var(--primary)/0.18)] sm:size-12"
+                  aria-label="ادامه پخش"
+                  data-no-drag
+                  className="audio-main-play"
                 >
-                  <Play className="h-6 w-6 text-card" />
+                  <Play />
                 </Button>
               )}
 
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => skipBy(40)}
-                aria-label="Forward 40 seconds"
-                className="h-8 w-8 rounded-full text-primary hover:bg-primary/10 hover:text-primary sm:h-10 sm:w-10"
-                title="40 seconds forward"
+                onClick={() => skipBy(10)}
+                aria-label="ده ثانیه جلو"
+                title="ده ثانیه جلو"
+                data-no-drag
               >
-                <FastForward className="h-5 w-5" />
+                <FastForward />
               </Button>
             </div>
 
-            <div className="flex items-center justify-center gap-1 sm:gap-1.5">
+            <div className="audio-utility-controls">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setMuted((m) => !m)}
-                aria-label={muted || volume === 0 ? "Unmute" : "Mute"}
-                className="h-8 w-8 rounded-full text-primary hover:bg-primary/10 hover:text-primary sm:h-9 sm:w-9"
+                aria-label={muted || volume === 0 ? "باز کردن صدا" : "بی‌صدا کردن"}
+                data-no-drag
               >
-                {muted || volume === 0 ? (
-                  <VolumeX className="h-5 w-5" />
-                ) : (
-                  <Volume2 className="h-5 w-5" />
-                )}
+                {muted || volume === 0 ? <VolumeX /> : <Volume2 />}
               </Button>
 
               <input
-                className="audio-volume-range hidden w-20 sm:block md:w-24"
+                className="audio-volume-range"
                 dir="ltr"
                 style={{
                   background: `linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary)) ${
@@ -816,53 +1060,100 @@ export const AudioPlayerProvider = ({
                 step={0.01}
                 value={muted ? 0 : volume}
                 onChange={(e) => setVolume(Number(e.target.value))}
-                aria-label="Volume"
+                aria-label="تنظیم صدا"
                 data-no-drag
               />
 
+              <div className="audio-speed-control" data-no-drag>
+                <button
+                  type="button"
+                  className="audio-speed-trigger"
+                  onClick={() => setIsSpeedMenuOpen((value) => !value)}
+                  aria-label="تغییر سرعت پخش"
+                  aria-haspopup="listbox"
+                  aria-expanded={isSpeedMenuOpen}
+                >
+                  <span className="audio-speed-mark" aria-hidden="true" />
+                  <span dir="ltr">{playbackRate}x</span>
+                </button>
+
+                {isSpeedMenuOpen ? (
+                  <div
+                    className="audio-speed-menu"
+                    role="listbox"
+                    aria-label="سرعت پخش"
+                    dir="ltr"
+                  >
+                    {PLAYBACK_RATES.map((rate) => (
+                      <button
+                        key={rate}
+                        type="button"
+                        role="option"
+                        aria-selected={playbackRate === rate}
+                        className={playbackRate === rate ? "is-active" : ""}
+                        onClick={() => {
+                          setPlaybackRate(rate);
+                          setIsSpeedMenuOpen(false);
+                        }}
+                      >
+                        {rate}x
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsLooping((value) => !value)}
-                aria-label={isLooping ? "Disable repeat" : "Enable repeat"}
-                className={`h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary sm:h-9 sm:w-9 ${
-                  isLooping ? "bg-primary/15 text-primary" : "text-primary"
-                }`}
-                title="Repeat"
+                onClick={() => {
+                  setIsSpeedMenuOpen(false);
+                  setIsLooping((value) => !value);
+                }}
+                aria-label={isLooping ? "خاموش کردن تکرار" : "روشن کردن تکرار"}
+                className={isLooping ? "is-active" : ""}
+                title="تکرار"
+                data-no-drag
               >
-                <Repeat2 className="h-4 w-4" />
+                <Repeat2 />
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={shareCurrent}
-                aria-label="Share"
-                className="h-8 w-8 rounded-full text-primary hover:bg-primary/10 hover:text-primary sm:h-9 sm:w-9"
-                title="Share"
+                onClick={() => {
+                  setIsSpeedMenuOpen(false);
+                  void shareCurrent();
+                }}
+                aria-label="اشتراک‌گذاری"
+                title="اشتراک‌گذاری"
+                data-no-drag
               >
-                <Share2 className="h-4 w-4" />
+                <Share2 />
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsMinimized(true)}
-                aria-label="Minimize"
-                className="h-8 w-8 rounded-full text-primary hover:bg-primary/10 hover:text-primary sm:h-9 sm:w-9"
-                title="Minimize"
+                onClick={() => {
+                  setIsSpeedMenuOpen(false);
+                  setIsMinimized(true);
+                }}
+                aria-label="جمع کردن پلیر"
+                title="جمع کردن"
+                data-no-drag
               >
-                <Minus className="h-4 w-4" />
+                <Minus />
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={close}
-                aria-label="Close"
-                className="h-8 w-8 rounded-full text-primary hover:bg-primary/10 hover:text-primary sm:h-9 sm:w-9"
+                aria-label="بستن پلیر"
+                data-no-drag
               >
-                <X className="h-4 w-4" />
+                <X />
               </Button>
             </div>
           </div>
@@ -874,13 +1165,13 @@ export const AudioPlayerProvider = ({
   // Minimized pill (shows when minimized & visible & has current track)
   const minimizedNode =
     current && isPlayerVisible && isMinimized ? (
-      <button
+      <div
         data-audio-player-shell
         className={`
+          audio-player-mini
           fixed z-[10001]
-          ${minimizedPosition ? "" : "bottom-4 right-4"}
-          flex h-14 max-w-[calc(100vw-2rem)] items-center gap-2
-          audio-player-shell touch-none select-none overflow-hidden rounded-2xl border p-1.5 pr-2
+          ${minimizedPosition ? "" : "bottom-4 left-4"}
+          audio-player-shell touch-none select-none overflow-visible
           cursor-grab transition-transform duration-200 hover:-translate-y-0.5 active:scale-95 active:cursor-grabbing
         `}
         style={
@@ -891,48 +1182,82 @@ export const AudioPlayerProvider = ({
               } as React.CSSProperties)
             : undefined
         }
-        aria-label="Expand audio player"
-        title={
-          isPlaying ? "Playing... (tap to expand)" : "Paused (tap to expand)"
-        }
         onPointerDown={(e) => startDragging(e, "minimized")}
         onPointerMove={dragPlayer}
         onPointerUp={stopDragging}
         onPointerCancel={stopDragging}
-        onClick={() => {
-          if (suppressClickRef.current) return;
-          setIsMinimized(false);
-        }}
       >
-        <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl border border-primary/30 bg-primary/10 p-0.5">
+        <button
+          type="button"
+          className="audio-mini-icon"
+          onClick={(event) => {
+            event.stopPropagation();
+            close();
+          }}
+          aria-label="بستن پلیر"
+          data-no-drag
+        >
+          <X />
+        </button>
+
+        <button
+          type="button"
+          className="audio-mini-icon"
+          onClick={(event) => {
+            event.stopPropagation();
+            setIsMinimized(false);
+          }}
+          aria-label="باز کردن پلیر"
+          data-no-drag
+        >
+          <ChevronUp />
+        </button>
+
+        <button
+          type="button"
+          className="audio-mini-play"
+          onClick={(event) => {
+            event.stopPropagation();
+            if (isPlaying) {
+              pause();
+            } else {
+              resume();
+            }
+          }}
+          aria-label={isPlaying ? "توقف پخش" : "ادامه پخش"}
+          data-no-drag
+        >
+          {isPlaying ? <Pause /> : <Play />}
+        </button>
+
+        <button
+          type="button"
+          className="audio-mini-copy"
+          dir="rtl"
+          onClick={(event) => {
+            event.stopPropagation();
+            goToCurrentSource();
+          }}
+          disabled={!current.navTarget}
+          aria-label="رفتن به محل این فایل"
+          data-no-drag
+        >
+          <strong>{current.title}</strong>
+          <small dir="ltr">
+            {fmt(progress)}
+            <span>/</span>
+            {fmt(duration)}
+          </small>
+        </button>
+
+        <span className="audio-mini-brand">
           <img
             src={current.cover || "/mainicon.jpg"}
             alt=""
             draggable={false}
-            className="size-full rounded-lg object-cover"
           />
         </span>
-
-        <span className="hidden min-w-0 text-right sm:block" dir="rtl">
-          <span className="block max-w-40 truncate text-sm font-bold text-foreground md:max-w-56">
-            {current.title}
-          </span>
-          <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-muted/50">
-            <span
-              className="block h-full rounded-full bg-primary"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </span>
-        </span>
-
-        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-primary text-card">
-          {isPlaying ? (
-            <Pause className="h-4 w-4" />
-          ) : (
-            <Play className="h-4 w-4" />
-          )}
-        </span>
-      </button>
+      </div>
     ) : null;
 
   // Resume prompt (unchanged)
@@ -949,10 +1274,12 @@ export const AudioPlayerProvider = ({
             const saved = savedStateRef.current!;
             setVolumeState(saved.volume);
             setMuted(saved.muted);
+            setPlaybackRate(saved.playbackRate ?? 1);
             // set current & resume
             setCurrent(saved.track);
             if (audioRef.current) {
               audioRef.current.src = saved.track.url;
+              audioRef.current.playbackRate = saved.playbackRate ?? 1;
               audioRef.current.load();
               const onLoaded = () => {
                 const d = audioRef.current!.duration || 0;
@@ -983,6 +1310,17 @@ export const AudioPlayerProvider = ({
       </div>
     ) : null;
 
+  const toastNode = toastMessage ? (
+    <div
+      className={`audio-player-toast ${toastLeaving ? "is-leaving" : ""}`}
+      dir="rtl"
+      role="status"
+      aria-live="polite"
+    >
+      {toastMessage}
+    </div>
+  ) : null;
+
   return (
     <AudioPlayerContext.Provider value={ctxValue}>
       {children}
@@ -991,6 +1329,7 @@ export const AudioPlayerProvider = ({
         ? createPortal(minimizedNode, document.body)
         : null}
       {mounted && resumeBar ? createPortal(resumeBar, document.body) : null}
+      {mounted && toastNode ? createPortal(toastNode, document.body) : null}
     </AudioPlayerContext.Provider>
   );
 };

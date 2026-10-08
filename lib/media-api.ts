@@ -1,4 +1,5 @@
-export const MEDIA_API_BASE = process.env.MEDIA_API_BASE || "";
+export const MEDIA_API_BASE =
+  process.env.MEDIA_API_BASE || "http://167.233.60.102:3001";
 
 export const AUDIO_CATALOG_URL = MEDIA_API_BASE
   ? `${MEDIA_API_BASE.replace(/\/$/, "")}/api/audios`
@@ -29,6 +30,10 @@ export type CatalogFile = {
   folder?: string;
   createdAt?: string;
   type?: string;
+  lesson?: {
+    start?: number | string | null;
+    end?: number | string | null;
+  } | null;
 };
 
 export type CatalogFileWithUrl = CatalogFile & { url: string };
@@ -45,6 +50,14 @@ export type MaktubatSession = {
     intro?: string | null;
     summary?: string | null;
   };
+  lesson_start?: number | string | null;
+  lesson_end?: number | string | null;
+  lessonStart?: number | string | null;
+  lessonEnd?: number | string | null;
+  lesson?: {
+    start?: number | string | null;
+    end?: number | string | null;
+  } | null;
   url?: string | null;
   audioUrl?: string | null;
   pdfUrl?: string | null;
@@ -65,6 +78,10 @@ export type LatestCatalogItem = {
   collection?: string;
   collectionTitle?: string;
   addedAt?: string;
+  lesson?: {
+    start?: number | string | null;
+    end?: number | string | null;
+  } | null;
 };
 
 export type MediaTopic = {

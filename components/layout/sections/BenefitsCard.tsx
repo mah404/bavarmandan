@@ -31,11 +31,12 @@ import {
   type CatalogFileWithUrl,
   type MaktubatSession,
 } from "@/lib/media-api";
+import { resolveLessonSegment, type AudioSegmentInput } from "@/lib/audio-segments";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 import { akhlaghOrderIndex, normalizePersianText } from "@/lib/akhlagh-order";
 import { HoverLift, MotionItem, MotionList } from "./reveal";
-import { Headphones, HeartHandshake } from "lucide-react";
+import { Download, Headphones, HeartHandshake, Play } from "lucide-react";
 
 const AkhlaghSkeleton = () => (
   <div className="mt-4 flex w-full flex-col gap-3" aria-label="در حال بارگذاری">
@@ -155,7 +156,7 @@ export const BenefitsCard = () => {
   // otherwise its content never mounts and the glow target is never found.
   const [nashaatSessionValues, setNashaatSessionValues] = useState<string[]>([]);
 
-  const { play } = useAudioPlayer();
+  const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer();
   const { target, clear } = useSheetNav();
   const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
 
@@ -337,6 +338,13 @@ const scrollToId = async (id: string, tries = 20) => {
                       >
                         {group.sessions.map((session, fileIndex) => {
                           const audioUrl = session.audioUrl || "";
+                          const streamUrl = toStreamableUrl(audioUrl);
+                          const lessonSegment = resolveLessonSegment(session);
+                          const isCurrentTrack = current?.url === streamUrl;
+                          const isLessonActive =
+                            isCurrentTrack && current?.segmentMode === "lesson";
+                          const isFullActive =
+                            isCurrentTrack && current?.segmentMode !== "lesson";
                           const pdfs = nashaatSessionPdfs(session);
                           const sessionLabel = akhlaghApiSessionLabel(session, fileIndex);
                           const subtitle = textValue(session.subtitle);
@@ -365,34 +373,111 @@ const scrollToId = async (id: string, tries = 20) => {
                                 ) : null}
 
                                 {audioUrl ? (
-                                  <div>
-                                    <p className="mb-2 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
+                                  <div className="lesson-audio-card">
+                                    <p className="lesson-audio-title">
                                       <span>صوت</span>
-                                      <Headphones className="size-5 text-muted-foreground" />
+                                      <Headphones aria-hidden="true" />
                                     </p>
 
-                                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                                      <Button
+                                    <div className="lesson-segment-switch">
+                                      <button
+                                        type="button"
+                                        className={`lesson-segment-chip ${
+                                          lessonSegment &&
+                                          isLessonActive &&
+                                          isPlaying
+                                            ? "is-active"
+                                            : ""
+                                        }`}
+                                        onClick={() => {
+                                          if (!lessonSegment) {
+                                            notifyLessonSoon();
+                                            return;
+                                          }
+
+                                          play({
+                                            title: sessionLabel,
+                                            url: streamUrl,
+                                            description:
+                                              akhlaghTopicDisplayTitle(group.subject),
+                                            lessonStart: lessonSegment.start,
+                                            lessonEnd: lessonSegment.end,
+                                            segmentMode: "lesson",
+                                            navTarget: {
+                                              sheetId: "benefitsCard",
+                                              accordionValue: `group-${groupIndex}`,
+                                              itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`,
+                                            },
+                                          });
+                                        }}
+                                      >
+                                        درس
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        className={`lesson-segment-chip ${
+                                          isFullActive && isPlaying
+                                            ? "is-active"
+                                            : ""
+                                        }`}
                                         onClick={() =>
                                           play({
                                             title: sessionLabel,
-                                            url: toStreamableUrl(audioUrl),
-                                            description: akhlaghTopicDisplayTitle(group.subject),
+                                            url: streamUrl,
+                                            description:
+                                              akhlaghTopicDisplayTitle(group.subject),
+                                            lessonStart:
+                                              lessonSegment?.start ?? null,
+                                            lessonEnd:
+                                              lessonSegment?.end ?? null,
+                                            segmentMode: "full",
+                                            navTarget: {
+                                              sheetId: "benefitsCard",
+                                              accordionValue: `group-${groupIndex}`,
+                                              itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`,
+                                            },
                                           })
                                         }
-                                        className="w-full sm:w-auto text-card"
                                       >
-                                        پخش
-                                      </Button>
+                                        کامل
+                                      </button>
+                                    </div>
 
+                                    <div className="lesson-action-row">
                                       <a
+                                        className="lesson-download-action"
                                         href={toDownloadUrl(audioUrl)}
                                         download={`${sessionLabel}.mp3`}
                                       >
-                                        <Button variant="outline" className="w-full sm:w-auto">
-                                          دانلود صوت
-                                        </Button>
+                                        <span>دانلود صوت</span>
+                                        <Download aria-hidden="true" />
                                       </a>
+
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          play({
+                                            title: sessionLabel,
+                                            url: streamUrl,
+                                            description: akhlaghTopicDisplayTitle(group.subject),
+                                            lessonStart:
+                                              lessonSegment?.start ?? null,
+                                            lessonEnd:
+                                              lessonSegment?.end ?? null,
+                                            segmentMode: "full",
+                                            navTarget: {
+                                              sheetId: "benefitsCard",
+                                              accordionValue: `group-${groupIndex}`,
+                                              itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`,
+                                            },
+                                          })
+                                        }
+                                        className="lesson-primary-action"
+                                      >
+                                        <span>پخش</span>
+                                        <Play aria-hidden="true" />
+                                      </button>
                                     </div>
                                   </div>
                                 ) : (
@@ -483,33 +568,42 @@ const scrollToId = async (id: string, tries = 20) => {
                         <div className="mb-2 text-center font-semibold text-primary">
                           {akhlaghSessionLabel(file, fileIndex)}
                         </div>
-                        <div className="mb-3 flex items-center justify-center gap-2 text-sm font-semibold text-primary">
-                          <span>صوت</span>
-                          <Headphones className="size-5 text-muted-foreground" />
-                        </div>
+                        <div className="lesson-audio-card">
+                          <p className="lesson-audio-title">
+                            <span>صوت</span>
+                            <Headphones aria-hidden="true" />
+                          </p>
 
-                        <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                          <Button
-                            onClick={() =>
-                              play({
-                                title: file.title || "",
-                                url: toStreamableUrl(file.url),
-                                description: akhlaghTopicDisplayTitle(group.subject),
-                              })
-                            }
-                            className="w-full sm:w-auto text-card"
-                          >
-                            پخش
-                          </Button>
+                          <div className="lesson-action-row">
+                            <a
+                              className="lesson-download-action"
+                              href={toDownloadUrl(file.url)}
+                              download={`${file.title || "audio"}.mp3`}
+                            >
+                              <span>دانلود صوت</span>
+                              <Download aria-hidden="true" />
+                            </a>
 
-                          <a
-                            href={toDownloadUrl(file.url)}
-                            download={`${file.title || "audio"}.mp3`}
-                          >
-                            <Button variant="outline" className="w-full sm:w-auto">
-                              دانلود صوت
-                            </Button>
-                          </a>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                play({
+                                  title: file.title || "",
+                                  url: toStreamableUrl(file.url),
+                                  description: akhlaghTopicDisplayTitle(group.subject),
+                                  navTarget: {
+                                    sheetId: "benefitsCard",
+                                    accordionValue: `group-${groupIndex}`,
+                                    itemDomId: `audio-benefitsCard-${groupIndex}-${fileIndex}`,
+                                  },
+                                })
+                              }
+                              className="lesson-primary-action"
+                            >
+                              <span>پخش</span>
+                              <Play aria-hidden="true" />
+                            </button>
+                          </div>
                         </div>
                       </MotionItem>
                       ))}

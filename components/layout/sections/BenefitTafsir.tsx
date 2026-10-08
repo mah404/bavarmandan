@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, Headphones } from "lucide-react";
+import { BookOpen, Download, Headphones, Play } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +27,7 @@ import {
   toPdfViewUrl,
   toStreamableUrl,
 } from "@/lib/media-api";
+import { resolveLessonSegment } from "@/lib/audio-segments";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "./SheetNavProvider";
 import { HoverLift } from "./reveal";
@@ -50,7 +51,7 @@ export const BenefitTafsir = () => {
   const [tartibiTopicValue, setTartibiTopicValue] = useState<string | undefined>();
   const [thematicTopicValue, setThematicTopicValue] = useState<string | undefined>();
   const { catalog, loading, error, load } = useAudioCatalog();
-  const { play } = useAudioPlayer();
+  const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer();
   const { target, clear } = useSheetNav();
 
   const flashHighlight = (id: string) => {
@@ -236,7 +237,15 @@ export const BenefitTafsir = () => {
                           dir="rtl"
                         >
                           {[...tafsirSessions].reverse().map((session, index) => {
+                            const itemId = `tafsir-session-${session.id || index}`;
                             const audioUrl = session.audioUrl || session.url || "";
+                            const streamUrl = toStreamableUrl(audioUrl);
+                            const lessonSegment = resolveLessonSegment(session);
+                            const isCurrentTrack = current?.url === streamUrl;
+                            const isLessonActive =
+                              isCurrentTrack && current?.segmentMode === "lesson";
+                            const isFullActive =
+                              isCurrentTrack && current?.segmentMode !== "lesson";
                             const sessionNumber = tafsirSessionNumber(session, index);
                             const sessionTitle =
                               normalizeSessionTitle(session.title, sessionNumber) ||
@@ -257,8 +266,8 @@ export const BenefitTafsir = () => {
                             return (
                               <AccordionItem
                                 key={session.id || `${session.title}-${index}`}
-                                id={`tafsir-session-${session.id || index}`}
-                                value={`tafsir-session-${session.id || index}`}
+                                id={itemId}
+                                value={itemId}
                               >
                                 <AccordionTrigger className="text-right">
                                   {sessionTitle}
@@ -279,39 +288,111 @@ export const BenefitTafsir = () => {
                                     ) : null}
 
                                     {audioUrl ? (
-                                      <div className="rounded-xl p-4 shadow-md">
-                                        <p className="mb-3 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
+                                      <div className="lesson-audio-card">
+                                        <p className="lesson-audio-title">
                                           <span>صوت</span>
-                                          <Headphones className="size-5 text-muted-foreground" />
+                                          <Headphones aria-hidden="true" />
                                         </p>
 
-                                        <div className="flex flex-col justify-center gap-2 sm:flex-row">
-                                          <Button
+                                        <div className="lesson-segment-switch">
+                                          <button
+                                            type="button"
+                                            className={`lesson-segment-chip ${
+                                              lessonSegment &&
+                                              isLessonActive &&
+                                              isPlaying
+                                                ? "is-active"
+                                                : ""
+                                            }`}
+                                            onClick={() => {
+                                              if (!lessonSegment) {
+                                                notifyLessonSoon();
+                                                return;
+                                              }
+
+                                              play({
+                                                title: sessionTitle,
+                                                url: streamUrl,
+                                                description: "پخش بخش درس",
+                                                lessonStart: lessonSegment.start,
+                                                lessonEnd: lessonSegment.end,
+                                                segmentMode: "lesson",
+                                                navTarget: {
+                                                  sheetId: "tafsir",
+                                                  accordionValue: "tafsir-tartibi",
+                                                  itemDomId: itemId,
+                                                },
+                                              });
+                                            }}
+                                          >
+                                            درس
+                                          </button>
+
+                                          <button
+                                            type="button"
+                                            className={`lesson-segment-chip ${
+                                              isFullActive && isPlaying
+                                                ? "is-active"
+                                                : ""
+                                            }`}
                                             onClick={() =>
                                               play({
                                                 title: sessionTitle,
-                                                url: toStreamableUrl(audioUrl),
+                                                url: streamUrl,
                                                 description: "تفسیر ترتیبی",
+                                                lessonStart:
+                                                  lessonSegment?.start ?? null,
+                                                lessonEnd:
+                                                  lessonSegment?.end ?? null,
+                                                segmentMode: "full",
+                                                navTarget: {
+                                                  sheetId: "tafsir",
+                                                  accordionValue: "tafsir-tartibi",
+                                                  itemDomId: itemId,
+                                                },
                                               })
                                             }
-                                            className="w-full text-card sm:w-auto"
                                           >
-                                            پخش
-                                          </Button>
+                                            کامل
+                                          </button>
+                                        </div>
 
+                                        <div className="lesson-action-row">
                                           <a
+                                            className="lesson-download-action"
                                             href={toDownloadUrl(audioUrl)}
                                             download={`${
                                               session.title || "tafsir-audio"
                                             }.mp3`}
                                           >
-                                            <Button
-                                              variant="outline"
-                                              className="w-full sm:w-auto"
-                                            >
-                                              دانلود صوت
-                                            </Button>
+                                            <span>دانلود صوت</span>
+                                            <Download aria-hidden="true" />
                                           </a>
+
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              play({
+                                                title: sessionTitle,
+                                                url: streamUrl,
+                                                description: "تفسیر ترتیبی",
+                                                lessonStart:
+                                                  lessonSegment?.start ?? null,
+                                                lessonEnd:
+                                                  lessonSegment?.end ?? null,
+                                                segmentMode: "full",
+                                                navTarget: {
+                                                  sheetId: "tafsir",
+                                                  accordionValue: "tafsir-tartibi",
+                                                  itemDomId: itemId,
+                                                },
+                                              })
+                                            }
+                                            className="lesson-primary-action"
+                                          >
+                                            <span>پخش</span>
+                                            <Play aria-hidden="true" />
+                                          </button>
                                         </div>
                                       </div>
                                     ) : null}
@@ -422,6 +503,13 @@ export const BenefitTafsir = () => {
                           {thematicTafsirSessions.map((session, index) => {
                             const itemId = `tafsir-mozooei-session-${session.id || index}`;
                             const audioUrl = session.audioUrl || session.url || "";
+                            const streamUrl = toStreamableUrl(audioUrl);
+                            const lessonSegment = resolveLessonSegment(session);
+                            const isCurrentTrack = current?.url === streamUrl;
+                            const isLessonActive =
+                              isCurrentTrack && current?.segmentMode === "lesson";
+                            const isFullActive =
+                              isCurrentTrack && current?.segmentMode !== "lesson";
                             const sessionNumber = tafsirSessionNumber(session, index);
                             const sessionTitle =
                               normalizeSessionTitle(session.title, sessionNumber) ||
@@ -464,40 +552,112 @@ export const BenefitTafsir = () => {
                                       ) : null}
 
                                       {audioUrl ? (
-                                        <div className="rounded-xl p-4 shadow-md">
-                                          <p className="mb-3 flex items-center justify-center gap-2 text-center text-sm font-semibold text-primary">
+                                        <div className="lesson-audio-card">
+                                          <p className="lesson-audio-title">
                                             <span>صوت</span>
-                                            <Headphones className="size-5 text-muted-foreground" />
+                                            <Headphones aria-hidden="true" />
                                           </p>
 
-                                          <div className="flex flex-col justify-center gap-2 sm:flex-row">
-                                            <Button
+                                          <div className="lesson-segment-switch">
+                                            <button
+                                              type="button"
+                                              className={`lesson-segment-chip ${
+                                                lessonSegment &&
+                                                isLessonActive &&
+                                                isPlaying
+                                                  ? "is-active"
+                                                  : ""
+                                              }`}
+                                              onClick={() => {
+                                                if (!lessonSegment) {
+                                                  notifyLessonSoon();
+                                                  return;
+                                                }
+
+                                                play({
+                                                  title:
+                                                    `سوره واقعه ـ مباحث معاد ـ ${sessionTitle}`,
+                                                  url: streamUrl,
+                                                  description: "پخش بخش درس",
+                                                  lessonStart: lessonSegment.start,
+                                                  lessonEnd: lessonSegment.end,
+                                                  segmentMode: "lesson",
+                                                  navTarget: {
+                                                    sheetId: "tafsir",
+                                                    accordionValue: "tafsir-mozooei",
+                                                    itemDomId: itemId,
+                                                  },
+                                                });
+                                              }}
+                                            >
+                                              درس
+                                            </button>
+
+                                            <button
+                                              type="button"
+                                              className={`lesson-segment-chip ${
+                                                isFullActive && isPlaying
+                                                  ? "is-active"
+                                                  : ""
+                                              }`}
                                               onClick={() =>
                                                 play({
                                                   title:
                                                     `سوره واقعه ـ مباحث معاد ـ ${sessionTitle}`,
-                                                  url: toStreamableUrl(audioUrl),
+                                                  url: streamUrl,
                                                   description: "احسن الحدیث",
+                                                  lessonStart:
+                                                    lessonSegment?.start ?? null,
+                                                  lessonEnd:
+                                                    lessonSegment?.end ?? null,
+                                                  segmentMode: "full",
+                                                  navTarget: {
+                                                    sheetId: "tafsir",
+                                                    accordionValue: "tafsir-mozooei",
+                                                    itemDomId: itemId,
+                                                  },
                                                 })
                                               }
-                                              className="w-full text-card sm:w-auto"
                                             >
-                                              پخش
-                                            </Button>
+                                              کامل
+                                            </button>
+                                          </div>
 
+                                          <div className="lesson-action-row">
                                             <a
+                                              className="lesson-download-action"
                                               href={toDownloadUrl(audioUrl)}
                                               download={`${
                                                 session.title || "tafsir-topic-audio"
                                               }.mp3`}
                                             >
-                                              <Button
-                                                variant="outline"
-                                                className="w-full sm:w-auto"
-                                              >
-                                                دانلود صوت
-                                              </Button>
+                                              <span>دانلود صوت</span>
+                                              <Download aria-hidden="true" />
                                             </a>
+
+                                            <button
+                                              type="button"
+                                              onClick={() =>
+                                                play({
+                                                  title:
+                                                    `سوره واقعه ـ مباحث معاد ـ ${sessionTitle}`,
+                                                  url: streamUrl,
+                                                  description: "احسن الحدیث",
+                                                  lessonStart: lessonSegment?.start ?? null,
+                                                  lessonEnd: lessonSegment?.end ?? null,
+                                                  segmentMode: "full",
+                                                  navTarget: {
+                                                    sheetId: "tafsir",
+                                                    accordionValue: "tafsir-mozooei",
+                                                    itemDomId: itemId,
+                                                  },
+                                                })
+                                              }
+                                              className="lesson-primary-action"
+                                            >
+                                              <span>پخش</span>
+                                              <Play aria-hidden="true" />
+                                            </button>
                                           </div>
                                         </div>
                                       ) : null}
