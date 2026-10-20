@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { BellRing, Sparkles } from "lucide-react";
+import { BellRing } from "lucide-react";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -39,7 +39,7 @@ function springEasing(stiffness = 240, damping = 22) {
 export function AnnouncementsDialog() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const triggerRef = useRef<HTMLAnchorElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const reducedMotion = useMemo(
     () =>
@@ -213,8 +213,38 @@ export function AnnouncementsDialog() {
 
               <header className="notes-header announcements-header">
                 <div className="notes-medal" data-announcements-animate="pop">
-                  <Sparkles className="notes-medal-star" />
-                  <BellRing className="notes-medal-icon" />
+                  <svg
+                    className="announcements-medal-icon"
+                    viewBox="0 0 100 100"
+                    role="img"
+                    aria-label="اعلانات"
+                  >
+                    <g fill="currentColor">
+                      <path d="M82 14h4v6h6v4h-6v6h-4v-6h-6v-4h6z" />
+                      <path d="M14 74h4v6h6v4h-6v6h-4v-6H8v-4h6z" />
+                    </g>
+                    <path
+                      d="M50 6C54 34 66 46 94 50C66 54 54 66 50 94C46 66 34 54 6 50C34 46 46 34 50 6Z"
+                      fill="currentColor"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinejoin="round"
+                    />
+                    <g transform="translate(26 25) scale(2)">
+                      <g
+                        className="announcements-medal-bell"
+                        fill="none"
+                        stroke="#111F1C"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        vectorEffect="non-scaling-stroke"
+                      >
+                        <path d="M6 10a6 6 0 0112 0v4l1.5 3h-15L6 14z" />
+                        <path d="M10 20a2 2 0 004 0" />
+                      </g>
+                    </g>
+                  </svg>
                 </div>
                 <h3 id="announcements-title" data-announcements-animate>
                   اعلانات و اشارات
@@ -252,23 +282,50 @@ export function AnnouncementsDialog() {
 
   return (
     <>
-      <div className="hero-announcements-row" dir="rtl">
-        <span className="hero-announcements-line" aria-hidden="true" />
-        <button
+      <div className="bv-sec" id="announcements" dir="rtl">
+        <div className="bv-sec__line" aria-hidden="true">
+          <span />
+          <i />
+        </div>
+
+        <a
           ref={triggerRef}
-          type="button"
-          className="notes-trigger hero-announcements-trigger"
+          className="bv-sec__pill"
+          href="#announcements"
           aria-haspopup="dialog"
           aria-expanded={open}
-          onClick={() => setOpen(true)}
+          onClick={(event) => {
+            event.preventDefault();
+            setOpen(true);
+          }}
         >
-          <span className="notes-trigger-icon">
-            <BellRing className="size-3.5" />
-            <span className="notes-trigger-ping" />
+          <span className="bv-sec__tile">
+            <span className="bv-sec__halo" aria-hidden="true" />
+            <svg
+              className="bv-sec__bell"
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.9"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M6 10a6 6 0 0112 0v4l1.5 3h-15L6 14z" />
+              <path d="M10 20a2 2 0 004 0" />
+              <path d="M3 7.5a9 9 0 012-3.5M21 7.5a9 9 0 00-2-3.5" />
+            </svg>
+            <span className="bv-sec__ping" aria-hidden="true" />
           </span>
-          <span className="notes-trigger-label">اعلانات و اشارات</span>
-        </button>
-        <span className="hero-announcements-line" aria-hidden="true" />
+          <span className="bv-sec__label">اعلانات و اشارات</span>
+        </a>
+
+        <div className="bv-sec__line" aria-hidden="true">
+          <span />
+          <i />
+        </div>
       </div>
       {dialog}
     </>

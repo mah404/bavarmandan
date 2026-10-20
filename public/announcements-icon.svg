@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96" role="img" aria-label="اعلانات">
+  <style>
+    .bell {
+      transform-box: fill-box;
+      transform-origin: 50% 8%;
+      animation: ring 3.2s ease-in-out infinite;
+    }
+    @keyframes ring {
+      0%, 52%, 100% { transform: rotate(0deg); }
+      6% { transform: rotate(14deg); }
+      14% { transform: rotate(-12deg); }
+      22% { transform: rotate(8deg); }
+      30% { transform: rotate(-4deg); }
+      40% { transform: rotate(0deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bell { animation: none; }
+    }
+  </style>
+
+  <g fill="#FDE047">
+    <path d="M82 14h4v6h6v4h-6v6h-4v-6h-6v-4h6z" />
+    <path d="M14 74h4v6h6v4h-6v6h-4v-6H8v-4h6z" />
+  </g>
+
+  <path
+    d="M50 6C54 34 66 46 94 50C66 54 54 66 50 94C46 66 34 54 6 50C34 46 46 34 50 6Z"
+    fill="#FDE047"
+    stroke="#FDE047"
+    stroke-width="3"
+    stroke-linejoin="round"
+  />
+
+  <g transform="translate(26 25) scale(2)">
+    <g
+      class="bell"
+      fill="none"
+      stroke="#111F1C"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      vector-effect="non-scaling-stroke"
+    >
+      <path d="M6 10a6 6 0 0112 0v4l1.5 3h-15L6 14z" />
+      <path d="M10 20a2 2 0 004 0" />
+    </g>
+  </g>
+</svg>
