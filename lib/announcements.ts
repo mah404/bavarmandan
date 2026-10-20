@@ -19,9 +19,6 @@ export interface AnnouncementInput {
   published: boolean;
 }
 
-export const ANNOUNCEMENT_TITLE_MAX = 200;
-export const ANNOUNCEMENT_CONTENT_MAX = 10000;
-
 /** Validates and normalizes a create/update body. Returns an error message (Persian) or the clean fields. */
 export function parseAnnouncementInput(
   raw: unknown,
@@ -38,9 +35,6 @@ export function parseAnnouncementInput(
     if (typeof body.title !== "string") return { error: "عنوان باید متن باشد." };
     const title = body.title.trim();
     if (!title) return { error: "عنوان اعلان نمی‌تواند خالی باشد." };
-    if (title.length > ANNOUNCEMENT_TITLE_MAX) {
-      return { error: `عنوان نباید بیشتر از ${ANNOUNCEMENT_TITLE_MAX} نویسه باشد.` };
-    }
     value.title = title;
   }
 
@@ -48,9 +42,6 @@ export function parseAnnouncementInput(
     if (typeof body.content !== "string") return { error: "متن اعلان باید متن باشد." };
     const content = body.content.trim();
     if (!content) return { error: "متن اعلان نمی‌تواند خالی باشد." };
-    if (content.length > ANNOUNCEMENT_CONTENT_MAX) {
-      return { error: `متن نباید بیشتر از ${ANNOUNCEMENT_CONTENT_MAX} نویسه باشد.` };
-    }
     value.content = content;
   }
 

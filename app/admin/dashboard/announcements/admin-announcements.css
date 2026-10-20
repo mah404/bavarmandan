@@ -228,7 +228,7 @@
 .bv-admin a.back-btn:hover{background:var(--panel-2);border-color:var(--gold)}
 .bv-admin .logo{box-shadow:none}
 /* Pin and cover are not supported by the announcements API */
-.bv-admin .switch-row,.bv-admin .side > div:has(> #cover){display:none}
+.bv-admin .switch-row{display:none !important}
 .bv-admin .item .dates{font-size:11.5px;color:var(--faint)}
 /* Loading label: spinner and text on one line */
 .bv-admin #publishLabel,.bv-admin .btn:has(> .spin){display:inline-flex;align-items:center;justify-content:center;gap:8px}
@@ -240,3 +240,93 @@
 .bv-admin .custom-color{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);cursor:pointer}
 .bv-admin .custom-color input{width:44px;height:30px;padding:0;border:1px solid var(--line);border-radius:8px;background:transparent;cursor:pointer}
 @media (max-width:600px){.bv-admin .swatches{grid-template-columns:repeat(7,32px)}}
+/* show-date and schedule options */
+.bv-admin .opt{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.bv-admin .opt input{width:18px;height:18px;margin:3px 0 0;flex:none;accent-color:var(--gold-deep)}
+.bv-admin .opt span{display:flex;flex-direction:column;line-height:1.5}
+.bv-admin .opt b{font-size:14px}
+.bv-admin .opt small,.bv-admin #schedHint{color:var(--muted);font-size:12.5px}
+.bv-admin .opt-group{display:flex;flex-direction:column;gap:10px}
+.bv-admin #schedBox{display:flex;flex-direction:column;gap:6px}
+.bv-admin #schedBox .field{width:100%;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--field);padding:0 12px;font-size:14px;color-scheme:inherit}
+.bv-admin #schedBox .field:focus{outline:none;border-color:var(--gold)}
+.bv-admin .chip.sched{color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent)}
+/* drag and drop ordering */
+.bv-admin .item[draggable="true"]{cursor:grab}
+.bv-admin .item.dragging{opacity:.45;cursor:grabbing}
+.bv-admin .item.drop-before{box-shadow:0 -3px 0 0 var(--gold)}
+.bv-admin .item.drop-after{box-shadow:0 3px 0 0 var(--gold)}
+.bv-admin .grip{color:var(--faint);font-size:16px;line-height:1;letter-spacing:-2px;cursor:grab;user-select:none}
+.bv-admin .sched-lbl{font-size:13px;font-weight:700;color:var(--muted)}
+.bv-admin #schedTz{cursor:pointer}
+.bv-admin #schedHint bdi{font-variant-numeric:tabular-nums}
+/* modern schedule fields */
+.bv-admin #schedBox{gap:12px}
+.bv-admin .sched-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.bv-admin .sched-grow{flex:1}
+.bv-admin .sched-row{display:flex;gap:10px;align-items:flex-end}
+.bv-admin .sched-lbl{font-size:12.5px;font-weight:700;color:var(--muted)}
+.bv-admin .pick{display:flex;align-items:center;gap:10px;width:100%;height:46px;padding:0 12px;border-radius:14px;border:1px solid var(--line);background:var(--field);color:var(--ink);font-size:14px;font-weight:600;text-align:right;transition:border-color .2s,box-shadow .2s,background .2s}
+.bv-admin .pick:hover{border-color:var(--line-gold)}
+.bv-admin .pick[aria-expanded="true"],.bv-admin .pick:focus-visible{border-color:var(--gold);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 18%,transparent);outline:none}
+.bv-admin .pick > svg:first-child{flex:none;color:var(--gold)}
+.bv-admin .pick-txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bv-admin .pick.empty .pick-txt{color:var(--faint);font-weight:500}
+.bv-admin .pick-meta{flex:none;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--gold) 14%,transparent);color:var(--gold);font-size:11.5px;font-weight:700;direction:ltr}
+.bv-admin .pick-chev{flex:none;color:var(--faint);transition:transform .25s}
+.bv-admin .pick[aria-expanded="true"] .pick-chev{transform:rotate(180deg)}
+.bv-admin .stepper{display:flex;align-items:center;gap:2px;height:46px;padding:0 6px;border-radius:14px;border:1px solid var(--line);background:var(--field)}
+.bv-admin .stepper i{font-style:normal;font-weight:800;color:var(--faint)}
+.bv-admin .step{display:flex;flex-direction:column;align-items:center;justify-content:center;width:34px}
+.bv-admin .step b{font-size:15px;line-height:1.1;font-weight:800;font-variant-numeric:tabular-nums}
+.bv-admin .step button{height:12px;width:100%;border:0;background:transparent;color:var(--faint);font-size:8px;line-height:1;padding:0;border-radius:6px}
+.bv-admin .step button:hover{color:var(--gold)}
+.bv-admin .tz-pop{padding:8px}
+.bv-admin .tz-list{display:flex;flex-direction:column;gap:2px;max-height:min(300px,50vh);overflow:auto}
+.bv-admin .tz-item{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;padding:9px 12px;border:0;border-radius:10px;background:transparent;text-align:right;font-size:13.5px;font-weight:600}
+.bv-admin .tz-item:hover{background:var(--field)}
+.bv-admin .tz-item.on{background:color-mix(in srgb,var(--gold) 14%,transparent);color:var(--gold)}
+.bv-admin .tz-r{display:flex;align-items:center;gap:8px;flex:none;color:var(--muted);font-size:12px}
+.bv-admin .tz-r em{font-style:normal;padding:1px 7px;border-radius:99px;background:var(--field);direction:ltr}
+.bv-admin .cal-pop{width:300px;padding:14px}
+.bv-admin .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.bv-admin .cal-head b{font-size:14px}
+.bv-admin .cal-nav{width:32px;height:32px;border-radius:10px;border:1px solid var(--line);background:var(--field);font-size:18px;line-height:1}
+.bv-admin .cal-nav:hover{border-color:var(--gold);color:var(--gold)}
+.bv-admin .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.bv-admin .cal-w{font-size:12px;color:var(--faint);padding:4px 0}
+.bv-admin .cal-d{height:36px;border:0;border-radius:10px;background:transparent;font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.bv-admin .cal-d:hover:not(:disabled){background:var(--field)}
+.bv-admin .cal-d.today{box-shadow:inset 0 0 0 1.5px var(--line-gold)}
+.bv-admin .cal-d.on{background:var(--yellow);color:var(--on-yellow);font-weight:800}
+.bv-admin .cal-d:disabled{opacity:.3;cursor:not-allowed}
+/* A soft bell under a short list; it disappears once the list is long enough to fill the column */
+.bv-admin .list-deco{display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px 0 8px;opacity:.9;pointer-events:none;user-select:none}
+.bv-admin .list-deco span{font-size:54px;line-height:1;filter:drop-shadow(0 10px 24px color-mix(in srgb,var(--yellow) 45%,transparent));animation:bva-bell 4s ease-in-out infinite;transform-origin:50% 10%}
+.bv-admin .list-deco small{color:var(--faint);font-size:12px}
+@keyframes bva-bell{0%,62%,100%{transform:rotate(0)}68%{transform:rotate(-12deg)}76%{transform:rotate(10deg)}84%{transform:rotate(-6deg)}92%{transform:rotate(3deg)}}
+/* Cards: same glass look as the site's own cards (soft gradient, gold glow in the corner, hairline border) */
+.bv-admin .card{
+  border-color:hsl(var(--primary)/.22);
+  background:
+    radial-gradient(circle at 90% 12%,hsl(var(--primary)/.11),transparent 11rem),
+    linear-gradient(145deg,hsl(var(--card)/.78),hsl(var(--card)/.5));
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  box-shadow:0 26px 54px -32px rgba(20,60,52,.5),inset 0 1px 0 hsl(var(--foreground)/.06);
+}
+.dark .bv-admin .card{
+  background:
+    radial-gradient(circle at 90% 12%,hsl(var(--primary)/.1),transparent 11rem),
+    linear-gradient(180deg,hsl(var(--foreground)/.03),transparent 48%),
+    linear-gradient(145deg,hsl(var(--card)/.76),hsl(var(--background)/.45));
+  box-shadow:0 28px 56px -30px rgba(0,0,0,.8),inset 0 1px 0 hsl(var(--foreground)/.05);
+}
+.bv-admin .card:hover{border-color:hsl(var(--primary)/.34)}
+.bv-admin .item{background:color-mix(in srgb,var(--panel-2) 55%,transparent);border-color:hsl(var(--primary)/.1)}
+.bv-admin .preview{background:color-mix(in srgb,var(--field) 70%,transparent)}
+.bv-admin .cover-remove{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;height:40px;border-radius:12px;border:1px solid color-mix(in srgb,var(--danger) 45%,transparent);background:var(--danger-bg);color:var(--danger);font-size:13.5px;font-weight:700;transition:background .2s,border-color .2s}
+.bv-admin .cover-remove:hover{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 16%,transparent)}
+.bv-admin .cover .rm{width:38px;height:38px;font-size:16px;cursor:pointer}
+.bv-admin .clear-all{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:42px;margin-top:2px;padding:0 12px;border-radius:12px;border:1px dashed var(--line);background:transparent;color:var(--muted);font-size:13px;font-weight:700;transition:color .2s,border-color .2s,background .2s}
+.bv-admin .clear-all:hover{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 55%,transparent);background:var(--danger-bg)}
+.bv-admin .clear-all.confirm{color:var(--danger);border-style:solid;border-color:var(--danger);background:var(--danger-bg)}

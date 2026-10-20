@@ -1,5 +1,6 @@
 // @ts-nocheck
 /* Admin announcements dashboard logic (ported from the approved design file). */
+import { parseAnnouncementContent, buildAnnouncementContent } from '../../../../lib/announcement-meta';
 export function initAnnouncementsAdmin(root, opts = {}) {
 let disposed = false;
 const cleanups = [];
@@ -43,23 +44,59 @@ function textToHtml(text){
 }
 /* Backend shape {id,title,content,published,createdAt,updatedAt} <-> dashboard shape */
 const HTML_HINT = /<\/?(p|b|strong|i|em|u|s|strike|div|br|h2|h3|ul|ol|li|blockquote|a|span|font|hr)\b/i;
-const fromApi = x => ({
-  id: x.id,
-  title: x.title || '',
-  body: HTML_HINT.test(x.content || '') ? clean(x.content) : textToHtml(x.content),
-  pinned: false,
-  status: x.published ? 'published' : 'draft',
-  cover: null,
-  created_at: x.createdAt,
-  updated_at: x.updatedAt,
+const fromApi = x => {
+  const { meta, body } = parseAnnouncementContent(x.content || '');
+  return {
+    id: x.id,
+    title: x.title || '',
+    body: HTML_HINT.test(body) ? clean(body) : textToHtml(body),
+    pinned: false,
+    status: x.published ? 'published' : 'draft',
+    created_at: x.createdAt,
+    updated_at: x.updatedAt,
+    showDate: meta.showDate,
+    publishAt: meta.publishAt,
+    order: meta.order,
+    cover: meta.cover,
+  };
+};
+const toApi = p => ({
+  title: p.title,
+  content: buildAnnouncementContent(clean(p.body), { showDate: !!p.showDate, publishAt: p.publishAt || null, order: typeof p.order === 'number' ? p.order : null, cover: p.cover || null }),
+  published: p.status === 'published',
 });
-const toApi = p => ({ title: p.title, content: clean(p.body), published: p.status === 'published' });
 const unwrap = r => (r && (r.announcement || r.data)) || r;
 
 const $ = (s, r = root) => r.querySelector(s);
 const $$ = (s, r = root) => [...r.querySelectorAll(s)];
 const FA = '۰۱۲۳۴۵۶۷۸۹';
 const fa = n => String(n).replace(/\d/g, d => FA[d]);
+const ZONE_NAMES = {
+  'Asia/Tehran': 'ایران', 'Europe/Berlin': 'آلمان', 'Europe/London': 'انگلستان', 'Europe/Paris': 'فرانسه', 'Europe/Istanbul': 'ترکیه',
+  'Asia/Dubai': 'امارات', 'Asia/Riyadh': 'عربستان', 'Asia/Baghdad': 'عراق', 'Asia/Karachi': 'پاکستان', 'Asia/Kolkata': 'هند',
+  'Asia/Shanghai': 'چین', 'Asia/Tokyo': 'ژاپن', 'America/New_York': 'آمریکا (شرق)', 'America/Chicago': 'آمریکا (مرکز)',
+  'America/Los_Angeles': 'Pacific', 'America/Toronto': 'کانادا', 'Australia/Sydney': 'استرالیا',
+};
+/* The zone the admin types times in. The saved time is always an absolute UTC instant. */
+let TZ = ZONE_NAMES[store_get('bv-sched-tz')] ? store_get('bv-sched-tz') : 'America/Los_Angeles';
+function store_get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }
+const pad = n => String(n).padStart(2, '0');
+function tzParts(date){
+  const f = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  return Object.fromEntries(f.formatToParts(date).map(p => [p.type, p.value]));
+}
+function tzOffsetMs(date){ const m = tzParts(date); return Date.UTC(+m.year, +m.month - 1, +m.day, +m.hour, +m.minute, +m.second) - Math.floor(date.getTime() / 1000) * 1000; }
+/* "2026-10-21T14:30" typed as Pacific time -> UTC ISO string */
+function pacificToIso(local){
+  const [d, t] = local.split('T'); const [Y, M, D] = d.split('-').map(Number); const [h, mi] = t.split(':').map(Number);
+  const guess = Date.UTC(Y, M - 1, D, h, mi); let utc = guess - tzOffsetMs(new Date(guess)); utc = guess - tzOffsetMs(new Date(utc));
+  return new Date(utc).toISOString();
+}
+function isoToPacificLocal(iso){ const m = tzParts(new Date(iso)); return m.year + '-' + m.month + '-' + m.day + 'T' + m.hour + ':' + m.minute; }
+const pacificNowLocal = () => isoToPacificLocal(new Date().toISOString());
+const pacificLabel = iso => { try { return new Date(iso).toLocaleString('fa-IR', { timeZone: TZ, dateStyle: 'medium', timeStyle: 'short' }) + ' (' + (ZONE_NAMES[TZ] || TZ) + ')'; } catch { return iso; } };
+const isScheduled = x => x.status === 'published' && x.publishAt && new Date(x.publishAt).getTime() > Date.now();
+const orderKey = x => (typeof x.order === 'number' ? x.order : 1e15);
 const store = {
   get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
   set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
@@ -90,6 +127,7 @@ const api = {
   },
   async create(p){ if (DEMO) return { ...p, id:'l' + Date.now(), created_at:Date.now() }; const r = unwrap(await http('POST', '', toApi(p))); return r && r.id ? fromApi(r) : null; },
   async update(id, p){ if (DEMO) return { ...p, id }; const r = unwrap(await http('PUT', '/' + encodeURIComponent(id), toApi(p))); return r && r.id ? fromApi(r) : null; },
+  async reorder(x){ if (DEMO) return null; return http('PUT', '/' + encodeURIComponent(x.id), { content: toApi(x).content }); },
   async remove(id){ if (DEMO) return null; return http('DELETE', '/' + encodeURIComponent(id)); },
 };
 
@@ -156,29 +194,38 @@ function fmtDate(t){
 function faDate(t){
   try { return new Date(t).toLocaleDateString('fa-IR', { year:'numeric', month:'long', day:'numeric' }); } catch { return ''; }
 }
+/* A soft bell under a short list; it disappears once the list is long enough to fill the column. */
+function addDeco(box, count){
+  if (count >= 4) return;
+  const deco = document.createElement('div'); deco.className = 'list-deco'; deco.setAttribute('aria-hidden', 'true');
+  deco.innerHTML = '<span>🔔</span><small>اعلان‌های شما اینجا فهرست می‌شوند</small>'; box.append(deco);
+}
 function renderList(){
   const box = $('#items'); box.innerHTML = '';
   const q = query.trim();
   const rows = items
     .filter(x => filter === 'all' || x.status === filter)
     .filter(x => !q || (x.title + ' ' + textOf(x.body)).includes(q))
-    .sort((a,b) => (b.pinned - a.pinned) || (new Date(b.created_at) - new Date(a.created_at)));
+    .sort((a,b) => (orderKey(a) - orderKey(b)) || (new Date(b.created_at) - new Date(a.created_at)));
+  const canDrag = filter === 'all' && !q;
   $('#count').textContent = '(' + fa(items.length) + ')';
   if (!rows.length) {
     box.innerHTML = '<div class="empty">' + (items.length ? (q ? 'اعلانی با این جستجو پیدا نشد.' : 'در این دسته اعلانی نیست. برای دیدن همه، روی «همه» بزنید.') : 'هنوز اعلانی نیست. اولین اعلان را در ویرایشگر بنویسید.') + '</div>';
+    addDeco(box, 0);
     return;
   }
   rows.forEach(x => {
     const el = document.createElement('div');
     el.className = 'item' + (x.id === editingId ? ' active' : '') + (x.id === freshId ? ' fresh' : '');
     const meta = document.createElement('div'); meta.className = 'meta';
-    meta.innerHTML = (x.status === 'published' ? '<span class="chip pub">منتشرشده</span>' : '<span class="chip draft">پیش‌نویس</span>') +
+    meta.innerHTML = (canDrag ? '<span class="grip" title="بکشید و رها کنید" aria-hidden="true">⠿</span>' : '') +
+      (isScheduled(x) ? '<span class="chip sched">زمان‌بندی‌شده</span>' : (x.status === 'published' ? '<span class="chip pub">منتشرشده</span>' : '<span class="chip draft">پیش‌نویس</span>')) +
       (x.pinned ? '<span class="chip pin">سنجاق</span>' : '') + '<span style="margin-inline-start:auto"></span>';
     meta.lastChild.textContent = fmtDate(x.created_at);
     const t = document.createElement('div'); t.className = 't'; t.textContent = x.title || 'بدون عنوان';
     const ex = document.createElement('div'); ex.className = 'ex'; ex.textContent = textOf(x.body);
     const dates = document.createElement('div'); dates.className = 'dates';
-    dates.textContent = 'ایجاد: ' + faDate(x.created_at) + (x.updated_at && x.updated_at !== x.created_at ? ' · آخرین ویرایش: ' + faDate(x.updated_at) : '');
+    dates.textContent = 'ایجاد: ' + faDate(x.created_at) + (x.updated_at && x.updated_at !== x.created_at ? ' · آخرین ویرایش: ' + faDate(x.updated_at) : '') + (x.publishAt ? ' · انتشار: ' + pacificLabel(x.publishAt) : '');
     el.append(meta, t, ex, dates);
     if (confirmId === x.id) {
       const c = document.createElement('div'); c.className = 'confirm';
@@ -192,11 +239,55 @@ function renderList(){
       const ed = document.createElement('button'); ed.className = 'mini'; ed.type = 'button'; ed.textContent = 'ویرایش';
       const del = document.createElement('button'); del.className = 'mini danger'; del.type = 'button'; del.textContent = 'حذف';
       ed.onclick = () => loadForEdit(x.id); del.onclick = () => { confirmId = x.id; renderList(); };
-      row.append(ed, del); el.append(row);
+      row.append(ed, del);
+      if (canDrag) {
+        const up = document.createElement('button'); up.className = 'mini'; up.type = 'button'; up.textContent = '↑'; up.setAttribute('aria-label', 'بردن بالاتر'); up.onclick = () => moveBy(x.id, -1);
+        const dn = document.createElement('button'); dn.className = 'mini'; dn.type = 'button'; dn.textContent = '↓'; dn.setAttribute('aria-label', 'بردن پایین‌تر'); dn.onclick = () => moveBy(x.id, 1);
+        row.append(up, dn);
+      }
+      el.append(row);
+    }
+    if (canDrag) {
+      el.draggable = true; el.dataset.id = x.id;
+      el.addEventListener('dragstart', e => { dragId = x.id; el.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', x.id); } catch {} });
+      el.addEventListener('dragend', () => { dragId = null; $$('.item', box).forEach(n => n.classList.remove('dragging', 'drop-before', 'drop-after')); });
+      el.addEventListener('dragover', e => {
+        if (!dragId || dragId === x.id) return; e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+        const r = el.getBoundingClientRect(), after = e.clientY > r.top + r.height / 2;
+        el.classList.toggle('drop-after', after); el.classList.toggle('drop-before', !after);
+      });
+      el.addEventListener('dragleave', () => el.classList.remove('drop-before', 'drop-after'));
+      el.addEventListener('drop', e => {
+        e.preventDefault(); if (!dragId || dragId === x.id) return;
+        const r = el.getBoundingClientRect(); reorderTo(dragId, x.id, e.clientY > r.top + r.height / 2);
+      });
     }
     box.append(el);
   });
+  addDeco(box, rows.length);
   freshId = null;
+}
+let dragId = null, orderQueue = Promise.resolve();
+const orderedItems = () => items.slice().sort((a, b) => (orderKey(a) - orderKey(b)) || (new Date(b.created_at) - new Date(a.created_at)));
+function reorderTo(movedId, targetId, after){
+  const list = orderedItems(), from = list.findIndex(x => x.id === movedId); if (from < 0) return;
+  const [moved] = list.splice(from, 1); let to = list.findIndex(x => x.id === targetId); if (to < 0) return;
+  list.splice(after ? to + 1 : to, 0, moved); persistOrder(list);
+}
+function moveBy(id, step){
+  const list = orderedItems(), i = list.findIndex(x => x.id === id), j = i + step; if (i < 0 || j < 0 || j >= list.length) return;
+  [list[i], list[j]] = [list[j], list[i]]; persistOrder(list);
+}
+/* The new order is shown immediately; only the items whose position changed are saved to the server. */
+function persistOrder(list){
+  const snapshot = items.map(x => ({ ...x })), changed = [];
+  list.forEach((x, i) => { if (x.order !== i) { x.order = i; changed.push(x); } });
+  items = list; renderList();
+  if (!changed.length) return;
+  orderQueue = orderQueue.then(async () => {
+    try { await Promise.all(changed.map(x => api.reorder(x))); toast('ترتیب اعلان‌ها ذخیره شد', '↕'); }
+    catch (e) { if (e.message === 'auth') return; items = snapshot; renderList(); toast((e.message || 'ذخیرهٔ ترتیب انجام نشد') + ' · ترتیب قبلی برگردانده شد', '!'); }
+  });
 }
 async function doDelete(id){
   /* Optimistic: the card disappears right away; it comes back if the server refuses. */
@@ -305,9 +396,9 @@ function closePop(){ if (opts.closeEmojiPicker) opts.closeEmojiPicker(); $$('.po
 function openPop(name){
   if (openName === name) { closePop(); return; }
   closePop(); openName = name;
-  const anchor = { color:'#colorBtn', hi:'#hiBtn', link:'#linkBtn', emoji:'#emojiBtn' }[name];
+  const anchor = { color:'#colorBtn', hi:'#hiBtn', link:'#linkBtn', emoji:'#emojiBtn', tz:'#tzBtn', date:'#dateBtn' }[name];
   const btn = $(anchor); btn.setAttribute('aria-expanded','true');
-  const p = document.createElement('div'); p.className = 'pop' + (name === 'emoji' ? ' emoji-pop' : ''); p.setAttribute('role','dialog');
+  const p = document.createElement('div'); p.className = 'pop' + (name === 'emoji' ? ' emoji-pop' : '') + (name === 'tz' ? ' tz-pop' : '') + (name === 'date' ? ' cal-pop' : ''); p.setAttribute('role','dialog');
   if (name === 'color' || name === 'hi') {
     const list = name === 'color' ? COLORS : HIS;
     p.innerHTML = '<div class="lbl">' + (name === 'color' ? 'رنگ متن' : 'رنگ پس‌زمینهٔ متن') + '</div><div class="swatches"></div>';
@@ -326,6 +417,39 @@ function openPop(name){
     ci.onmousedown = () => saveRange();
     ci.onchange = () => { exec(name === 'color' ? 'foreColor' : 'hiliteColor', ci.value); $(name === 'color' ? '#colorSwatch' : '#hiSwatch').style.background = ci.value; closePop(); };
     p.append(custom);
+  } else if (name === 'tz') {
+    p.setAttribute('role', 'listbox'); p.innerHTML = '<div class="tz-list"></div>';
+    ZONES.forEach(z => {
+      const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'option'); b.className = 'tz-item' + (z === TZ ? ' on' : ''); b.setAttribute('aria-selected', String(z === TZ));
+      b.innerHTML = '<span class="tz-n"></span><span class="tz-r"><bdi dir="ltr" class="tz-t"></bdi><em></em></span>';
+      $('.tz-n', b).textContent = ZONE_FULL[z]; $('.tz-t', b).textContent = nowIn(z).split('T')[1]; $('em', b).textContent = offsetLabel(z);
+      b.onclick = () => {
+        const cur = $('#schedAt').value, keep = cur ? pacificToIso(cur) : null;   /* same instant, shown in the new zone */
+        TZ = z; try { localStorage.setItem('bv-sched-tz', JSON.stringify(TZ)); } catch {}
+        if (keep) { const l = isoToPacificLocal(keep); schedTime = l.split('T')[1]; $('#schedAt').value = l; }
+        renderSchedUi(); closePop();
+      };
+      $('.tz-list', p).append(b);
+    });
+  } else if (name === 'date') {
+    const today = pacificNowLocal().split('T')[0], sel = getDate();
+    if (!calYM) { const [y, m] = (sel || today).split('-').map(Number); calYM = { y, m }; }
+    const draw = () => {
+      const { y, m } = calYM, first = new Date(Date.UTC(y, m - 1, 1)), startPad = (first.getUTCDay() + 1) % 7, days = new Date(Date.UTC(y, m, 0)).getUTCDate();
+      p.innerHTML = '<div class="cal-head"><button type="button" class="cal-nav" data-n="1" aria-label="ماه بعد">‹</button><b></b><button type="button" class="cal-nav" data-n="-1" aria-label="ماه قبل">›</button></div><div class="cal-grid"></div>';
+      $('b', p).textContent = first.toLocaleDateString('fa-IR-u-ca-gregory', { timeZone: 'UTC', month: 'long', year: 'numeric' });
+      const g = $('.cal-grid', p);
+      ['ش','ی','د','س','چ','پ','ج'].forEach(d => { const w = document.createElement('span'); w.className = 'cal-w'; w.textContent = d; g.append(w); });
+      for (let i = 0; i < startPad; i++) g.append(document.createElement('span'));
+      for (let d = 1; d <= days; d++) {
+        const key = y + '-' + pad(m) + '-' + pad(d), b = document.createElement('button'); b.type = 'button'; b.className = 'cal-d' + (key === today ? ' today' : '') + (key === sel ? ' on' : '');
+        b.textContent = fa(d); b.disabled = key < today;
+        b.onclick = () => { setSched(key); closePop(); };
+        g.append(b);
+      }
+      $$('.cal-nav', p).forEach(n => n.onclick = ev => { ev.stopPropagation(); const k = Number(n.dataset.n); calYM = { y: m + k > 12 ? y + 1 : m + k < 1 ? y - 1 : y, m: m + k > 12 ? 1 : m + k < 1 ? 12 : m + k }; draw(); });
+    };
+    draw();
   } else if (name === 'link') {
     const sel = savedRange ? savedRange.toString() : '';
     p.innerHTML = '<div class="lbl">افزودن لینک</div><input class="field" id="lkUrl" dir="ltr" placeholder="https://…" aria-label="آدرس لینک"><input class="field" id="lkTxt" placeholder="متن لینک" aria-label="متن لینک" style="margin-top:8px"><div class="acts"><button class="btn primary" type="button" id="lkOk">افزودن</button><button class="btn ghost" type="button" id="lkNo">انصراف</button></div>';
@@ -341,6 +465,7 @@ function openPop(name){
     setTimeout(() => { $('#lkOk', p).onclick = apply; $('#lkNo', p).onclick = () => { closePop(); restoreRange(); }; });
   }
   root.append(p);
+  if (name === 'tz') p.style.minWidth = btn.getBoundingClientRect().width + 'px';
   const br = btn.getBoundingClientRect(), pw = p.offsetWidth, ph = p.offsetHeight;
   let left = Math.max(12, Math.min(br.right - pw, innerWidth - pw - 12));
   let top = br.bottom + 8; if (top + ph > innerHeight - 12) top = Math.max(12, br.top - ph - 8);
@@ -349,9 +474,9 @@ function openPop(name){
 listen(window, 'resize', () => closePop());
 listen(root, 'scroll', () => { if (openName) closePop(); }, { passive:true });
 listen(window, 'scroll', () => { if (openName) closePop(); }, { passive:true });
-['color','hi','link','emoji'].forEach(n => {
-  const b = $({ color:'#colorBtn', hi:'#hiBtn', link:'#linkBtn', emoji:'#emojiBtn' }[n]);
-  b.addEventListener('mousedown', e => { e.preventDefault(); saveRange(); });
+['color','hi','link','emoji','tz','date'].forEach(n => {
+  const b = $({ color:'#colorBtn', hi:'#hiBtn', link:'#linkBtn', emoji:'#emojiBtn', tz:'#tzBtn', date:'#dateBtn' }[n]);
+  b.addEventListener('mousedown', e => { e.preventDefault(); if (n !== 'tz' && n !== 'date') saveRange(); });
   b.addEventListener('click', e => {
     e.stopPropagation();
     if (n === 'emoji' && opts.openEmojiPicker) {
@@ -368,6 +493,7 @@ listen(document, 'keydown', e => { if (e.key === 'Escape') { closePop(); closeMo
 /* ---------- counters, preview, autosave ---------- */
 let saveT;
 function onChange(){
+  if (typeof syncClear === 'function') queueMicrotask(syncClear);
   const txt = (body.textContent || '').trim();
   const words = txt ? txt.split(/\s+/).length : 0;
   $('#wc').textContent = fa(words) + ' کلمه · ' + fa(txt.length) + ' نویسه';
@@ -396,6 +522,7 @@ title.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefau
 $('#pin').addEventListener('click', () => { pinned = !pinned; $('#pin').setAttribute('aria-checked', String(pinned)); onChange(); });
 function setCover(src){
   cover = src; const c = $('#cover');
+  $('#coverRemove').hidden = !src; if (!src) $('#coverIn').value = '';   /* picking the same file again must work */
   $$('img,.rm', c).forEach(n => n.remove());
   if (src) {
     const img = document.createElement('img'); img.src = src; img.alt = 'تصویر اعلان';
@@ -405,12 +532,32 @@ function setCover(src){
   }
   onChange();
 }
+/* The cover travels inside the announcement, so it is shrunk first (about 900px wide JPEG, small enough for the API). */
+const COVER_MAX_CHARS = 150000;
+function shrinkImage(src){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      for (const [side, q] of [[900, .74], [800, .66], [700, .58], [600, .5], [500, .45]]) {
+        const k = Math.min(1, side / Math.max(img.width, img.height)), c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k));
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+        const out = c.toDataURL('image/jpeg', q); if (out.length <= COVER_MAX_CHARS) return resolve(out);
+      }
+      reject(new Error('big'));
+    };
+    img.onerror = () => reject(new Error('bad')); img.src = src;
+  });
+}
 function readFile(f){
   if (!f) return;
   if (!/^image\//.test(f.type)) { toast('فقط تصویر JPG، PNG یا WebP', '!'); return; }
-  if (f.size > 2 * 1024 * 1024) { toast('حجم تصویر بیشتر از ۲ مگابایت است', '!'); return; }
-  const r = new FileReader(); r.onload = () => setCover(r.result); r.readAsDataURL(f);
+  if (f.size > 8 * 1024 * 1024) { toast('حجم تصویر بیشتر از ۸ مگابایت است', '!'); return; }
+  const r = new FileReader();
+  r.onload = () => shrinkImage(r.result).then(setCover).catch(e => toast(e.message === 'big' ? 'این تصویر خیلی سنگین است؛ تصویر ساده‌تر یا کوچک‌تری انتخاب کنید' : 'تصویر خوانده نشد', '!'));
+  r.readAsDataURL(f);
 }
+$('#coverRemove').addEventListener('click', () => setCover(null));
 $('#coverIn').addEventListener('change', e => readFile(e.target.files[0]));
 ['dragover','dragenter'].forEach(t => $('#cover').addEventListener(t, e => { e.preventDefault(); $('#cover').classList.add('drag'); }));
 ['dragleave','drop'].forEach(t => $('#cover').addEventListener(t, () => $('#cover').classList.remove('drag')));
@@ -422,14 +569,23 @@ async function save(status){
   const t = title.value.trim(), html = clean(body.innerHTML), txt = textOf(html);
   const plain = htmlToText(html);
   if (!t) { showErr('اعلان باید عنوان داشته باشد.'); title.focus(); return; }
-  if (t.length > 200) { showErr('عنوان نباید بیشتر از ۲۰۰ نویسه باشد.'); title.focus(); return; }
   if (!txt || !plain) { showErr('متن اعلان خالی است.'); body.focus(); return; }
-  if (html.length > 10000) { showErr('متن (همراه با قالب‌بندی) بیش از حد طولانی است. کمی کوتاهش کنید.'); body.focus(); return; }
+  const cur = editingId && items.find(i => i.id === editingId);
+  let publishAt = null;
+  if ($('#schedOn').checked) {
+    const v = $('#schedAt').value;
+    if (!v) { if (status === 'published') { showErr('زمان انتشار را انتخاب کنید یا گزینهٔ زمان‌بندی را خاموش کنید.'); $('#schedAt').focus(); return; } }
+    else {
+      publishAt = pacificToIso(v);
+      if (status === 'published' && publishAt !== (cur && cur.publishAt) && new Date(publishAt).getTime() <= Date.now()) { showErr('زمان انتخاب‌شده گذشته است؛ یک زمان آینده (در منطقهٔ زمانی انتخاب‌شده) بگذارید.'); $('#schedAt').focus(); return; }
+    }
+  }
+  const topOrder = () => { const o = items.map(x => x.order).filter(n => typeof n === 'number'); return o.length ? Math.min(...o) - 1 : 0; };
   const btn = status === 'published' ? $('#publishBtn') : $('#draftBtn');
   const label = btn === $('#publishBtn') ? $('#publishLabel') : btn;
   const old = label.textContent; btn.disabled = true;
   label.innerHTML = '<svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" style="vertical-align:-3px;margin-inline-end:8px"><path d="M12 3a9 9 0 019 9"/></svg>در حال ذخیره…';
-  const payload = { title:t, body:html, pinned, cover, status };
+  const payload = { title:t, body:html, pinned, cover, status, showDate: $('#showDate').checked, publishAt, order: cur && typeof cur.order === 'number' ? cur.order : (cur ? null : topOrder()) };
   try {
     let saved;
     const wasEditing = editingId;
@@ -447,16 +603,58 @@ async function save(status){
         if (!wasEditing) freshId = items.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0]?.id;
       } catch (e) { if (e.message === 'auth') throw e; }
     }
-    if (status === 'published') burst($('#publishBtn'));
-    toast(editingId ? 'تغییرات ذخیره شد' : (status === 'published' ? 'اعلان منتشر شد' : 'پیش‌نویس ذخیره شد'));
+    const scheduled = status === 'published' && publishAt && new Date(publishAt).getTime() > Date.now();
+    if (status === 'published' && !scheduled) burst($('#publishBtn'));
+    toast(editingId ? 'تغییرات ذخیره شد' : (scheduled ? 'اعلان برای زمان انتخاب‌شده زمان‌بندی شد' : (status === 'published' ? 'اعلان منتشر شد' : 'پیش‌نویس ذخیره شد')));
     resetEditor(); renderList();
   } catch(e){ if (e.message !== 'auth') showErr(e.message || 'ذخیره انجام نشد. دوباره امتحان کنید.'); }
-  finally { btn.disabled = false; label.textContent = editingId ? old : (btn === $('#publishBtn') ? 'انتشار اعلان' : 'ذخیرهٔ پیش‌نویس'); }
+  finally { btn.disabled = false; if (btn === $('#publishBtn')) syncPublishLabel(); else label.textContent = 'ذخیرهٔ پیش‌نویس'; }
 }
 $('#publishBtn').addEventListener('click', () => save('published'));
 $('#draftBtn').addEventListener('click', () => save('draft'));
 
+function syncPublishLabel(){
+  const cur = editingId && items.find(i => i.id === editingId);
+  $('#publishLabel').textContent = cur && cur.status === 'published' ? 'ذخیرهٔ تغییرات' : ($('#schedOn').checked ? 'زمان‌بندی انتشار' : 'انتشار اعلان');
+}
+const ZONES = ['Asia/Tehran','Europe/Berlin','Europe/London','Europe/Paris','Europe/Istanbul','Asia/Dubai','Asia/Riyadh','Asia/Baghdad','Asia/Karachi','Asia/Kolkata','Asia/Shanghai','Asia/Tokyo','America/New_York','America/Chicago','America/Los_Angeles','America/Toronto','Australia/Sydney'];
+const ZONE_FULL = { 'Asia/Tehran':'ایران (تهران)', 'Europe/Berlin':'آلمان (برلین)', 'Europe/London':'انگلستان (لندن)', 'Europe/Paris':'فرانسه (پاریس)', 'Europe/Istanbul':'ترکیه (استانبول)', 'Asia/Dubai':'امارات (دبی)', 'Asia/Riyadh':'عربستان (ریاض)', 'Asia/Baghdad':'عراق (بغداد)', 'Asia/Karachi':'پاکستان (کراچی)', 'Asia/Kolkata':'هند (دهلی)', 'Asia/Shanghai':'چین (پکن)', 'Asia/Tokyo':'ژاپن (توکیو)', 'America/New_York':'آمریکا – ساحل شرقی (نیویورک)', 'America/Chicago':'آمریکا – مرکزی (شیکاگو)', 'America/Los_Angeles':'آمریکا – ساحل غربی (Pacific)', 'America/Toronto':'کانادا (تورنتو)', 'Australia/Sydney':'استرالیا (سیدنی)' };
+function offsetLabel(tz){
+  const keep = TZ; TZ = tz; const min = Math.round(tzOffsetMs(new Date()) / 60000); TZ = keep;
+  const sign = min < 0 ? '−' : '+', a = Math.abs(min); return 'UTC' + sign + Math.floor(a / 60) + (a % 60 ? ':' + pad(a % 60) : '');
+}
+function nowIn(tz){ const keep = TZ; TZ = tz; const v = pacificNowLocal(); TZ = keep; return v; }
+let schedTime = '12:00', calYM = null;
+const getDate = () => ($('#schedAt').value || '').split('T')[0] || '';
+function setSched(date, time){
+  if (time) schedTime = time;
+  $('#schedAt').value = date ? date + 'T' + schedTime : '';
+  renderSchedUi();
+}
+function renderSchedUi(){
+  const date = getDate(); if ($('#schedAt').value) schedTime = $('#schedAt').value.split('T')[1] || schedTime;
+  $('#tzName').textContent = ZONE_FULL[TZ] || TZ; $('#tzOff').textContent = offsetLabel(TZ);
+  $('#dateTxt').textContent = date ? new Date(date + 'T12:00:00Z').toLocaleDateString('fa-IR-u-ca-gregory', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : 'انتخاب تاریخ';
+  $('#dateBtn').classList.toggle('empty', !date);
+  const [h, m] = schedTime.split(':'); $('#hTxt').textContent = fa(h); $('#mTxt').textContent = fa(m);
+  const hint = $('#schedHint'); hint.textContent = 'ساعت الان در ' + (ZONE_FULL[TZ] || TZ) + ': ';
+  const clock = document.createElement('bdi'); clock.dir = 'ltr'; clock.textContent = pacificNowLocal().replace('T', ' '); hint.append(clock);
+}
+function syncSchedule(){
+  const on = $('#schedOn').checked; $('#schedBox').hidden = !on;
+  if (on) renderSchedUi();
+  syncPublishLabel();
+}
+$$('[data-step]').forEach(b => b.addEventListener('click', () => {
+  let [h, m] = schedTime.split(':').map(Number); const k = b.dataset.step;
+  if (k === 'h+') h = (h + 1) % 24; if (k === 'h-') h = (h + 23) % 24;
+  if (k === 'm+') { m = (Math.floor(m / 5) * 5 + 5) % 60; if (m === 0) h = (h + 1) % 24; }
+  if (k === 'm-') { m = m % 5 ? Math.floor(m / 5) * 5 : (m + 55) % 60; if (m === 55) h = (h + 23) % 24; }
+  setSched(getDate(), pad(h) + ':' + pad(m));
+}));
+$('#schedOn').addEventListener('change', syncSchedule);
 function resetEditor(){
+  $('#showDate').checked = false; $('#schedOn').checked = false; $('#schedAt').value = ''; schedTime = '12:00'; calYM = null; $('#schedBox').hidden = true;
   editingId = null; title.value = ''; body.innerHTML = ''; pinned = false; $('#pin').setAttribute('aria-checked','false'); setCover(null);
   $('#editingBar').hidden = true; $('#publishLabel').textContent = 'انتشار اعلان';
   const ss = $('#saveState'); ss.className = 'save-state'; ss.lastChild.textContent = 'آماده';
@@ -467,12 +665,33 @@ function loadForEdit(id){
   editingId = id; title.value = x.title || ''; body.innerHTML = clean(x.body || '');
   pinned = !!x.pinned; $('#pin').setAttribute('aria-checked', String(pinned)); setCover(x.cover || null);
   $('#editingBar').hidden = false; $('#editingText').textContent = 'در حال ویرایش: ' + (x.title || 'بدون عنوان');
-  $('#publishLabel').textContent = x.status === 'published' ? 'ذخیرهٔ تغییرات' : 'انتشار اعلان';
+  $('#showDate').checked = !!x.showDate; $('#schedOn').checked = !!x.publishAt; $('#schedAt').value = x.publishAt ? isoToPacificLocal(x.publishAt) : ''; calYM = null;
+  syncSchedule();
   clearTimeout(saveT); $('#saveState').className = 'save-state'; $('#saveState').lastChild.textContent = 'در حال ویرایش';
   renderList(); onChange(); clearTimeout(saveT);
   $('#saveState').className = 'save-state'; $('#saveState').lastChild.textContent = 'در حال ویرایش';
   title.scrollIntoView({ behavior:'smooth', block:'center' }); title.focus();
 }
+/* The clear button only appears when there is something to clear. */
+function syncClear(){
+  const dirty = !!(title.value.trim() || textOf(body.innerHTML) || cover || $('#showDate').checked || $('#schedOn').checked || editingId);
+  const btn = $('#clearAll'); if (!dirty) { btn.classList.remove('confirm'); $('#clearAllTxt').textContent = 'پاک کردن همه و شروع از اول'; }
+  btn.hidden = !dirty;
+}
+$('#showDate').addEventListener('change', syncClear); $('#schedOn').addEventListener('change', syncClear);
+body.addEventListener('input', syncClear); title.addEventListener('input', syncClear);
+/* Clears everything typed so far (title, text, image, time options) and starts over; two taps to avoid accidents. */
+let clearTimer = 0;
+$('#clearAll').addEventListener('click', () => {
+  const btn = $('#clearAll'), txt = $('#clearAllTxt');
+  if (!btn.classList.contains('confirm')) {
+    btn.classList.add('confirm'); txt.textContent = 'مطمئنید؟ دوباره بزنید تا همه‌چیز پاک شود';
+    clearTimeout(clearTimer); clearTimer = setTimeout(() => { btn.classList.remove('confirm'); txt.textContent = 'پاک کردن همه و شروع از اول'; }, 3500);
+    return;
+  }
+  clearTimeout(clearTimer); btn.classList.remove('confirm'); txt.textContent = 'پاک کردن همه و شروع از اول';
+  store.del(DRAFT_KEY); closeModal(); resetEditor(); renderList(); title.focus(); toast('همه‌چیز پاک شد؛ از اول شروع کنید', '↺');
+});
 $('#cancelEdit').addEventListener('click', () => { resetEditor(); renderList(); });
 $('#newBtn').addEventListener('click', () => { resetEditor(); renderList(); title.focus(); });
 

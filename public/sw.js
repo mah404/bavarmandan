@@ -1,4 +1,4 @@
-const CACHE_NAME = "bavarmandan-pwa-v2";
+const CACHE_NAME = "bavarmandan-pwa-v3";
 const PRECACHE_URLS = [
   "/",
   "/taghvim-shia",
@@ -49,6 +49,22 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => caches.match(request).then((cached) => cached || caches.match("/")))
+    );
+    return;
+  }
+
+  // Scripts and styles: always try the network first so a new deploy is never hidden behind an old copy.
+  if (url.pathname.startsWith("/_next/") || /\.(?:js|css)$/.test(url.pathname)) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
     );
     return;
   }

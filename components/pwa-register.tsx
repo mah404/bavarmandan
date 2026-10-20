@@ -21,8 +21,17 @@ export function PWARegister() {
       source: isStandalone ? "standalone_app" : "browser",
     });
 
-    if (process.env.NODE_ENV !== "production") return;
     if (!("serviceWorker" in navigator)) return;
+
+    if (process.env.NODE_ENV !== "production") {
+      // Development: a worker left over from an earlier production build would serve stale files forever.
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+        .then(() => ("caches" in window ? caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key)))) : null))
+        .catch(() => {});
+      return;
+    }
 
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("/sw.js").catch(() => {

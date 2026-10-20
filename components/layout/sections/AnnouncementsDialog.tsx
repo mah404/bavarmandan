@@ -4,6 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { createPortal } from "react-dom";
 import { BellRing } from "lucide-react";
 import type { Announcement, AnnouncementsResponse } from "@/lib/announcements";
+import { parseAnnouncementContent } from "@/lib/announcement-meta";
 import { AnnouncementContent } from "./AnnouncementContent";
 
 const isBrowser = typeof window !== "undefined";
@@ -95,10 +96,16 @@ export function AnnouncementsDialog() {
       }
 
       hasData.current = true;
+      // Order chosen by the admin (drag and drop in the dashboard); items without one come last, newest first.
+      const orderOf = (item: Announcement) => parseAnnouncementContent(item.content).meta.order ?? Number.MAX_SAFE_INTEGER;
       setAnnouncements(
         data.announcements
           .filter((item) => item.published)
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .sort(
+            (a, b) =>
+              orderOf(a) - orderOf(b) ||
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
       );
       setLoadState("ready");
     } catch {
@@ -333,7 +340,6 @@ export function AnnouncementsDialog() {
                 <h3 id="announcements-title" data-announcements-animate>
                   اعلانات و اشارات
                 </h3>
-                <p data-announcements-animate>اطلاعیه‌ها و مطالب تازه مجمع باورمندان</p>
                 <div className="notes-ornament" data-announcements-animate>
                   <i />
                   <span />
@@ -349,20 +355,31 @@ export function AnnouncementsDialog() {
                   </div>
                 ) : loadState === "ready" && announcements.length > 0 ? (
                   <ul className="announcements-list">
-                    {announcements.map((item, index) => (
-                      <li key={item.id} className="announcements-item">
-                        <h4>{item.title}</h4>
-                        <AnnouncementContent content={item.content} />
-                        <time dateTime={item.createdAt}>{formatAnnouncementDate(item.createdAt)}</time>
-                        {index < announcements.length - 1 ? (
-                          <div className="announcements-sep" aria-hidden="true">
-                            <i />
-                            <span />
-                            <i />
-                          </div>
-                        ) : null}
-                      </li>
-                    ))}
+                    {announcements.map((item, index) => {
+                      const { meta, body } = parseAnnouncementContent(item.content);
+                      const shownDate = meta.publishAt || item.createdAt;
+
+                      return (
+                        <li key={item.id} className="announcements-item">
+                          {meta.cover ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img className="announcements-cover" src={meta.cover} alt="" loading="lazy" />
+                          ) : null}
+                          <h4>{item.title}</h4>
+                          <AnnouncementContent content={body} />
+                          {meta.showDate ? (
+                            <time dateTime={shownDate}>{formatAnnouncementDate(shownDate)}</time>
+                          ) : null}
+                          {index < announcements.length - 1 ? (
+                            <div className="announcements-sep" aria-hidden="true">
+                              <i />
+                              <span />
+                              <i />
+                            </div>
+                          ) : null}
+                        </li>
+                      );
+                    })}
                   </ul>
                 ) : (
                   <div className="announcements-empty" data-announcements-animate role="status">
