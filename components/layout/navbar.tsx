@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, Music2 } from "lucide-react";
+import { ChevronLeft, Menu, Music2, ShieldCheck } from "lucide-react";
 import React from "react";
 import {
   Sheet,
@@ -81,6 +81,26 @@ function BackgroundMusicNavButton() {
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [peek, setPeek] = React.useState(false);
+  const peekTimer = React.useRef<number>(0);
+  const [mobilePeek, setMobilePeek] = React.useState(false);
+  const holdTimer = React.useRef<number>(0);
+  const heldRef = React.useRef(false);
+  const hidePeekTimer = React.useRef<number>(0);
+
+  // Touch: press and hold the name inside the menu to reveal the dashboard link (a quick tap still plays the audio).
+  const startHold = () => {
+    heldRef.current = false;
+    window.clearTimeout(holdTimer.current);
+    holdTimer.current = window.setTimeout(() => {
+      heldRef.current = true;
+      setMobilePeek(true);
+      if (navigator.vibrate) navigator.vibrate(12);
+      window.clearTimeout(hidePeekTimer.current);
+      hidePeekTimer.current = window.setTimeout(() => setMobilePeek(false), 6000);
+    }, 550);
+  };
+  const cancelHold = () => window.clearTimeout(holdTimer.current);
   const secretAudioRef = React.useRef<HTMLAudioElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
@@ -133,27 +153,52 @@ export const Navbar = () => {
       className="sticky top-4 z-40 mx-auto w-[94%] max-w-6xl"
     >
       <div className="relative flex items-center justify-between rounded-xl border border-secondary/45 bg-card/70 px-3 py-2 shadow-[0_16px_42px_rgba(0,0,0,0.1)] backdrop-blur-xl dark:bg-card/85">
-        <button
-          type="button"
-          onClick={toggleSecretAudio}
-          className="group flex items-center gap-3 rounded-lg border border-transparent py-1 pl-4 pr-1 transition duration-300  focus:outline-none focus-visible:outline-none focus-visible:ring-0"
-          dir="rtl"
-          aria-label="Play Bavarmandan audio"
-        >
-          <Image
-            src="/mainicon.jpg"
-            alt="Bavarmandan"
-            width={44}
-            height={44}
-            className="size-11 rounded-full border object-cover  transition duration-300 "
-          />
-          <span className="hidden text-right sm:block">
-            <span className="block text-base font-extrabold leading-5 text-foreground">
-              مجمع باورمندان
+        <div className="flex items-center gap-3 py-1 pl-4 pr-1" dir="rtl">
+          <button
+            type="button"
+            onClick={toggleSecretAudio}
+            className="rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+            aria-label="Play Bavarmandan audio"
+          >
+            <Image
+              src="/mainicon.jpg"
+              alt="Bavarmandan"
+              width={44}
+              height={44}
+              className="size-11 rounded-full border object-cover transition duration-300"
+            />
+          </button>
+
+          {/* Hold the pointer on the name: it flips to a "dashboard login" link. A quick click still plays the audio. */}
+          <Link
+            href="/admin"
+            className="admin-peek hidden sm:grid"
+            data-peek={peek ? "true" : "false"}
+            onPointerEnter={() => {
+              window.clearTimeout(peekTimer.current);
+              peekTimer.current = window.setTimeout(() => setPeek(true), 450);
+            }}
+            onPointerLeave={() => {
+              window.clearTimeout(peekTimer.current);
+              setPeek(false);
+            }}
+            onFocus={() => setPeek(true)}
+            onBlur={() => setPeek(false)}
+            onClick={(event) => {
+              if (peek) return;
+              event.preventDefault();
+              toggleSecretAudio();
+            }}
+            aria-label="مجمع باورمندان؛ ورود به داشبورد مدیریت"
+          >
+            <span className="admin-peek__name">مجمع باورمندان</span>
+            <span className="admin-peek__enter" aria-hidden="true">
+              <ShieldCheck className="size-3.5" />
+              ورود به داشبورد
+              <ChevronLeft className="admin-peek__arrow size-3.5" />
             </span>
-         
-          </span>
-        </button>
+          </Link>
+        </div>
 
         <nav
           className="absolute left-1/2 hidden -translate-x-1/2 rounded-lg border border-secondary/35 bg-background/15 p-1 backdrop-blur lg:flex"
@@ -197,8 +242,19 @@ export const Navbar = () => {
                   <SheetTitle>
                     <button
                       type="button"
-                      onClick={toggleSecretAudio}
-                      className="absolute left-5 top-8 flex h-10 max-w-[calc(100%-6rem)] items-center gap-2 border border-transparent focus:outline-none focus-visible:outline-none focus-visible:ring-0"
+                      onClick={() => {
+                        if (heldRef.current) {
+                          heldRef.current = false;
+                          return;
+                        }
+                        toggleSecretAudio();
+                      }}
+                      onPointerDown={startHold}
+                      onPointerUp={cancelHold}
+                      onPointerLeave={cancelHold}
+                      onPointerCancel={cancelHold}
+                      onContextMenu={(event) => event.preventDefault()}
+                      className="absolute left-5 top-8 flex h-10 max-w-[calc(100%-6rem)] touch-manipulation select-none items-center gap-2 border border-transparent focus:outline-none focus-visible:outline-none focus-visible:ring-0"
                       dir="ltr"
                       aria-label="Play Bavarmandan audio"
                     >
@@ -216,6 +272,17 @@ export const Navbar = () => {
                         مجمع باورمندان 
                       </span>
                     </button>
+                    <Link
+                      href="/admin"
+                      className="admin-peek-mobile"
+                      data-open={mobilePeek ? "true" : "false"}
+                      tabIndex={mobilePeek ? 0 : -1}
+                      aria-hidden={!mobilePeek}
+                    >
+                      <ShieldCheck className="size-4" />
+                      ورود به داشبورد
+                      <ChevronLeft className="size-4" />
+                    </Link>
                   </SheetTitle>
                 </SheetHeader>
 

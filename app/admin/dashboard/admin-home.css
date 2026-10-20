@@ -1,0 +1,145 @@
+/* Scoped dashboard home. Colors come from the main site tokens (globals.css): light = :root, dark = .dark */
+.bv-home{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;z-index:2147483000;
+  --bg:oklch(77.7% 0.152 181.912); --panel:hsl(var(--card));
+  --panel-2:color-mix(in srgb,hsl(var(--card)) 55%,#fff); --field:color-mix(in srgb,hsl(var(--card)) 30%,#fff);
+  --line:hsl(var(--border)); --line-gold:hsl(var(--primary)/.4);
+  --ink:hsl(var(--foreground)); --muted:hsl(var(--muted-foreground)); --faint:color-mix(in srgb,hsl(var(--muted-foreground)) 75%,hsl(var(--card)));
+  --gold:color-mix(in srgb,hsl(var(--primary)) 75%,#000); --gold-deep:hsl(var(--primary)); --yellow:hsl(var(--primary)); --on-yellow:hsl(var(--primary-foreground));
+  --ok:#1E7A45; --shadow:0 26px 54px -32px rgba(20,60,52,.45);
+  --font:var(--font-arabic),"Vazirmatn",Tahoma,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+.dark .bv-home{
+  --bg:hsl(var(--background)); --panel:hsl(var(--card));
+  --panel-2:color-mix(in srgb,hsl(var(--card)) 92%,hsl(var(--foreground))); --field:hsl(var(--background));
+  --line:color-mix(in srgb,hsl(var(--card)) 82%,hsl(var(--foreground))); --line-gold:hsl(var(--primary)/.26);
+  --faint:color-mix(in srgb,hsl(var(--muted-foreground)) 70%,hsl(var(--background)));
+  --gold:hsl(var(--primary)); --gold-deep:color-mix(in srgb,hsl(var(--primary)) 80%,#000); --on-yellow:hsl(var(--background));
+  --ok:#8FD9A8; --shadow:0 26px 54px -30px rgba(0,0,0,.8);
+  color-scheme:dark;
+}
+.bv-home *{box-sizing:border-box}
+.bv-home [hidden]{display:none !important}
+.bv-home{margin:0;direction:rtl;text-align:right;background:var(--bg);color:var(--ink);font-family:inherit;font-size:15px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px;overflow-x:hidden}
+.bv-home a{color:inherit}
+.bv-home button{font:inherit;color:inherit;cursor:pointer}
+.bv-home :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:10px}
+.bv-home .pattern{position:fixed;inset:0 0 auto 0;height:540px;pointer-events:none;z-index:0;opacity:.32;
+  -webkit-mask-image:radial-gradient(ellipse 70% 100% at 50% 0%,#000 0%,rgba(0,0,0,.5) 45%,transparent 80%);
+          mask-image:radial-gradient(ellipse 70% 100% at 50% 0%,#000 0%,rgba(0,0,0,.5) 45%,transparent 80%)}
+.bv-home .pattern > rect{animation:bvh-drift 24s linear infinite}
+@keyframes bvh-drift{to{transform:translateY(-80px)}}
+.bv-home .wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto}
+/* top */
+.bv-home .top{display:flex;align-items:center;gap:14px;padding-block:20px;border-bottom:1px solid var(--line-gold)}
+.bv-home .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.bv-home .logo{position:relative;width:44px;height:44px;border-radius:13px;background:var(--yellow);color:var(--on-yellow);display:grid;place-items:center;flex:none}
+.bv-home .logo::after{content:"";position:absolute;inset:-6px;border:1.2px solid var(--gold);border-radius:15px;transform:rotate(45deg);opacity:.5;animation:bvh-turn45 28s linear infinite}
+@keyframes bvh-turn45{to{transform:rotate(405deg)}}
+.bv-home .brand b{font-size:15px;font-weight:800}
+.bv-home .brand small{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.bv-home .grow{flex:1}
+.bv-home .icon-btn{width:44px;height:44px;border-radius:13px;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;color:var(--muted);text-decoration:none;transition:color .2s,border-color .2s}
+.bv-home .icon-btn:hover{color:var(--gold);border-color:var(--line-gold)}
+/* hero */
+.bv-home .hero{position:relative;display:flex;align-items:center;gap:28px;padding-block:44px 34px}
+.bv-home .hero-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.bv-home .hello{font-size:15px;color:var(--gold);font-weight:700}
+.bv-home .hero h1{margin:0;font-size:clamp(28px,4.4vw,42px);line-height:1.35;font-weight:800;text-wrap:balance}
+.bv-home .date{font-size:14.5px;color:var(--muted)}
+.bv-home .rose{position:relative;flex:none;width:180px;height:180px;display:grid;place-items:center}
+.bv-home .rose svg{position:absolute;inset:0;width:100%;height:100%}
+.bv-home .rose .a{animation:bvh-spin 40s linear infinite}
+.bv-home .rose .b{animation:bvh-spinr 26s linear infinite}
+.bv-home .rose .glow{position:absolute;inset:34px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--yellow) 28%,transparent),transparent 70%);animation:bvh-breathe 3.6s ease-in-out infinite}
+.bv-home .rose .tile{position:relative;width:70px;height:70px;border-radius:21px;background:var(--yellow);color:var(--on-yellow);display:grid;place-items:center;box-shadow:0 0 0 7px var(--bg),0 18px 36px -12px color-mix(in srgb,var(--yellow) 55%,transparent)}
+@keyframes bvh-spin{to{transform:rotate(360deg)}}
+@keyframes bvh-spinr{to{transform:rotate(-360deg)}}
+@keyframes bvh-breathe{0%,100%{opacity:.5;transform:scale(.92)}50%{opacity:1;transform:scale(1.12)}}
+.bv-home .rise{animation:bvh-rise .65s cubic-bezier(.2,.8,.2,1) both}
+@keyframes bvh-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* main grid */
+.bv-home .main{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.bv-home .f-row{flex-direction:row !important;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px 28px !important;padding:28px 30px !important}
+.bv-home .f-row .f-head{flex:1 1 320px;align-items:center}
+.bv-home .f-row .primary{flex:0 1 260px;min-width:220px}
+@media (max-width:600px){.bv-home .f-row{padding:20px !important}
+.bv-home .f-row .primary{flex:1 1 100%;min-width:0}}
+/* featured card with animated gold border */
+.bv-home .feature{position:relative;border-radius:26px;padding:1.5px;background:var(--line);overflow:hidden;isolation:isolate}
+.bv-home .feature::before{content:"";position:absolute;inset:-60%;z-index:-1;
+  background:conic-gradient(from 0deg,transparent 0 62%,var(--gold-deep) 72%,var(--yellow) 78%,var(--gold-deep) 84%,transparent 94%);
+  animation:bvh-spin 7s linear infinite}
+.bv-home .feature-in{position:relative;height:100%;border-radius:25px;background:var(--panel);padding:26px;display:flex;flex-direction:column;gap:20px}
+.bv-home .f-head{display:flex;align-items:flex-start;gap:16px}
+.bv-home .f-ic{position:relative;flex:none;width:58px;height:58px;border-radius:18px;background:var(--yellow);color:var(--on-yellow);display:grid;place-items:center}
+.bv-home .f-ic::after{content:"";position:absolute;inset:-1px;border-radius:18px;animation:bvh-beat 1.8s ease-out infinite}
+@keyframes bvh-beat{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--yellow) 50%,transparent)}70%,100%{box-shadow:0 0 0 12px color-mix(in srgb,var(--yellow) 0%,transparent)}}
+.bv-home .f-ic svg{transform-origin:50% 50%;animation:bvh-shout 4s ease-in-out infinite}
+@keyframes bvh-shout{0%,60%,100%{transform:rotate(0)}66%{transform:rotate(-10deg) scale(1.06)}74%{transform:rotate(6deg)}82%{transform:rotate(0)}}
+.bv-home .f-head h2{margin:0;font-size:24px;font-weight:800;line-height:1.4}
+.bv-home .f-head p{margin:2px 0 0;color:var(--muted);font-size:14.5px}
+.bv-home .f-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
+.bv-home .primary{position:relative;overflow:hidden;flex:1 1 220px;display:inline-flex;align-items:center;justify-content:center;gap:10px;height:54px;border-radius:16px;background:var(--yellow);color:var(--on-yellow);font-weight:800;font-size:15.5px;text-decoration:none;box-shadow:0 16px 30px -18px color-mix(in srgb,var(--yellow) 90%,transparent);transition:transform .15s}
+.bv-home .primary:hover{transform:translateY(-1px)}
+.bv-home .primary::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:bvh-sheen 4.2s ease-in-out infinite;pointer-events:none}
+@keyframes bvh-sheen{0%,62%{transform:translateX(-160%) skewX(-20deg)}100%{transform:translateX(260%) skewX(-20deg)}}
+.bv-home .secondary{flex:1 1 160px;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:54px;border-radius:16px;border:1px solid var(--line-gold);color:var(--gold);font-weight:700;text-decoration:none;transition:background .2s}
+.bv-home .secondary:hover{background:var(--panel-2)}
+/* upcoming */
+.bv-home .soon-head{display:flex;align-items:center;gap:14px;margin:34px 0 14px;color:var(--muted);font-size:14px;font-weight:700}
+.bv-home .soon-head::after{content:"";flex:1;height:1px;background:linear-gradient(270deg,var(--line-gold),transparent)}
+.bv-home .soon{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.bv-home .soon{grid-template-columns:minmax(0,1fr)}}
+.bv-home .s-card{position:relative;border-radius:20px;border:1px dashed var(--line);padding:18px;display:flex;align-items:center;gap:14px;color:var(--muted);transition:border-color .25s,transform .25s}
+.bv-home .s-card:hover{border-color:var(--line-gold);transform:translateY(-2px)}
+.bv-home .s-ic{flex:none;width:46px;height:46px;border-radius:14px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;color:var(--faint)}
+.bv-home .s-card b{display:block;color:var(--ink);font-size:15px;font-weight:700;opacity:.8}
+.bv-home .s-card small{font-size:12.5px}
+.bv-home .tag{margin-inline-start:auto;flex:none;font-size:11.5px;font-weight:700;color:var(--gold);border:1px solid var(--line-gold);padding:1px 10px;border-radius:99px}
+.bv-home .foot{margin-top:36px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;font-size:13px;color:var(--faint)}
+.bv-home .foot a{text-decoration:none;color:var(--muted)}
+.bv-home .foot a:hover{color:var(--gold)}
+.bv-home .demo{font-size:12px;font-weight:700;color:var(--gold);border:1px solid var(--line-gold);padding:2px 10px;border-radius:99px}
+@media (max-width:600px){.bv-home .hero{flex-direction:column-reverse;align-items:flex-start;gap:8px;padding-block:28px 22px}
+.bv-home .rose{width:130px;height:130px;align-self:center}
+.bv-home .rose .tile{width:54px;height:54px;border-radius:17px}
+.bv-home .feature-in{padding:20px}
+.bv-home .f-head h2{font-size:21px}
+.bv-home .stat b{font-size:20px}
+.bv-home .brand small{display:none}}
+@media (prefers-reduced-motion:reduce){.bv-home *,.bv-home *::before,.bv-home *::after{animation:none !important;transition:none !important}}
+.bv-home .pattern g{stroke:var(--gold)}
+.dark .bv-home .pattern g{stroke:var(--gold-deep)}
+.bv-home .pattern{opacity:.4}
+.dark .bv-home .pattern{opacity:.32}
+
+.bv-home .logo img,.bv-home .rose .tile img{width:100%;height:100%;object-fit:cover;display:block;user-select:none}
+.bv-home .logo img{border-radius:13px}
+.bv-home .rose .tile img{border-radius:21px}
+@media (max-width:600px){.bv-home .rose .tile img{border-radius:17px}}
+.bv-home .logo,.bv-home .rose .tile{border-radius:50%;background:transparent}
+.bv-home .logo img,.bv-home .rose .tile img{border-radius:50%;border:1px solid var(--line-gold)}
+.bv-home .logo::after{display:none}
+/* Light theme: darker amber so the pattern and rosette stay visible on the teal background */
+.bv-home .pattern g{stroke:color-mix(in srgb,hsl(var(--primary)) 55%,#000)}
+.bv-home .pattern{opacity:.6}
+.bv-home .rose svg g{stroke:color-mix(in srgb,hsl(var(--primary)) 55%,#000)}
+.bv-home .rose svg .a g{opacity:1}
+.dark .bv-home .pattern g{stroke:var(--gold-deep)}
+.dark .bv-home .pattern{opacity:.32}
+.dark .bv-home .rose svg g{stroke:#E6C55A}
+/* "Coming soon" cards: more body and contrast on the light theme */
+.bv-home .s-card{background:color-mix(in srgb,var(--panel) 75%,transparent);border-color:hsl(var(--primary)/.6);box-shadow:0 12px 26px -18px rgba(20,60,52,.5);color:var(--ink)}
+.bv-home .s-card:hover{border-color:var(--gold);box-shadow:0 16px 30px -16px rgba(20,60,52,.55)}
+.bv-home .s-card b{opacity:1}
+.bv-home .s-card small{color:var(--muted)}
+.bv-home .s-ic{border-color:hsl(var(--primary)/.55);color:var(--gold)}
+.bv-home .tag{background:color-mix(in srgb,hsl(var(--primary)) 18%,transparent);border-color:hsl(var(--primary)/.6);color:var(--gold)}
+.dark .bv-home .s-card{background:transparent;border-color:var(--line);box-shadow:none;color:var(--muted)}
+.dark .bv-home .s-card:hover{border-color:var(--line-gold);box-shadow:none}
+.dark .bv-home .s-card b{opacity:.8}
+.dark .bv-home .s-card small{color:inherit}
+.dark .bv-home .s-ic{border-color:var(--line);color:var(--faint)}
+.dark .bv-home .tag{background:transparent;border-color:var(--line-gold);color:var(--gold)}

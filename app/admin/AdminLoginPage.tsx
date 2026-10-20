@@ -19,6 +19,7 @@ const persianNumber = (value: number) =>
 export function AdminLoginPage() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+  const mobileInputRef = useRef<HTMLInputElement>(null);
   const shakeTimer = useRef<ReturnType<typeof setTimeout>>();
   const redirectTimer = useRef<ReturnType<typeof setTimeout>>();
   const [password, setPassword] = useState("");
@@ -47,7 +48,10 @@ export function AdminLoginPage() {
     setStatus("error");
     setMessage(text);
     shakeField();
-    requestAnimationFrame(() => inputRef.current?.focus());
+    requestAnimationFrame(() => {
+      const visible = inputRef.current?.offsetParent ? inputRef.current : mobileInputRef.current;
+      visible?.focus();
+    });
   };
 
   const checkCapsLock = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -113,11 +117,7 @@ export function AdminLoginPage() {
       <section className={styles.formHalf}>
         <Link href="/" className={styles.brand} aria-label="بازگشت به مجمع باورمندان">
           <span className={styles.brandLogo}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
-              <path d="M12 1.5v2" />
-              <path d="M12 3.5c-1.3 2.2-5.6 4-5.6 8.4V22h11.2V11.9c0-4.4-4.3-6.2-5.6-8.4z" />
-              <path d="M9.6 22v-6a2.4 2.4 0 014.8 0v6" />
-            </svg>
+            <img src="/mainicon.jpg" alt="" draggable={false} />
           </span>
           <span>مجمع باورمندان</span>
         </Link>
@@ -232,7 +232,6 @@ export function AdminLoginPage() {
             </svg>
             بازگشت به سایت
           </Link>
-          <span>اتصال امن · HTTPS</span>
         </footer>
       </section>
 
@@ -261,15 +260,154 @@ export function AdminLoginPage() {
             </g>
           </svg>
           <div className={styles.centerLogo}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round">
-              <path d="M12 1.5v2" />
-              <path d="M12 3.5c-1.3 2.2-5.6 4-5.6 8.4V22h11.2V11.9c0-4.4-4.3-6.2-5.6-8.4z" />
-              <path d="M9.6 22v-6a2.4 2.4 0 014.8 0v6" />
-            </svg>
-            مجمع باورمندان
+            <img src="/mainicon.jpg" alt="" draggable={false} />
           </div>
         </div>
       </section>
+
+      <div className={styles.mLogin}>
+        <svg className={styles.mPattern} aria-hidden="true" width="100%" height="360">
+          <defs>
+            <pattern id="admin-m-khatam" width="56" height="56" patternUnits="userSpaceOnUse">
+              <g fill="none" stroke="#C6973C" strokeWidth=".9">
+                <rect x="14" y="14" width="28" height="28" />
+                <rect x="14" y="14" width="28" height="28" transform="rotate(45 28 28)" />
+                <path d="M0 28h8.2M47.8 28H56M28 0v8.2M28 47.8V56" />
+              </g>
+            </pattern>
+          </defs>
+          <rect className={styles.mDrift} x="0" y="0" width="100%" height="430" fill="url(#admin-m-khatam)" />
+        </svg>
+
+        <header className={styles.mHead}>
+          <div className={`${styles.mBadge} ${styles.mPop}`} aria-hidden="true">
+            <span className={styles.mGlow} />
+            <svg className={styles.mRot} viewBox="0 0 300 300">
+              <g fill="none" stroke="#E6C55A" strokeLinejoin="round" strokeWidth="2.2">
+                <rect x="62" y="62" width="176" height="176" opacity=".75" />
+                <rect x="62" y="62" width="176" height="176" transform="rotate(45 150 150)" opacity=".75" />
+                <circle cx="150" cy="150" r="136" strokeWidth="1.6" opacity=".3" strokeDasharray="4 10" />
+              </g>
+            </svg>
+            <svg className={styles.mRotRev} viewBox="0 0 300 300">
+              <g fill="none" stroke="#E6C55A" strokeLinejoin="round" strokeWidth="1.6" opacity=".45">
+                <rect x="88" y="88" width="124" height="124" transform="rotate(22.5 150 150)" />
+                <rect x="88" y="88" width="124" height="124" transform="rotate(67.5 150 150)" />
+              </g>
+            </svg>
+            <i className={styles.mTw} style={{ top: 8, left: 78, animationDelay: "0s" }} />
+            <i className={styles.mTw} style={{ top: 80, right: 2, animationDelay: ".7s" }} />
+            <i className={styles.mTw} style={{ bottom: 10, left: 30, animationDelay: "1.4s" }} />
+            <i className={styles.mTw} style={{ top: 34, left: 14, animationDelay: "2.1s" }} />
+            <span className={styles.mLogo}>
+              <img src="/mainicon.jpg" alt="" draggable={false} />
+            </span>
+          </div>
+          <span className={`${styles.mSite} ${styles.mRise}`} style={{ animationDelay: ".25s" }}>مجمع باورمندان</span>
+          <h1 className={`${styles.mTitle} ${styles.mRise}`} style={{ animationDelay: ".35s" }}>ورود به پنل مدیریت</h1>
+        </header>
+
+        <form className={styles.mForm} onSubmit={submit} noValidate>
+          <div className={`${styles.mField} ${styles.mRise}`} style={{ animationDelay: ".5s" }}>
+            <label htmlFor="admin-m-password">رمز عبور</label>
+            <div className={`${styles.mPw} ${invalid ? styles.mIsError : ""} ${shaking ? styles.mShake : ""}`}>
+              <span className={styles.mIc}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="5" y="10.5" width="14" height="10" rx="2.5" />
+                  <path d="M8 10.5V7.5a4 4 0 018 0v3" />
+                </svg>
+              </span>
+              <input
+                ref={mobileInputRef}
+                id="admin-m-password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                  if (status === "error") {
+                    setStatus("idle");
+                    setMessage("");
+                  }
+                }}
+                onKeyUp={checkCapsLock}
+                autoComplete="current-password"
+                dir="ltr"
+                disabled={status === "locked"}
+                aria-invalid={invalid}
+                aria-describedby="admin-m-message"
+              />
+              <button
+                className={styles.mEye}
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+                aria-label={showPassword ? "پنهان کردن رمز" : "نمایش رمز"}
+                aria-pressed={showPassword}
+                disabled={status === "locked"}
+              >
+                {showPassword ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M3 3l18 18M10.6 6.1A9.8 9.8 0 0112 6c5 0 9 6 9 6a16 16 0 01-3 3.4M6.6 6.6C4.3 8.1 3 12 3 12s4 6 9 6c1.6 0 3-.4 4.3-1.1M9.9 9.9a3 3 0 004.2 4.2" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M3 12s4-6 9-6 9 6 9 6-4 6-9 6-9-6-9-6z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
+            </div>
+            <div id="admin-m-message" className={styles.mMessages} aria-live="polite">
+              {capsLock && status !== "locked" ? (
+                <span className={styles.mCaps}>Caps Lock روشن است</span>
+              ) : null}
+              {message ? (
+                <span role="alert" className={styles.mError}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7.5v5.5M12 16.5v.01" />
+                  </svg>
+                  {message}
+                </span>
+              ) : null}
+            </div>
+          </div>
+
+          <label className={`${styles.mCheck} ${styles.mRise}`} style={{ animationDelay: ".6s" }}>
+            <input type="checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} disabled={status === "locked"} />
+            در این دستگاه وارد بمانم
+          </label>
+
+          {status === "success" ? (
+            <Link className={styles.mGo} href="/admin/dashboard">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 12l5 5 9-10" />
+              </svg>
+              خوش آمدید ـ ورود به داشبورد
+            </Link>
+          ) : (
+            <button
+              className={`${styles.mGo} ${styles.mRise} ${status === "locked" ? styles.mGoLocked : ""}`}
+              style={{ animationDelay: ".7s" }}
+              type="submit"
+              disabled={disabled}
+            >
+              {status === "loading" ? (
+                <svg className={styles.mSpin} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true">
+                  <path d="M12 3a9 9 0 019 9" />
+                </svg>
+              ) : null}
+              {status === "loading" ? "در حال بررسی…" : status === "locked" ? "ورود موقتاً بسته است" : "ورود"}
+            </button>
+          )}
+        </form>
+
+        <Link className={styles.mBack} href="/">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+          بازگشت به سایت
+        </Link>
+      </div>
     </main>
   );
 }

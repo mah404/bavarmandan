@@ -84,7 +84,7 @@ export const HeroSection = () => {
                   <img
                     src="/telegramicon.png"
                     alt="telegram"
-                    className="ml-2 h-6 w-6"
+                    className="ms-2 h-6 w-6"
                   />
                 </Link>
               </Button>

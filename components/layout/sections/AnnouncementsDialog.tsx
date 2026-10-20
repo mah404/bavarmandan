@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { BellRing } from "lucide-react";
+import type { Announcement, AnnouncementsResponse } from "@/lib/announcements";
+import { AnnouncementContent } from "./AnnouncementContent";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -36,8 +38,19 @@ function springEasing(stiffness = 240, damping = 22) {
   return { easing: `linear(${output.join(",")})`, duration: Math.round(t * 1000) };
 }
 
+type LoadState = "idle" | "loading" | "ready" | "error";
+
+function formatAnnouncementDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("fa-IR", { year: "numeric", month: "long", day: "numeric" });
+}
+
 export function AnnouncementsDialog() {
   const [open, setOpen] = useState(false);
+  const [loadState, setLoadState] = useState<LoadState>("idle");
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
   const [mounted, setMounted] = useState(false);
   const triggerRef = useRef<HTMLAnchorElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -50,6 +63,77 @@ export function AnnouncementsDialog() {
   );
 
   useEffect(() => setMounted(true), []);
+
+  const inFlight = useRef(false);
+  const hasData = useRef(false);
+  const alive = useRef(true);
+
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+
+  // showLoading=false refreshes silently: the list on screen is kept until fresh data arrives.
+  const refresh = useCallback(async (showLoading: boolean) => {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    if (showLoading) setLoadState("loading");
+
+    try {
+      const response = await fetch("/api/announcements", { cache: "no-store" });
+      const data = (await response.json().catch(() => null)) as AnnouncementsResponse | null;
+      if (!alive.current) return;
+
+      if (!response.ok || !data || !Array.isArray(data.announcements)) {
+        if (!hasData.current) {
+          setErrorMessage(data?.message || "دریافت اعلانات انجام نشد. کمی بعد دوباره تلاش کنید.");
+          setLoadState("error");
+        }
+        return;
+      }
+
+      hasData.current = true;
+      setAnnouncements(
+        data.announcements
+          .filter((item) => item.published)
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      );
+      setLoadState("ready");
+    } catch {
+      if (!alive.current || hasData.current) return;
+      setErrorMessage("ارتباط با سرور برقرار نشد. کمی بعد دوباره تلاش کنید.");
+      setLoadState("error");
+    } finally {
+      inFlight.current = false;
+    }
+  }, []);
+
+  // Load in the background as soon as the page is ready, so the dialog opens with data already there.
+  useEffect(() => {
+    refresh(true);
+  }, [refresh]);
+
+  // While the dialog is open: refresh now, then every 10 seconds and whenever the tab becomes visible again.
+  useEffect(() => {
+    if (!open) return;
+
+    refresh(!hasData.current);
+
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible") refresh(false);
+    }, 10_000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh(false);
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [open, refresh]);
 
   useEffect(() => {
     if (!open) return;
@@ -258,10 +342,38 @@ export function AnnouncementsDialog() {
               </header>
 
               <article className="notes-body announcements-body">
-                <div className="announcements-empty" data-announcements-animate>
-                  <BellRing aria-hidden="true" />
-                  <p>هنوز اعلانی منتشر نشده است.</p>
-                </div>
+                {loadState === "idle" || loadState === "loading" ? (
+                  <div className="announcements-loading" role="status" aria-busy="true">
+                    <span className="announcements-loading__ring" aria-hidden="true" />
+                    <p>در حال دریافت اعلانات…</p>
+                  </div>
+                ) : loadState === "ready" && announcements.length > 0 ? (
+                  <ul className="announcements-list">
+                    {announcements.map((item, index) => (
+                      <li key={item.id} className="announcements-item">
+                        <h4>{item.title}</h4>
+                        <AnnouncementContent content={item.content} />
+                        <time dateTime={item.createdAt}>{formatAnnouncementDate(item.createdAt)}</time>
+                        {index < announcements.length - 1 ? (
+                          <div className="announcements-sep" aria-hidden="true">
+                            <i />
+                            <span />
+                            <i />
+                          </div>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="announcements-empty" data-announcements-animate role="status">
+                    <BellRing aria-hidden="true" />
+                    <p>
+                      {loadState === "error"
+                        ? errorMessage
+                        : "در حال حاضر اعلانی منتشر نشده است."}
+                    </p>
+                  </div>
+                )}
               </article>
 
               <footer className="notes-footer" data-announcements-animate>

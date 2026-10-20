@@ -103,14 +103,34 @@
 
 body {
     background-color: oklch(77.7% 0.152 181.912);
-    background-image: linear-gradient(180deg, oklch(84% 0.105 181.912), oklch(77.7% 0.152 181.912) 44rem, oklch(73% 0.16 181.912)), linear-gradient(135deg, hsl(var(--primary) / 0.1), transparent 38%), linear-gradient(225deg, oklch(88% 0.08 181.912 / 0.44), transparent 46%);
-    background-size: 100% 100%;
-    background-attachment: fixed;
 }
 
 .dark body {
     background-color: hsl(var(--background));
-    background-image: linear-gradient(180deg, hsl(var(--primary) / 0.035), transparent 34rem);
+}
+
+/* Khatam pattern: always at the top of the screen (it stays while scrolling), fading out downwards. */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 760px;
+    z-index: -1;
+    pointer-events: none;
+    /* Own compositor layer: the masked pattern is painted once, not on every scroll frame. */
+    transform: translateZ(0);
+    will-change: transform;
+    contain: strict;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%238A5E10' stroke-opacity='.38' stroke-width='1'%3E%3Crect x='20' y='20' width='40' height='40'/%3E%3Crect x='20' y='20' width='40' height='40' transform='rotate(45 40 40)'/%3E%3Cpath d='M0 40h11.7M68.3 40H80M40 0v11.7M40 68.3V80'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 80px 80px;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.55) 45%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.55) 45%, transparent 100%);
+}
+
+.dark body::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23C6973C' stroke-opacity='.2' stroke-width='1'%3E%3Crect x='20' y='20' width='40' height='40'/%3E%3Crect x='20' y='20' width='40' height='40' transform='rotate(45 40 40)'/%3E%3Cpath d='M0 40h11.7M68.3 40H80M40 0v11.7M40 68.3V80'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 @layer components {
@@ -2792,4 +2812,305 @@ html body[data-scroll-locked][data-scroll-locked] {
 
 @media (prefers-reduced-motion: reduce) {
     .skeleton-shimmer::after { animation: none; }
+}
+
+.announcements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: right;
+}
+
+.announcements-item {
+    padding: 0.25rem 0.25rem 0;
+}
+
+.announcements-item h4 {
+    margin: 0;
+    color: hsl(var(--primary));
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.7;
+}
+
+.announcements-item time {
+    display: block;
+    margin-top: 0.4rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.78rem;
+    text-align: left;
+}
+
+.announcements-item .announcements-plain {
+    margin: 0.5rem 0 0;
+    color: hsl(var(--foreground));
+    font-size: 0.95rem;
+    line-height: 2;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.announcements-sep {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 1.15rem;
+}
+
+.announcements-sep i {
+    height: 1.5px;
+    flex: 1;
+    background: hsl(var(--primary) / 0.75);
+}
+
+.announcements-sep span {
+    width: 0.6rem;
+    height: 0.6rem;
+    flex: none;
+    background: hsl(var(--primary));
+    transform: rotate(45deg);
+}
+
+.announcements-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9rem;
+    min-height: 8rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.announcements-loading p {
+    margin: 0;
+}
+
+.announcements-loading__ring {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    border: 2px solid hsl(var(--primary) / 0.25);
+    border-top-color: hsl(var(--primary));
+    animation: announcements-spin 0.9s linear infinite;
+}
+
+@keyframes announcements-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .announcements-loading__ring { animation-duration: 3s; }
+}
+
+.announcements-plain {
+    color: hsl(var(--foreground));
+    font-size: 0.95rem;
+    line-height: 2;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.announcements-content {
+    margin-top: 0.5rem;
+    color: hsl(var(--foreground));
+    font-size: 0.95rem;
+    line-height: 2;
+    overflow-wrap: anywhere;
+}
+
+.announcements-content p,
+.announcements-content div {
+    margin: 0 0 0.5em;
+}
+
+.announcements-content h2 {
+    margin: 0.7em 0 0.25em;
+    color: hsl(var(--primary));
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1.7;
+}
+
+.announcements-content h3 {
+    margin: 0.6em 0 0.2em;
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.7;
+}
+
+.announcements-content ul,
+.announcements-content ol {
+    margin: 0.3em 0 0.6em;
+    padding-inline-start: 1.5em;
+}
+
+.announcements-content ul { list-style: disc; }
+.announcements-content ol { list-style: decimal; }
+
+.announcements-content blockquote {
+    margin: 0.7em 0;
+    padding: 0.4rem 1rem;
+    border-inline-start: 3px solid hsl(var(--primary));
+    border-radius: 0 0.6rem 0.6rem 0;
+    background: hsl(var(--primary) / 0.08);
+    color: hsl(var(--muted-foreground));
+}
+
+.announcements-content a {
+    color: hsl(var(--primary));
+    text-underline-offset: 4px;
+    text-decoration: underline;
+}
+
+.announcements-content hr {
+    width: 60%;
+    height: 1.5px;
+    margin: 1.2em auto;
+    border: 0;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+}
+
+/* The generic notes dialog styles paragraphs with a diamond between them; announcements keep their own spacing. */
+.announcements-body .announcements-content p,
+.announcements-body .announcements-content p:first-child,
+.announcements-body .announcements-content p + p {
+    margin: 0 0 0.5em;
+    padding-top: 0;
+    font-size: inherit;
+    line-height: inherit;
+    text-align: inherit;
+}
+
+.announcements-body .announcements-content p + p::before {
+    content: none;
+}
+
+/* Navbar brand name: hold the pointer on it; the name lifts and a gold "dashboard login" line rises beneath it (all inside the bar). */
+.admin-peek {
+    position: relative;
+    height: 2.75rem;
+    padding: 0 0.15rem;
+    align-items: center;
+    justify-items: start;
+    text-align: right;
+    outline: none;
+}
+
+.admin-peek > span {
+    grid-area: 1 / 1;
+}
+
+.admin-peek__name {
+    color: hsl(var(--foreground));
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.25rem;
+    transform-origin: right center;
+    transition:
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        color 0.4s ease;
+}
+
+.admin-peek[data-peek="true"] .admin-peek__name {
+    color: hsl(var(--primary));
+    transform: translateY(-0.6rem) scale(0.95);
+}
+
+.admin-peek__enter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: hsl(var(--foreground) / 0.85);
+    font-size: 0.74rem;
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(0.2rem);
+    transition:
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.4s ease;
+}
+
+.admin-peek[data-peek="true"] .admin-peek__enter {
+    opacity: 1;
+    transform: translateY(0.75rem);
+}
+
+.admin-peek__arrow {
+    color: hsl(var(--primary));
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+}
+
+.admin-peek[data-peek="true"] .admin-peek__arrow {
+    transform: translateX(-3px);
+}
+
+.admin-peek::after {
+    content: "";
+    position: absolute;
+    right: 0.15rem;
+    bottom: 0.1rem;
+    left: 0.15rem;
+    height: 1.5px;
+    border-radius: 999px;
+    background: linear-gradient(270deg, hsl(var(--primary)), transparent);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.admin-peek[data-peek="true"]::after {
+    transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-peek__name,
+    .admin-peek__enter,
+    .admin-peek__arrow,
+    .admin-peek::after {
+        transition-duration: 0.01ms;
+        transition-delay: 0s;
+    }
+}
+
+/* Mobile menu: the dashboard link appears under the brand after a press-and-hold on the name. */
+.admin-peek-mobile {
+    position: absolute;
+    left: 1.25rem;
+    top: 4.7rem;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid hsl(var(--primary) / 0.5);
+    border-radius: 999px;
+    background: hsl(var(--primary) / 0.12);
+    color: hsl(var(--primary));
+    font-size: 0.8rem;
+    font-weight: 800;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px) scale(0.96);
+    transition:
+        opacity 0.35s ease,
+        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.admin-peek-mobile[data-open="true"] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-peek-mobile {
+        transition-duration: 0.01ms;
+    }
 }
