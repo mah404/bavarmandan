@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   ADMIN_SESSION_COOKIE,
   adminSessionLifetimeSeconds,
+  adminPasswordHash,
   createAdminSessionToken,
   isAdminAuthConfigured,
   missingAdminAuthSettings,
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
 
   const password = typeof body.password === "string" ? body.password : "";
   const remember = body.remember === true;
-  const passwordHash = process.env.ADMIN_DASHBOARD_PASSWORD_HASH?.trim() || "";
+  const passwordHash = adminPasswordHash();
   const valid = password.length > 0 && (await compare(password, passwordHash));
 
   if (!valid) {

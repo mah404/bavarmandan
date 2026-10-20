@@ -10,6 +10,18 @@ function sessionSecret() {
   return process.env.ADMIN_DASHBOARD_SESSION_SECRET?.trim() || "";
 }
 
+/**
+ * The bcrypt hash exactly as intended: surrounding quotes and the backslashes people copy from
+ * .env files ("\$2b\$12\$...") are removed, so a pasted value works on Vercel as well.
+ */
+export function adminPasswordHash() {
+  return (process.env.ADMIN_DASHBOARD_PASSWORD_HASH || "")
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .replace(/\\/g, "")
+    .trim();
+}
+
 function safeEqual(left: string, right: string) {
   const leftBuffer = Buffer.from(left);
   const rightBuffer = Buffer.from(right);
@@ -18,7 +30,7 @@ function safeEqual(left: string, right: string) {
 
 export function isAdminAuthConfigured() {
   return Boolean(
-    process.env.ADMIN_DASHBOARD_PASSWORD_HASH?.trim() &&
+    adminPasswordHash() &&
       sessionSecret().length >= 32
   );
 }
@@ -26,7 +38,7 @@ export function isAdminAuthConfigured() {
 /** Names (never values) of the admin settings that are missing or invalid. Used for a temporary setup hint. */
 export function missingAdminAuthSettings() {
   const problems: string[] = [];
-  const hash = process.env.ADMIN_DASHBOARD_PASSWORD_HASH?.trim() || "";
+  const hash = adminPasswordHash();
   const secret = sessionSecret();
 
   if (!hash) problems.push("ADMIN_DASHBOARD_PASSWORD_HASH (خالی یا تنظیم‌نشده)");

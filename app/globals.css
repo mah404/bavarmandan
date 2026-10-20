@@ -3114,3 +3114,55 @@ html body[data-scroll-locked][data-scroll-locked] {
         transition-duration: 0.01ms;
     }
 }
+
+/* Mobile: every action button inside the content sheets (play, download audio, view, download…) has one size.
+   The sheets are narrow on phones, so the buttons stack: same width, same height, same text size. */
+@media (max-width: 600px) {
+    .sheet-modern [role="region"] .lesson-action-row,
+    .sheet-modern [role="region"] div:has(> a > button[class*="inline-flex"]) {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .sheet-modern [role="region"] .lesson-action-row .lesson-primary-action {
+        order: -1;
+    }
+
+    .sheet-modern [role="region"] div:has(> a > button[class*="inline-flex"]) > a {
+        display: flex;
+        width: 6.25rem;
+        max-width: 100%;
+    }
+
+    .sheet-modern [role="region"] div:has(> a > button[class*="inline-flex"]) > a > button {
+        width: 100%;
+    }
+
+    .sheet-modern [role="region"] .lesson-primary-action,
+    .sheet-modern [role="region"] .lesson-download-action,
+    .sheet-modern [role="region"] button[class*="inline-flex"]:not([aria-expanded]) {
+        width: 6.25rem;
+        max-width: 100%;
+        min-width: 0;
+        height: 2.5rem;
+        min-height: 2.5rem;
+        padding: 0 0.9rem;
+        gap: 0.45rem;
+        border-radius: 0.65rem;
+        font-size: 0.85rem;
+        font-weight: 800;
+        line-height: 1;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sheet-modern [role="region"] .lesson-primary-action svg,
+    .sheet-modern [role="region"] .lesson-download-action svg {
+        flex: none;
+        width: 1.05rem;
+        height: 1.05rem;
+    }
+}
