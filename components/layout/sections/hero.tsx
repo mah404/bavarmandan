@@ -4,6 +4,7 @@ import { PWAInstallButton } from "@/components/pwa-install-button";
 import Link from "next/link";
 import Image from "next/image";
 import { FloatInPlace, MotionButton, Reveal } from "./reveal";
+import { AnnouncementsDialog } from "./AnnouncementsDialog";
 
 export const HeroSection = () => {
   return (
@@ -33,7 +34,7 @@ export const HeroSection = () => {
             </span>
           </div>
 
-          <hr className="soft-divider w-full" />
+          <AnnouncementsDialog />
 
           <p
             dir="rtl"
