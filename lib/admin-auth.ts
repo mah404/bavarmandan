@@ -23,6 +23,21 @@ export function isAdminAuthConfigured() {
   );
 }
 
+/** Names (never values) of the admin settings that are missing or invalid. Used for a temporary setup hint. */
+export function missingAdminAuthSettings() {
+  const problems: string[] = [];
+  const hash = process.env.ADMIN_DASHBOARD_PASSWORD_HASH?.trim() || "";
+  const secret = sessionSecret();
+
+  if (!hash) problems.push("ADMIN_DASHBOARD_PASSWORD_HASH (خالی یا تنظیم‌نشده)");
+  else if (!/^\$2[aby]\$/.test(hash)) problems.push("ADMIN_DASHBOARD_PASSWORD_HASH (مقدارش هش bcrypt نیست)");
+
+  if (!secret) problems.push("ADMIN_DASHBOARD_SESSION_SECRET (خالی یا تنظیم‌نشده)");
+  else if (secret.length < 32) problems.push("ADMIN_DASHBOARD_SESSION_SECRET (کوتاه‌تر از ۳۲ نویسه)");
+
+  return problems;
+}
+
 function sign(payload: string) {
   return createHmac("sha256", sessionSecret()).update(payload).digest("base64url");
 }

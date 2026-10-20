@@ -5,6 +5,7 @@ import {
   adminSessionLifetimeSeconds,
   createAdminSessionToken,
   isAdminAuthConfigured,
+  missingAdminAuthSettings,
 } from "@/lib/admin-auth";
 import {
   clearLoginFailures,
@@ -39,7 +40,9 @@ function lockedResponse(retryAfterSeconds: number) {
 export async function POST(request: NextRequest) {
   if (!isAdminAuthConfigured()) {
     return NextResponse.json(
-      { error: "ورود مدیریت در سرور پیکربندی نشده است." },
+      {
+        error: `ورود مدیریت در سرور پیکربندی نشده است: ${missingAdminAuthSettings().join("، ") || "نامشخص"}`,
+      },
       { status: 503 }
     );
   }
