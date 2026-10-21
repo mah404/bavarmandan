@@ -189,12 +189,12 @@ export const Navbar = () => {
               event.preventDefault();
               toggleSecretAudio();
             }}
-            aria-label="مجمع باورمندان؛ ورود به داشبورد مدیریت"
+            aria-label="مجمع باورمندان؛ ورود به پیشخوان مدیریت"
           >
             <span className="admin-peek__name">مجمع باورمندان</span>
             <span className="admin-peek__enter" aria-hidden="true">
               <ShieldCheck className="size-3.5" />
-              ورود به داشبورد
+              ورود به پیشخوان مدیریت
               <ChevronLeft className="admin-peek__arrow size-3.5" />
             </span>
           </Link>
@@ -280,7 +280,7 @@ export const Navbar = () => {
                       aria-hidden={!mobilePeek}
                     >
                       <ShieldCheck className="size-4" />
-                      ورود به داشبورد
+                      ورود به پیشخوان مدیریت
                       <ChevronLeft className="size-4" />
                     </Link>
                   </SheetTitle>
@@ -298,6 +298,14 @@ export const Navbar = () => {
                       <span className="h-px w-8 bg-primary/60" />
                     </button>
                   ))}
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsOpen(false)}
+                    className="mt-1 flex h-12 w-full items-center justify-between rounded-xl border border-primary/50 bg-primary/10 px-4 text-base font-bold text-primary transition hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  >
+                    <span>ورود به پیشخوان مدیریت</span>
+                    <ShieldCheck className="size-5" aria-hidden="true" />
+                  </Link>
                 </div>
               </div>
 

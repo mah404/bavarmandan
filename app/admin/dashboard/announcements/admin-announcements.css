@@ -330,3 +330,7 @@
 .bv-admin .clear-all{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:42px;margin-top:2px;padding:0 12px;border-radius:12px;border:1px dashed var(--line);background:transparent;color:var(--muted);font-size:13px;font-weight:700;transition:color .2s,border-color .2s,background .2s}
 .bv-admin .clear-all:hover{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 55%,transparent);background:var(--danger-bg)}
 .bv-admin .clear-all.confirm{color:var(--danger);border-style:solid;border-color:var(--danger);background:var(--danger-bg)}
+/* A big, very faint emoji behind the writing area (the title emoji lives in the placeholder and disappears when typing starts) */
+.bv-admin .body-wrap{position:relative;overflow:hidden}
+.bv-admin .body-wrap::after{content:"📝";position:absolute;left:22px;bottom:10px;font-size:190px;line-height:1;opacity:.07;transform:rotate(-8deg);pointer-events:none;user-select:none;filter:saturate(.8)}
+.bv-admin .body-wrap .body{position:relative;z-index:1}

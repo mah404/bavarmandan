@@ -4,7 +4,9 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 
 export const ADMIN_SESSION_COOKIE = "bavarmandan_admin_session";
-const sessionLifetimeSeconds = 60 * 60 * 24 * 30;
+// A normal sign-in lasts 8 hours; "stay signed in on this device" lasts 7 days. Never longer.
+const shortSessionSeconds = 60 * 60 * 8;
+const rememberSessionSeconds = 60 * 60 * 24 * 7;
 
 function sessionSecret() {
   return process.env.ADMIN_DASHBOARD_SESSION_SECRET?.trim() || "";
@@ -54,9 +56,14 @@ function sign(payload: string) {
   return createHmac("sha256", sessionSecret()).update(payload).digest("base64url");
 }
 
-export function createAdminSessionToken() {
+export function adminSessionLifetime(remember: boolean) {
+  return remember ? rememberSessionSeconds : shortSessionSeconds;
+}
+
+export function createAdminSessionToken(lifetimeSeconds: number) {
+  const seconds = Math.min(lifetimeSeconds, rememberSessionSeconds);
   const payload = Buffer.from(
-    JSON.stringify({ expiresAt: Date.now() + sessionLifetimeSeconds * 1000 })
+    JSON.stringify({ expiresAt: Date.now() + seconds * 1000 })
   ).toString("base64url");
 
   return `${payload}.${sign(payload)}`;
@@ -71,10 +78,12 @@ export function hasAdminSession() {
 
   try {
     const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
-    return typeof parsed.expiresAt === "number" && parsed.expiresAt > Date.now();
+    if (typeof parsed.expiresAt !== "number") return false;
+    const remaining = parsed.expiresAt - Date.now();
+    // Expired, or issued with a longer lifetime than allowed (older 30-day sessions): sign in again.
+    return remaining > 0 && remaining <= (rememberSessionSeconds + 60) * 1000;
   } catch {
     return false;
   }
 }
 
-export const adminSessionLifetimeSeconds = sessionLifetimeSeconds;

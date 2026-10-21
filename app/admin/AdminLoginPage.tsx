@@ -125,7 +125,7 @@ export function AdminLoginPage() {
         <div className={styles.formCenter}>
           <form className={styles.form} onSubmit={submit} noValidate>
             <div className={styles.heading}>
-              <h1>ورود به پنل مدیریت</h1>
+              <h1>ورود به پیشخوان مدیریت</h1>
               <p>این بخش فقط برای مدیر سایت است.</p>
             </div>
 
@@ -210,7 +210,7 @@ export function AdminLoginPage() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M5 12l5 5 9-10" />
                 </svg>
-                خوش آمدید ـ ورود به داشبورد
+                خوش آمدید ـ ورود به پیشخوان مدیریت
               </Link>
             ) : (
               <button className={`${styles.submitButton} ${status === "locked" ? styles.lockedButton : ""}`} type="submit" disabled={disabled}>
@@ -304,7 +304,7 @@ export function AdminLoginPage() {
             </span>
           </div>
           <span className={`${styles.mSite} ${styles.mRise}`} style={{ animationDelay: ".25s" }}>مجمع باورمندان</span>
-          <h1 className={`${styles.mTitle} ${styles.mRise}`} style={{ animationDelay: ".35s" }}>ورود به پنل مدیریت</h1>
+          <h1 className={`${styles.mTitle} ${styles.mRise}`} style={{ animationDelay: ".35s" }}>ورود به پیشخوان مدیریت</h1>
         </header>
 
         <form className={styles.mForm} onSubmit={submit} noValidate>
@@ -382,7 +382,7 @@ export function AdminLoginPage() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M5 12l5 5 9-10" />
               </svg>
-              خوش آمدید ـ ورود به داشبورد
+              خوش آمدید ـ ورود به پیشخوان مدیریت
             </Link>
           ) : (
             <button

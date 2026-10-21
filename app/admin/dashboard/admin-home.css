@@ -143,3 +143,7 @@
 .dark .bv-home .s-card small{color:inherit}
 .dark .bv-home .s-ic{border-color:var(--line);color:var(--faint)}
 .dark .bv-home .tag{background:transparent;border-color:var(--line-gold);color:var(--gold)}
+/* Top bar: same solid bar as the announcements page, so the pattern does not run behind the buttons */
+.bv-home .top{position:sticky;top:0;z-index:20;margin-bottom:6px;background:var(--bg)}
+.bv-home .hello{display:inline-flex;align-items:center;gap:8px}
+.bv-home .hello-emoji{font-size:1.25em;line-height:1}

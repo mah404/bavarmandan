@@ -2,7 +2,7 @@ import { compare } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import {
   ADMIN_SESSION_COOKIE,
-  adminSessionLifetimeSeconds,
+  adminSessionLifetime,
   adminPasswordHash,
   createAdminSessionToken,
   isAdminAuthConfigured,
@@ -80,12 +80,13 @@ export async function POST(request: NextRequest) {
     redirectTo: "/admin/dashboard",
   });
 
-  response.cookies.set(ADMIN_SESSION_COOKIE, createAdminSessionToken(), {
+  const lifetime = adminSessionLifetime(remember);
+  response.cookies.set(ADMIN_SESSION_COOKIE, createAdminSessionToken(lifetime), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",
-    ...(remember ? { maxAge: adminSessionLifetimeSeconds } : {}),
+    ...(remember ? { maxAge: lifetime } : {}),
   });
 
   return response;

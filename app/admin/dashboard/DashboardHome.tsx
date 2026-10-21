@@ -10,17 +10,17 @@ import { useThemeFlow } from "./use-theme-flow";
 
 const rise = (delay: number) => ({ animationDelay: `${delay}s` });
 
+// Four parts of the day, by the time the admin opens the page.
 function greetingFor(hour: number) {
-  if (hour < 5) return "شب بخیر";
-  if (hour < 12) return "صبح بخیر";
-  if (hour < 17) return "روز بخیر";
-  if (hour < 20) return "عصر بخیر";
-  return "شب بخیر";
+  if (hour >= 5 && hour < 12) return { text: "صبح بخیر", emoji: "🌅" };
+  if (hour >= 12 && hour < 16) return { text: "ظهر بخیر", emoji: "☀️" };
+  if (hour >= 16 && hour < 20) return { text: "عصر بخیر", emoji: "🌤️" };
+  return { text: "شب بخیر", emoji: "🌙" };
 }
 
 export function DashboardHome() {
   const { toggleTheme } = useThemeFlow();
-  const [hello, setHello] = useState("سلام، خوش آمدید");
+  const [hello, setHello] = useState({ text: "سلام، خوش آمدید", emoji: "👋" });
   const [today, setToday] = useState("");
 
   useEffect(() => {
@@ -52,13 +52,13 @@ export function DashboardHome() {
 
       <div className="wrap">
         <header className="top">
-          <Link className="brand" href="/admin/dashboard" aria-label="مجمع باورمندان، پنل مدیریت">
+          <Link className="brand" href="/admin/dashboard" aria-label="مجمع باورمندان، پیشخوان مدیریت">
             <span className="logo" aria-hidden="true">
               <img src="/mainicon.jpg" alt="" draggable={false} />
             </span>
             <span>
               <b>مجمع باورمندان</b>
-              <small>پنل مدیریت</small>
+              <small>پیشخوان مدیریت</small>
             </span>
           </Link>
           <span className="grow" />
@@ -84,7 +84,9 @@ export function DashboardHome() {
 
         <section className="hero">
           <div className="hero-txt">
-            <span className="hello rise">{hello}</span>
+            <span className="hello rise">
+              <span className="hello-emoji" aria-hidden="true">{hello.emoji}</span> {hello.text}
+            </span>
             <h1 className="rise" style={rise(0.08)}>امروز چه چیزی را با مخاطبان در میان می‌گذارید؟</h1>
             <span className="date rise" style={rise(0.16)}>{today}</span>
           </div>

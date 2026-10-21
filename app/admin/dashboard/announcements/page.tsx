@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AnnouncementsAdmin } from "./AnnouncementsAdmin";
 
 export const metadata: Metadata = {
-  title: "اعلانات | پنل مدیریت",
+  title: "اعلانات | پیشخوان مدیریت",
 };
 
 export default function DashboardAnnouncementsPage() {
