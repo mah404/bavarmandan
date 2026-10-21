@@ -109,28 +109,46 @@ body {
     background-color: hsl(var(--background));
 }
 
-/* Khatam pattern: always at the top of the screen (it stays while scrolling), fading out downwards. */
-body::before {
-    content: "";
+/* Khatam pattern: always at the top of the screen (it stays while scrolling), fading out downwards,
+   and drifting upwards very slowly. The fade lives on the fixed frame; only the tiles inside it move,
+   on the GPU (transform), so scrolling stays smooth. */
+.bg-pattern {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     height: 760px;
     z-index: -1;
+    overflow: hidden;
     pointer-events: none;
-    /* Own compositor layer: the masked pattern is painted once, not on every scroll frame. */
-    transform: translateZ(0);
-    will-change: transform;
-    contain: strict;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23023E8A' stroke-opacity='.3' stroke-width='1'%3E%3Crect x='20' y='20' width='40' height='40'/%3E%3Crect x='20' y='20' width='40' height='40' transform='rotate(45 40 40)'/%3E%3Cpath d='M0 40h11.7M68.3 40H80M40 0v11.7M40 68.3V80'/%3E%3C/g%3E%3C/svg%3E");
-    background-size: 80px 80px;
     -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.55) 45%, transparent 100%);
     mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.55) 45%, transparent 100%);
 }
 
-.dark body::before {
+.bg-pattern__tiles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: -80px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23023E8A' stroke-opacity='.3' stroke-width='1'%3E%3Crect x='20' y='20' width='40' height='40'/%3E%3Crect x='20' y='20' width='40' height='40' transform='rotate(45 40 40)'/%3E%3Cpath d='M0 40h11.7M68.3 40H80M40 0v11.7M40 68.3V80'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 80px 80px;
+    will-change: transform;
+    animation: bg-pattern-drift 16s linear infinite;
+}
+
+.dark .bg-pattern__tiles {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23C6973C' stroke-opacity='.2' stroke-width='1'%3E%3Crect x='20' y='20' width='40' height='40'/%3E%3Crect x='20' y='20' width='40' height='40' transform='rotate(45 40 40)'/%3E%3Cpath d='M0 40h11.7M68.3 40H80M40 0v11.7M40 68.3V80'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* One tile is 80px tall, so moving up by exactly 80px loops without a seam. */
+@keyframes bg-pattern-drift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(0, -80px, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bg-pattern__tiles { animation: none; }
 }
 
 @layer components {
@@ -3198,4 +3216,25 @@ html body[data-scroll-locked][data-scroll-locked] {
 .light header nav a:hover,
 .light header nav a:focus-visible {
     color: #fde047;
+}
+
+/* Light theme: the star behind the bell in the announcements dialog is logo-yellow with a Cornflower outline. */
+.light .announcements-medal-icon > path:first-of-type {
+    fill: #fde047;
+    stroke: hsl(var(--primary));
+    stroke-width: 2.5;
+}
+
+/* Text the admin wrote in white: white on the dark theme, dark blue (Cornflower) on the light theme. */
+.announcements-content .announcements-ink-white {
+    color: hsl(var(--foreground));
+}
+
+.light .announcements-content .announcements-ink-white {
+    color: hsl(var(--primary));
+}
+
+/* Light theme: the bell inside the yellow star is Cornflower instead of near-black. */
+.light .announcements-medal-bell {
+    stroke: hsl(var(--primary));
 }

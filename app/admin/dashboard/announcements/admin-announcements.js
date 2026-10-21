@@ -1,6 +1,6 @@
 // @ts-nocheck
 /* Admin announcements dashboard logic (ported from the approved design file). */
-import { parseAnnouncementContent, buildAnnouncementContent } from '../../../../lib/announcement-meta';
+import { parseAnnouncementContent, buildAnnouncementContent, neutralColorKind } from '../../../../lib/announcement-meta';
 export function initAnnouncementsAdmin(root, opts = {}) {
 let disposed = false;
 const cleanups = [];
@@ -151,7 +151,7 @@ function clean(html){
       if (c.tagName === 'A') { const h = c.getAttribute('href') || ''; if (/^(https?:|mailto:|\/|#)/i.test(h)) keep.href = h; keep.target = '_blank'; keep.rel = 'noopener'; }
       if (c.getAttribute('dir')) keep.dir = c.getAttribute('dir') === 'ltr' ? 'ltr' : 'rtl';
       const st = c.style, ok = [];
-      if (st.color) ok.push('color:' + st.color);
+      if (st.color) { const k = neutralColorKind(st.color); if (k === 'white') ok.push('color:#ffffff'); else if (!k) ok.push('color:' + st.color); }   /* plain black follows the theme */
       if (st.backgroundColor) ok.push('background-color:' + st.backgroundColor);
       if (st.textAlign) ok.push('text-align:' + st.textAlign);
       if (c.tagName === 'FONT' && c.getAttribute('color')) ok.push('color:' + c.getAttribute('color'));
@@ -166,11 +166,11 @@ function clean(html){
 const textOf = html => { const d = document.createElement('div'); d.innerHTML = html; return (d.textContent || '').trim(); };
 
 /* ---------- toasts & sparkle ---------- */
-function toast(msg, icon = '✓'){
+function toast(msg, icon = '✓', ms = 2600){
   const el = document.createElement('div'); el.className = 'toast';
   el.innerHTML = '<span style="color:var(--gold)">' + icon + '</span><span></span>'; el.lastChild.textContent = msg;
   $('#toasts').appendChild(el);
-  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 2600);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, ms);
 }
 function burst(from){
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -386,6 +386,11 @@ body.addEventListener('keydown', e => {
 });
 
 /* ---------- popovers: color, highlight, link, emoji ---------- */
+function warnNeutral(c){
+  const k = neutralColorKind(c);
+  if (k === 'white') toast('رنگ سفید در تم روشن سایت «آبی تیره» نشان داده می‌شود (در تم تیره سفید می‌ماند). اگر می‌خواهید رنگ دیگری انتخاب کنید.', 'ℹ', 6000);
+  else if (k === 'black') toast('رنگ سیاه در تم تیرهٔ سایت سفید نشان داده می‌شود. اگر می‌خواهید رنگ دیگری انتخاب کنید.', 'ℹ', 6000);
+}
 const GRAYS = ['#FFFFFF','#E5E7EB','#C0C6CF','#9CA3AF','#6B7280','#374151','#111827','#000000'];
 const HUES = [0, 24, 42, 55, 85, 140, 168, 190, 212, 245, 280, 325];
 const tones = (lightnesses, sat) => lightnesses.flatMap(l => HUES.map(h => 'hsl(' + h + ',' + sat + '%,' + l + '%)'));
@@ -405,7 +410,7 @@ function openPop(name){
     const g = $('.swatches', p);
     list.forEach(c => { const b = document.createElement('button'); b.type = 'button'; b.className = 'sw'; b.style.background = c; b.setAttribute('aria-label', c);
       b.onmousedown = e => e.preventDefault();
-      b.onclick = () => { exec(name === 'color' ? 'foreColor' : 'hiliteColor', c); $(name === 'color' ? '#colorSwatch' : '#hiSwatch').style.background = c; closePop(); };
+      b.onclick = () => { exec(name === 'color' ? 'foreColor' : 'hiliteColor', c); $(name === 'color' ? '#colorSwatch' : '#hiSwatch').style.background = c; closePop(); if (name === 'color') warnNeutral(c); };
       g.append(b); });
     const none = document.createElement('button'); none.type = 'button'; none.className = 'sw none'; none.setAttribute('aria-label','بدون رنگ'); none.textContent = '⌀';
     none.onmousedown = e => e.preventDefault();
@@ -415,7 +420,7 @@ function openPop(name){
     custom.innerHTML = '<span>رنگ دلخواه</span><input type="color" aria-label="رنگ دلخواه" value="#e6c55a">';
     const ci = $('input', custom);
     ci.onmousedown = () => saveRange();
-    ci.onchange = () => { exec(name === 'color' ? 'foreColor' : 'hiliteColor', ci.value); $(name === 'color' ? '#colorSwatch' : '#hiSwatch').style.background = ci.value; closePop(); };
+    ci.onchange = () => { exec(name === 'color' ? 'foreColor' : 'hiliteColor', ci.value); $(name === 'color' ? '#colorSwatch' : '#hiSwatch').style.background = ci.value; closePop(); if (name === 'color') warnNeutral(ci.value); };
     p.append(custom);
   } else if (name === 'tz') {
     p.setAttribute('role', 'listbox'); p.innerHTML = '<div class="tz-list"></div>';

@@ -48,3 +48,35 @@ export function buildAnnouncementContent(body: string, meta: Partial<Announcemen
 export function isVisibleNow(meta: AnnouncementMeta, now = Date.now()) {
   return !meta.publishAt || new Date(meta.publishAt).getTime() <= now;
 }
+
+/**
+ * Classifies "plain" text colors the editor offers by default:
+ *  - "white": white and near-white grays. They are shown in the theme's ink color (dark blue on the light theme).
+ *  - "black": black and near-black grays. They follow the theme's normal text color.
+ * Everything else (yellow, red, blue…) is a real color and is kept exactly as written.
+ */
+export function neutralColorKind(value: string): "white" | "black" | null {
+  const v = (value || "").trim().toLowerCase();
+  if (!v) return null;
+  if (v === "white") return "white";
+  if (v === "black" || v === "inherit" || v === "currentcolor") return "black";
+
+  let rgb: number[] | null = null;
+  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/.exec(v);
+  if (hex) {
+    const h = hex[1].length === 3 ? hex[1].split("").map((c) => c + c).join("") : hex[1];
+    rgb = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+  } else {
+    const m = /^rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)/.exec(v);
+    if (m) rgb = [Number(m[1]), Number(m[2]), Number(m[3])];
+  }
+  if (!rgb) return null;
+
+  const max = Math.max(...rgb);
+  const min = Math.min(...rgb);
+  if (max - min > 24) return null;
+  const lightness = (max + min) / 2;
+  if (lightness >= 225) return "white";
+  if (lightness <= 40) return "black";
+  return null;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { createElement, useMemo, type CSSProperties, type ReactNode } from "react";
+import { neutralColorKind } from "@/lib/announcement-meta";
 
 /**
  * Renders announcement content with the formatting the admin wrote (bold, colors, headings, lists…).
@@ -28,12 +29,13 @@ function safeColor(value: string) {
   return COLOR_VALUE.test(v) || NAMED_COLOR.test(v) ? v : null;
 }
 
-function safeStyle(element: Element, extraColor?: string | null): CSSProperties | undefined {
+function safeStyle(element: Element, extraColor?: string | null): { style?: CSSProperties; white: boolean } {
   const source = (element as HTMLElement).style;
   const style: CSSProperties = {};
 
   const color = safeColor(source?.color || extraColor || "");
-  if (color) style.color = color;
+  const kind = color ? neutralColorKind(color) : null;
+  if (color && !kind) style.color = color;
 
   const background = safeColor(source?.backgroundColor || "");
   if (background) {
@@ -45,7 +47,7 @@ function safeStyle(element: Element, extraColor?: string | null): CSSProperties 
   const align = (source?.textAlign || "").trim();
   if (ALIGN_VALUE.test(align)) style.textAlign = align as CSSProperties["textAlign"];
 
-  return Object.keys(style).length ? style : undefined;
+  return { style: Object.keys(style).length ? style : undefined, white: kind === "white" };
 }
 
 let keyCounter = 0;
@@ -67,8 +69,10 @@ function convert(node: Node, keyPrefix: string): ReactNode {
   const key = `${keyPrefix}-${keyCounter++}`;
   const props: Record<string, unknown> = { key };
 
-  const style = safeStyle(element, tag === "font" ? element.getAttribute("color") : null);
+  const { style, white } = safeStyle(element, tag === "font" ? element.getAttribute("color") : null);
   if (style) props.style = style;
+  // White text from the editor is shown in the theme's ink color (dark blue on the light theme).
+  if (white) props.className = "announcements-ink-white";
 
   const dir = element.getAttribute("dir");
   if (dir === "ltr" || dir === "rtl") props.dir = dir;

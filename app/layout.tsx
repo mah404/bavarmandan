@@ -208,6 +208,9 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
+          <div className="bg-pattern" aria-hidden="true">
+            <div className="bg-pattern__tiles" />
+          </div>
           <Providers>
             <AudioPlayerProvider>
               <PWARegister />
