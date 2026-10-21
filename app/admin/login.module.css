@@ -1,6 +1,6 @@
 .page {
   /* Colors come from the main site tokens (globals.css): light = :root, dark = .dark */
-  --page: oklch(77.7% 0.152 181.912);
+  --page: #82EEFD;
   --fbg: color-mix(in srgb, hsl(var(--card)) 30%, #fff);
   --fbd: hsl(var(--border));
   --ink: hsl(var(--foreground));
@@ -8,9 +8,9 @@
   --faint: color-mix(in srgb, hsl(var(--muted-foreground)) 75%, hsl(var(--card)));
   --gold: hsl(var(--primary));
   --goldtx: color-mix(in srgb, hsl(var(--primary)) 75%, #000);
-  --prim: hsl(var(--primary));
-  --primtx: hsl(var(--primary-foreground));
-  --logo: hsl(var(--primary));
+  --prim: #fde047;
+  --primtx: hsl(var(--primary));
+  --logo: #fde047;
   --err: #9b2318;
   --errbg: rgba(155, 35, 24, 0.07);
   position: fixed;

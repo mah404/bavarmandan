@@ -1,10 +1,10 @@
 /* Scoped dashboard home. Colors come from the main site tokens (globals.css): light = :root, dark = .dark */
 .bv-home{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;z-index:2147483000;
-  --bg:oklch(77.7% 0.152 181.912); --panel:hsl(var(--card));
+  --bg:#82EEFD; --panel:hsl(var(--card));
   --panel-2:color-mix(in srgb,hsl(var(--card)) 55%,#fff); --field:color-mix(in srgb,hsl(var(--card)) 30%,#fff);
   --line:hsl(var(--border)); --line-gold:hsl(var(--primary)/.4);
   --ink:hsl(var(--foreground)); --muted:hsl(var(--muted-foreground)); --faint:color-mix(in srgb,hsl(var(--muted-foreground)) 75%,hsl(var(--card)));
-  --gold:color-mix(in srgb,hsl(var(--primary)) 75%,#000); --gold-deep:hsl(var(--primary)); --yellow:hsl(var(--primary)); --on-yellow:hsl(var(--primary-foreground));
+  --gold:color-mix(in srgb,hsl(var(--primary)) 75%,#000); --gold-deep:hsl(var(--primary)); --yellow:#fde047; --on-yellow:hsl(var(--primary));
   --ok:#1E7A45; --shadow:0 26px 54px -32px rgba(20,60,52,.45);
   --font:var(--font-arabic),"Vazirmatn",Tahoma,"Segoe UI",sans-serif;
   color-scheme:light;
