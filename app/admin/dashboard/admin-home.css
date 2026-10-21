@@ -147,3 +147,36 @@
 .bv-home .top{position:sticky;top:0;z-index:20;margin-bottom:6px;background:var(--bg)}
 .bv-home .hello{display:inline-flex;align-items:center;gap:8px}
 .bv-home .hello-emoji{font-size:1.25em;line-height:1}
+/* Sections still to be built: one card per section of the site's first page */
+.bv-home .soon-head{margin:38px 0 16px}
+.bv-home .soon-head b{color:var(--ink);font-size:16px;font-weight:800}
+.bv-home .soon-head span{font-weight:500;font-size:13.5px}
+.bv-home .plan-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:980px){.bv-home .plan-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.bv-home .plan-grid{grid-template-columns:minmax(0,1fr)}}
+.bv-home .plan-card{position:relative;display:flex;flex-direction:column;gap:6px;min-height:208px;padding:20px 20px 16px;border-radius:24px;overflow:hidden;cursor:not-allowed;
+  border:1px solid hsl(var(--primary)/.22);
+  background:radial-gradient(circle at 12% 0%,hsl(var(--primary)/.1),transparent 12rem),linear-gradient(150deg,hsl(var(--card)/.8),hsl(var(--card)/.5));
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 24px 48px -32px rgba(20,60,52,.5),inset 0 1px 0 hsl(var(--foreground)/.06);
+  transition:transform .35s cubic-bezier(.22,1,.36,1),border-color .3s,box-shadow .3s}
+.dark .bv-home .plan-card{background:radial-gradient(circle at 12% 0%,hsl(var(--primary)/.09),transparent 12rem),linear-gradient(150deg,hsl(var(--card)/.78),hsl(var(--background)/.5));box-shadow:0 26px 52px -32px rgba(0,0,0,.8),inset 0 1px 0 hsl(var(--foreground)/.05)}
+.bv-home .plan-card:hover{transform:translateY(-3px);border-color:hsl(var(--primary)/.4)}
+.bv-home .plan-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.bv-home .plan-ic{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;border:1px solid hsl(var(--primary)/.28);background:color-mix(in srgb,var(--panel) 70%,transparent);color:var(--gold)}
+.bv-home .plan-kicker{padding:3px 12px;border-radius:99px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel-2) 70%,transparent);color:var(--muted);font-size:12px;font-weight:700}
+.bv-home .plan-card h3{margin:auto 0 0;font-size:19px;font-weight:800;line-height:1.55;color:var(--ink);text-wrap:balance}
+.bv-home .plan-card p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.8}
+.bv-home .plan-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.bv-home .plan-status{position:relative;display:inline-flex;align-items:center;gap:8px;padding:4px 12px 4px 14px;border-radius:99px;overflow:hidden;
+  background:color-mix(in srgb,var(--yellow) 24%,transparent);border:1px solid color-mix(in srgb,var(--yellow) 60%,transparent);color:var(--ink);font-size:12.5px;font-weight:800}
+.bv-home .plan-status::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 8px,color-mix(in srgb,var(--yellow) 14%,transparent) 8px 16px);background-size:22.6px 22.6px;animation:bvh-tape 2.4s linear infinite;pointer-events:none}
+.bv-home .plan-status i{position:relative;width:8px;height:8px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 0 color-mix(in srgb,var(--yellow) 70%,transparent);animation:bvh-ping 1.8s ease-out infinite}
+.bv-home .plan-soon{color:var(--faint);font-size:12px}
+@keyframes bvh-tape{to{background-position:22.6px 0}}
+@keyframes bvh-ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--yellow) 65%,transparent)}80%,100%{box-shadow:0 0 0 8px transparent}}
+@media (prefers-reduced-motion:reduce){.bv-home .plan-status::before,.bv-home .plan-status i{animation:none}}
+.bv-home .plan-card.is-link{cursor:pointer;text-decoration:none;color:inherit}
+.bv-home .plan-status.live{background:color-mix(in srgb,var(--ok) 14%,transparent);border-color:color-mix(in srgb,var(--ok) 45%,transparent);color:var(--ok)}
+.bv-home .plan-status.live::before{display:none}
+.bv-home .plan-status.live i{background:var(--ok);animation:none}
+.bv-home .plan-card.is-link .plan-soon{color:var(--gold);font-weight:700}

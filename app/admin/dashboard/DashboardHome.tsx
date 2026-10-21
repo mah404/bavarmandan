@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import "./admin-home.css";
 import { dashboardSections } from "./sections";
-import { upcomingSections } from "./upcoming";
+import { LatestCard } from "./content/LatestCard";
+import { plannedSections } from "./upcoming";
 import { logoutAdminSession } from "./logout-client";
 import { useThemeFlow } from "./use-theme-flow";
 
@@ -139,22 +140,54 @@ export function DashboardHome() {
           ))}
         </div>
 
-        <div className="soon-head rise" style={rise(0.38)}>بخش‌هایی که به‌زودی اضافه می‌شوند</div>
-        <div className="soon">
-          {upcomingSections.map((item, index) => (
-            <div key={item.title} className="s-card rise" style={rise(0.44 + index * 0.06)}>
-              <span className="s-ic" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                  <path d={item.icon} />
-                </svg>
-              </span>
-              <span>
-                <b>{item.title}</b>
-                <small>{item.description}</small>
-              </span>
-              <span className="tag">به‌زودی</span>
-            </div>
-          ))}
+        <div className="soon-head rise" style={rise(0.38)}>
+          <b>بخش‌های سایت</b>
+        </div>
+        <div className="plan-grid">
+          <LatestCard style={rise(0.4)} />
+          {plannedSections.map((item, index) => {
+            const Icon = item.icon;
+            const body = (
+              <>
+                <div className="plan-top">
+                  <span className="plan-ic" aria-hidden="true">
+                    <Icon size={22} strokeWidth={1.7} />
+                  </span>
+                  <span className="plan-kicker">{item.kicker}</span>
+                </div>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+                <div className="plan-foot">
+                  {item.href ? (
+                    <>
+                      <span className="plan-status live">
+                        <i aria-hidden="true" />
+                        فعال
+                      </span>
+                      <span className="plan-soon">مدیریت دوره‌ها و جلسه‌ها ←</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="plan-status">
+                        <i aria-hidden="true" />
+                        در حال ساخت
+                      </span>
+                      <span className="plan-soon">به‌زودی فعال می‌شود</span>
+                    </>
+                  )}
+                </div>
+              </>
+            );
+            return item.href ? (
+              <Link key={item.title} href={item.href} className="plan-card is-link rise" style={rise(0.44 + index * 0.06)}>
+                {body}
+              </Link>
+            ) : (
+              <article key={item.title} className="plan-card rise" style={rise(0.44 + index * 0.06)} aria-disabled="true">
+                {body}
+              </article>
+            );
+          })}
         </div>
 
         <footer className="foot">

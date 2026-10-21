@@ -1,0 +1,91 @@
+"use client";
+
+import Link from "next/link";
+import type { ReactNode } from "react";
+import "../admin-home.css";
+import "./content.css";
+import { logoutAdminSession } from "../logout-client";
+import { useThemeFlow } from "../use-theme-flow";
+
+export interface Crumb {
+  label: string;
+  href?: string;
+}
+
+/** Page frame shared by the content pages: pattern, top bar with the breadcrumb, theme and sign-out. */
+export function ContentShell({ crumbs, children }: { crumbs: Crumb[]; children: ReactNode }) {
+  const { toggleTheme } = useThemeFlow();
+  const parent = crumbs.length > 1 ? crumbs[crumbs.length - 2] : undefined;
+
+  return (
+    <div className="bv-home bv-ct" dir="rtl" lang="fa">
+      <svg className="pattern" aria-hidden="true" width="100%" height="520">
+        <defs>
+          <pattern id="bvct-khatam" width="80" height="80" patternUnits="userSpaceOnUse">
+            <g fill="none" strokeWidth="1">
+              <rect x="20" y="20" width="40" height="40" />
+              <rect x="20" y="20" width="40" height="40" transform="rotate(45 40 40)" />
+              <path d="M0 40h11.7M68.3 40H80M40 0v11.7M40 68.3V80" />
+            </g>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="100%" height="620" fill="url(#bvct-khatam)" />
+      </svg>
+
+      <div className="wrap">
+        <header className="top ct-top">
+          <Link className="brand" href="/admin/dashboard" aria-label="بازگشت به پیشخوان مدیریت">
+            <span className="logo" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/mainicon.jpg" alt="" draggable={false} />
+            </span>
+          </Link>
+
+          <nav className="ct-crumbs" aria-label="مسیر">
+            {crumbs.map((crumb, index) => (
+              <span key={`${crumb.label}-${index}`} className="ct-crumb">
+                {index > 0 ? (
+                  <svg className="ct-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" />
+                  </svg>
+                ) : null}
+                {crumb.href ? <Link href={crumb.href}>{crumb.label}</Link> : <b aria-current="page">{crumb.label}</b>}
+              </span>
+            ))}
+          </nav>
+
+          <span className="grow" />
+          {parent?.href ? (
+            <Link className="icon-btn ct-back" href={parent.href} aria-label={`بازگشت به ${parent.label}`} title={`بازگشت به ${parent.label}`}>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            </Link>
+          ) : null}
+          <button className="icon-btn" type="button" onClick={toggleTheme} aria-label="تغییر روشن/تیره">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z" />
+            </svg>
+          </button>
+          <button
+            className="icon-btn"
+            type="button"
+            aria-label="خروج"
+            onClick={async () => {
+              await logoutAdminSession();
+              window.location.href = "/admin";
+            }}
+          >
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M10 4H5v16h5M14 12H4M17 9l3 3-3 3" />
+            </svg>
+          </button>
+        </header>
+
+        {children}
+
+        <p className="ct-demo">داده‌های این صفحه نمایشی‌اند و فقط روی همین مرورگر می‌مانند.</p>
+      </div>
+    </div>
+  );
+}
