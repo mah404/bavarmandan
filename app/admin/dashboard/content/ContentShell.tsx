@@ -4,10 +4,11 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import "../admin-home.css";
 import "./content.css";
+import { DashboardFooter } from "../DashboardFooter";
+import { TopMenu } from "../TopMenu";
 import { DEMO_MODE } from "./api";
 import { logoutAdminSession } from "../logout-client";
 import { useLogoAudio } from "../secret-audio";
-import { useThemeFlow } from "../use-theme-flow";
 
 export interface Crumb {
   label: string;
@@ -16,7 +17,6 @@ export interface Crumb {
 
 /** Page frame shared by the content pages: pattern, top bar with the breadcrumb, theme and sign-out. */
 export function ContentShell({ crumbs, children }: { crumbs: Crumb[]; children: ReactNode }) {
-  const { toggleTheme } = useThemeFlow();
   const toggleLogoAudio = useLogoAudio();
   const parent = crumbs.length > 1 ? crumbs[crumbs.length - 2] : undefined;
 
@@ -65,11 +65,7 @@ export function ContentShell({ crumbs, children }: { crumbs: Crumb[]; children: 
               </svg>
             </Link>
           ) : null}
-          <button className="icon-btn" type="button" onClick={toggleTheme} aria-label="تغییر روشن/تیره">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z" />
-            </svg>
-          </button>
+          <TopMenu />
           <button
             className="icon-btn"
             type="button"
@@ -90,6 +86,8 @@ export function ContentShell({ crumbs, children }: { crumbs: Crumb[]; children: 
         {DEMO_MODE ? <p className="ct-demo">پیشخوان به سرور وصل نیست؛ داده‌های این صفحه نمایشی‌اند و فقط روی همین مرورگر می‌مانند.</p> : null}
 
       </div>
+
+      <DashboardFooter />
     </div>
   );
 }

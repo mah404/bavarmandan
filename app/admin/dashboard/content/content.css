@@ -286,3 +286,24 @@
 .bv-ct .ct-subline{margin:0 0 6px;color:var(--muted);font-size:13px;line-height:1.8}
 .bv-ct .ct-hint{display:block;margin-top:-4px;color:var(--faint);font-size:12px}
 .bv-ct .bk-st small{white-space:normal}
+
+/* Page headers use the same icon model as the dashboard cards: a faded watermark that shrinks into the corner (yellow) on hover. */
+.bv-ct .ct-hero{position:relative;overflow:hidden}
+.bv-ct .ct-hero > *:not(.ct-hero-ic){position:relative;z-index:1}
+.bv-ct .ct-hero-ic{position:absolute;z-index:0;top:50%;left:24%;width:176px;height:176px;margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;
+  display:block;pointer-events:none;transform-origin:top left;transform:translateY(-50%) rotate(-8deg);
+  color:color-mix(in srgb,var(--yellow) 70%,hsl(var(--primary)) 30%);opacity:.12;
+  transition:top .6s cubic-bezier(.22,1,.36,1),left .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1),opacity .4s ease,color .4s ease,filter .4s ease}
+.bv-ct .ct-hero-ic svg{display:block;width:100%;height:100%;stroke-width:1.1}
+/* On hover the watermark flies to the slot beside the title (--ic-x / --ic-y come from HeroIcon) while the title makes room. */
+.bv-ct .ct-title-gap{display:inline-block;width:0;transition:width .6s cubic-bezier(.22,1,.36,1)}
+.bv-ct .ct-hero:hover .ct-title-gap{width:48px}
+.bv-ct .ct-hero:hover .ct-hero-ic{top:var(--ic-y,22px);left:var(--ic-x,24px);transform:translateY(0) rotate(0) scale(.193);opacity:1;color:var(--yellow);
+  filter:drop-shadow(0 1px 0 rgba(2,62,138,.35)) drop-shadow(0 0 8px color-mix(in srgb,var(--yellow) 55%,transparent))}
+.bv-ct .ct-hero-ic svg{transition:stroke-width .6s ease}
+.bv-ct .ct-hero:hover .ct-hero-ic svg{stroke-width:1.9}
+@media (max-width:700px){.bv-ct .ct-hero-ic{width:132px;height:132px;left:-8px;top:50%}}
+@media (prefers-reduced-motion:reduce){.bv-ct .ct-hero-ic,.bv-ct .ct-title-gap{transition:none}}
+
+html:not(.dark) .bv-ct .ct-hero-ic{opacity:.2;filter:drop-shadow(1.4px 0px 0 hsl(var(--primary))) drop-shadow(-1.4px 0px 0 hsl(var(--primary))) drop-shadow(0px 1.4px 0 hsl(var(--primary))) drop-shadow(0px -1.4px 0 hsl(var(--primary)))}
+html:not(.dark) .bv-ct .ct-hero:hover .ct-hero-ic{opacity:1;filter:drop-shadow(9px 0px 0 hsl(var(--primary))) drop-shadow(-9px 0px 0 hsl(var(--primary))) drop-shadow(0px 9px 0 hsl(var(--primary))) drop-shadow(0px -9px 0 hsl(var(--primary)))}

@@ -719,7 +719,7 @@ $('#previewBtn').addEventListener('click', () => {
 /* ---------- list controls & theme ---------- */
 $('#q').addEventListener('input', e => { query = e.target.value; renderList(); });
 $$('.tabs button').forEach(b => b.addEventListener('click', () => { filter = b.dataset.f; $$('.tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); renderList(); }));
-$('#themeBtn').addEventListener('click', () => { opts.toggleTheme && opts.toggleTheme(); });
+const themeBtn = $('#themeBtn'); if (themeBtn) themeBtn.addEventListener('click', () => { opts.toggleTheme && opts.toggleTheme(); });
 
 /* ---------- boot ---------- */
 (async function(){

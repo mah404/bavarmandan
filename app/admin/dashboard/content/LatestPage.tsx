@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, FileText, Headphones, Pin, Play, Plus, Timer } from "lucide-react";
 import { ContentShell } from "./ContentShell";
+import { HeroIcon } from "./HeroIcon";
 import { getLatest, putLatest, useRemote, type LatestEntry, type LatestSettings } from "./api";
 import { SECTION_SLUGS, isSectionSlug } from "./data";
 import { sectionMeta } from "./meta";
@@ -126,11 +127,12 @@ export function LatestPage() {
   return (
     <ContentShell crumbs={[{ label: "پیشخوان", href: "/admin/dashboard" }, { label: "جدیدترین محتواها" }]}>
       <section className="ct-hero rise">
-        <span className="ct-hero-ic" aria-hidden="true">
-          <Timer size={30} strokeWidth={1.6} />
-        </span>
+        <HeroIcon icon={Timer} />
         <div className="ct-hero-txt">
-          <h1>جدیدترین محتواها</h1>
+          <h1>
+            <span className="ct-title-text">جدیدترین محتواها</span>
+            <span className="ct-title-gap" aria-hidden="true" />
+          </h1>
           <p>جلسه‌هایی که در صفحه‌ی اول سایت، زیر «جدیدترین محتواها» نمایش داده می‌شوند.</p>
         </div>
         <span className="lt-mode-badge">{manual ? "دستی ـ انتخاب شما" : "خودکار ـ به‌روز با هر بارگذاری"}</span>

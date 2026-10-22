@@ -7,8 +7,9 @@ import { dashboardSections } from "./sections";
 import { LatestCard } from "./content/LatestCard";
 import { plannedSections } from "./upcoming";
 import { logoutAdminSession } from "./logout-client";
+import { DashboardFooter } from "./DashboardFooter";
+import { TopMenu } from "./TopMenu";
 import { useLogoAudio } from "./secret-audio";
-import { useThemeFlow } from "./use-theme-flow";
 
 const rise = (delay: number) => ({ animationDelay: `${delay}s` });
 
@@ -21,7 +22,6 @@ function greetingFor(hour: number) {
 }
 
 export function DashboardHome() {
-  const { toggleTheme } = useThemeFlow();
   const toggleLogoAudio = useLogoAudio();
   const [hello, setHello] = useState({ text: "سلام، خوش آمدید", emoji: "👋" });
   const [today, setToday] = useState("");
@@ -65,11 +65,7 @@ export function DashboardHome() {
             </Link>
           </div>
           <span className="grow" />
-          <button className="icon-btn" type="button" onClick={toggleTheme} aria-label="تغییر روشن/تیره">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z" />
-            </svg>
-          </button>
+          <TopMenu />
           <button
             className="icon-btn"
             type="button"
@@ -192,10 +188,7 @@ export function DashboardHome() {
           })}
         </div>
 
-        <footer className="foot">
-          <Link href="/">مشاهدهٔ سایت</Link>
-          <span>اتصال امن · فقط برای مدیر سایت</span>
-        </footer>
+        <DashboardFooter />
       </div>
     </div>
   );

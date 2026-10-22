@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import EmojiPicker, { Categories, EmojiStyle } from "emoji-picker-react";
 import "./admin-announcements.css";
 import { initAnnouncementsAdmin } from "./admin-announcements";
 import { announcementsMarkup } from "./markup";
 import { logoutAdminSession } from "../logout-client";
 import { toggleAudioOn } from "../secret-audio";
+import { TopMenu } from "../TopMenu";
 import { useThemeFlow } from "../use-theme-flow";
 
 type PickerPosition = { top: number; left: number };
@@ -32,6 +34,7 @@ export function AnnouncementsAdmin() {
   const onPickRef = useRef<((emoji: string) => void) | null>(null);
   const { theme, toggleTheme } = useThemeFlow();
   const [picker, setPicker] = useState<PickerPosition | null>(null);
+  const [menuSlot, setMenuSlot] = useState<HTMLElement | null>(null);
   const latest = useRef({ toggleTheme });
   latest.current = { toggleTheme };
 
@@ -51,6 +54,7 @@ export function AnnouncementsAdmin() {
     const logoAudio = { current: null as HTMLAudioElement | null };
     const onLogo = () => toggleAudioOn(logoAudio);
     root.querySelector("#logoAudio")?.addEventListener("click", onLogo);
+    setMenuSlot(root.querySelector<HTMLElement>("#topMenuSlot"));
 
     const dispose = initAnnouncementsAdmin(root, {
       onLogout: logoutAdminSession,
@@ -106,6 +110,7 @@ export function AnnouncementsAdmin() {
   return (
     <>
       <div ref={rootRef} className="bv-admin" dir="rtl" />
+      {menuSlot ? createPortal(<TopMenu />, menuSlot) : null}
       {picker ? (
         <div
           ref={pickerRef}

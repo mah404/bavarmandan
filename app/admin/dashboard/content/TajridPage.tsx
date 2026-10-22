@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { BookOpenText, Check, ChevronUp } from "lucide-react";
 import { ContentShell } from "./ContentShell";
+import { HeroIcon } from "./HeroIcon";
 import { getTajrid, patchTajridSession, removeTajridFile, uploadTajridFile, useRemote, type TajridSession } from "./api";
 import { AudioField, FileField } from "./fields";
 import { siteLabel } from "./site-labels";
@@ -113,12 +114,13 @@ export function TajridPage() {
   return (
     <ContentShell crumbs={[{ label: "پیشخوان", href: "/admin/dashboard" }, { label: tajridMeta.short }]}>
       <section className="ct-hero bk-hero rise">
-        <span className="ct-hero-ic" aria-hidden="true">
-          <BookOpenText size={30} strokeWidth={1.6} />
-        </span>
+        <HeroIcon icon={BookOpenText} />
         <div className="ct-hero-txt">
           <span className="ct-kicker">بخش · شرح کتاب</span>
-          <h1>{tajridMeta.title}</h1>
+          <h1>
+            <span className="ct-title-text">{tajridMeta.title}</span>
+            <span className="ct-title-gap" aria-hidden="true" />
+          </h1>
           <p>{tajridMeta.author} · هر جلسه: شرح، جزوه و صوت</p>
           <div className="bk-pills">
             <span className="bk-done"><Check size={13} aria-hidden="true" /> دوره کامل شده</span>

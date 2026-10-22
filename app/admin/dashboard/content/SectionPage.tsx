@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ChevronDown, ChevronLeft, ChevronUp, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { ContentShell } from "./ContentShell";
+import { HeroIcon } from "./HeroIcon";
 import { createCourse, listCourses, patchCourse, removeCourse, saveCourseOrder, useRemote, type Course } from "./api";
 import type { SectionSlug } from "./data";
 import { sectionMeta } from "./meta";
@@ -88,12 +89,13 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
   return (
     <ContentShell crumbs={[{ label: "پیشخوان", href: "/admin/dashboard" }, { label: meta.title }]}>
       <section className="ct-hero rise">
-        <span className="ct-hero-ic" aria-hidden="true">
-          <Icon size={30} strokeWidth={1.6} />
-        </span>
+        <HeroIcon icon={Icon} />
         <div className="ct-hero-txt">
           <span className="ct-kicker">بخش · {meta.kicker}</span>
-          <h1>{meta.title}</h1>
+          <h1>
+            <span className="ct-title-text">{meta.title}</span>
+            <span className="ct-title-gap" aria-hidden="true" />
+          </h1>
           <p>
             {fa(courses.length)} دوره · {fa(sessionTotal)} جلسه
           </p>

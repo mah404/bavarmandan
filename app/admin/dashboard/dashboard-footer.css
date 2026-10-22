@@ -1,0 +1,14 @@
+/* Uses only the site's own colour tokens, so it looks right in both themes on every dashboard page. */
+.bv-foot{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 14px;max-width:1120px;margin:26px auto 12px;padding:9px 6px 0;font-size:12px;color:hsl(var(--muted-foreground))}
+.bv-foot::before{content:"";position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,hsl(var(--primary)/.45) 30%,#fde047 50%,hsl(var(--primary)/.45) 70%,transparent)}
+.bv-foot-brand{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:hsl(var(--foreground)/.85)}
+.bv-foot-brand img{width:20px;height:20px;border-radius:50%;object-fit:cover;border:1px solid hsl(var(--primary)/.3)}
+.bv-foot-tag{margin:0;display:flex;align-items:center;gap:8px;letter-spacing:.2px;font-size:12px}
+.bv-foot-tag i{font-style:normal;opacity:.45}
+.bv-foot-tag b{color:hsl(var(--primary));font-weight:800}
+.dark .bv-foot-tag b{color:#fde047}
+.bv-foot-tag em{font-style:normal}
+.bv-heart{display:inline-block;color:#e11d48;animation:bvfoot-beat 1.8s ease-in-out infinite}
+@keyframes bvfoot-beat{0%,60%,100%{transform:scale(1)}15%{transform:scale(1.28)}30%{transform:scale(1)}45%{transform:scale(1.18)}}
+@media (max-width:760px){.bv-foot{flex-direction:column;justify-content:center;text-align:center;margin:20px 16px 12px}.bv-foot-tag{order:-1}}
+@media (prefers-reduced-motion:reduce){.bv-heart{animation:none}}
