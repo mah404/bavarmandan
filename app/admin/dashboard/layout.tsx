@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 
 // One session check for every dashboard section.
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  if (!hasAdminSession()) redirect("/admin");
+  // No valid session: the old cookie is removed on the way and the sign-in page opens.
+  if (!hasAdminSession()) redirect("/api/admin/session-expired");
 
   return children;
 }

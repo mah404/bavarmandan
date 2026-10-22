@@ -13,8 +13,17 @@ function sessionSecret() {
 }
 
 /**
+ * Change ADMIN_SESSION_VERSION (any new text) to sign every admin out at once, without touching the password hash
+ * or the session secret. Sessions issued under another version are refused.
+ */
+function sessionVersion() {
+  return process.env.ADMIN_SESSION_VERSION?.trim() || "1";
+}
+
+/**
  * The bcrypt hash exactly as intended: surrounding quotes and the backslashes people copy from
  * .env files ("\$2b\$12\$...") are removed, so a pasted value works on Vercel as well.
+ * (A bcrypt hash never contains a quote or a backslash, so a real hash is never altered.)
  */
 export function adminPasswordHash() {
   return (process.env.ADMIN_DASHBOARD_PASSWORD_HASH || "")
@@ -37,7 +46,7 @@ export function isAdminAuthConfigured() {
   );
 }
 
-/** Names (never values) of the admin settings that are missing or invalid. Used for a temporary setup hint. */
+/** Names (never values) of the admin settings that are missing or invalid. Used for the setup message. */
 export function missingAdminAuthSettings() {
   const problems: string[] = [];
   const hash = adminPasswordHash();
@@ -63,10 +72,33 @@ export function adminSessionLifetime(remember: boolean) {
 export function createAdminSessionToken(lifetimeSeconds: number) {
   const seconds = Math.min(lifetimeSeconds, rememberSessionSeconds);
   const payload = Buffer.from(
-    JSON.stringify({ expiresAt: Date.now() + seconds * 1000 })
+    JSON.stringify({ expiresAt: Date.now() + seconds * 1000, v: sessionVersion() })
   ).toString("base64url");
 
   return `${payload}.${sign(payload)}`;
+}
+
+/** The session cookie's settings. Always limited by maxAge, never a permanent cookie. */
+export function adminCookieOptions(maxAgeSeconds: number) {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge: Math.min(maxAgeSeconds, rememberSessionSeconds),
+  };
+}
+
+/**
+ * Set-Cookie headers that remove the session cookie on every path it may ever have been issued for
+ * ("/" now, "/admin" in older versions). Two headers are needed because one cookie name cannot be set twice
+ * with cookies().
+ */
+export function expiredAdminCookieHeaders() {
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  return ["/", "/admin"].map(
+    (path) => `${ADMIN_SESSION_COOKIE}=; Path=${path}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; HttpOnly; SameSite=Lax${secure}`
+  );
 }
 
 export function hasAdminSession() {
@@ -79,6 +111,8 @@ export function hasAdminSession() {
   try {
     const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
     if (typeof parsed.expiresAt !== "number") return false;
+    // Signed out on purpose by changing ADMIN_SESSION_VERSION (sessions from before the version existed count as "1").
+    if ((typeof parsed.v === "string" ? parsed.v : "1") !== sessionVersion()) return false;
     const remaining = parsed.expiresAt - Date.now();
     // Expired, or issued with a longer lifetime than allowed (older 30-day sessions): sign in again.
     return remaining > 0 && remaining <= (rememberSessionSeconds + 60) * 1000;
@@ -86,4 +120,3 @@ export function hasAdminSession() {
     return false;
   }
 }
-

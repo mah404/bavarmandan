@@ -2,19 +2,19 @@ import { compare } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import {
   ADMIN_SESSION_COOKIE,
-  adminSessionLifetime,
+  adminCookieOptions,
   adminPasswordHash,
+  adminSessionLifetime,
   createAdminSessionToken,
+  expiredAdminCookieHeaders,
   isAdminAuthConfigured,
   missingAdminAuthSettings,
 } from "@/lib/admin-auth";
-import {
-  clearLoginFailures,
-  readLoginLock,
-  recordLoginFailure,
-} from "@/lib/admin-login-limiter";
+import { performLogin } from "@/lib/admin-login-core";
+import { mongoAttemptStore, visitorKey } from "@/lib/admin-login-limiter";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 function requestIp(request: NextRequest) {
   return (
@@ -24,70 +24,42 @@ function requestIp(request: NextRequest) {
   );
 }
 
-function lockedResponse(retryAfterSeconds: number) {
-  return NextResponse.json(
-    {
-      error: "به خاطر چند تلاش ناموفق، ورود تا ۱۵ دقیقه بسته شد.",
-      locked: true,
-      retryAfterSeconds,
-    },
-    {
-      status: 429,
-      headers: { "Retry-After": String(retryAfterSeconds) },
-    }
-  );
-}
-
 export async function POST(request: NextRequest) {
-  if (!isAdminAuthConfigured()) {
-    return NextResponse.json(
-      {
-        error: `ورود مدیریت در سرور پیکربندی نشده است: ${missingAdminAuthSettings().join("، ") || "نامشخص"}`,
-      },
-      { status: 503 }
-    );
-  }
-
-  const ip = requestIp(request);
-  const retryAfterSeconds = await readLoginLock(ip);
-  if (retryAfterSeconds > 0) return lockedResponse(retryAfterSeconds);
-
   let body: { password?: unknown; remember?: unknown };
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "درخواست نامعتبر است." }, { status: 400 });
+    return NextResponse.json({ error: "درخواست نامعتبر است.", code: "bad_request" }, { status: 400 });
   }
 
-  const password = typeof body.password === "string" ? body.password : "";
-  const remember = body.remember === true;
-  const passwordHash = adminPasswordHash();
-  const valid = password.length > 0 && (await compare(password, passwordHash));
+  const result = await performLogin(
+    { password: body.password, remember: body.remember, key: visitorKey(requestIp(request)) },
+    {
+      store: mongoAttemptStore,
+      configured: isAdminAuthConfigured(),
+      problems: missingAdminAuthSettings(),
+      passwordHash: adminPasswordHash(),
+      compare,
+      makeToken: createAdminSessionToken,
+      lifetime: adminSessionLifetime,
+      // One line per attempt with only safe facts (outcome, hash shape, counts): never the password or the hash.
+      log: (entry) => console.info("[admin-login]", JSON.stringify(entry)),
+    }
+  );
 
-  if (!valid) {
-    const result = await recordLoginFailure(ip);
-    if (result.locked) return lockedResponse(result.retryAfterSeconds);
+  const response = NextResponse.json(result.body, {
+    status: result.status,
+    headers: {
+      "Cache-Control": "no-store",
+      ...(result.retryAfterSeconds ? { "Retry-After": String(result.retryAfterSeconds) } : {}),
+    },
+  });
 
-    return NextResponse.json(
-      { error: "رمز درست نیست.", remainingAttempts: result.remainingAttempts },
-      { status: 401 }
-    );
+  if (result.session) {
+    response.cookies.set(ADMIN_SESSION_COOKIE, result.session.token, adminCookieOptions(result.session.maxAge));
+    // An older cookie on the "/admin" path would shadow the new one: remove it too (appended after, as cookies.set rewrites the header).
+    response.headers.append("Set-Cookie", expiredAdminCookieHeaders()[1]);
   }
-
-  await clearLoginFailures(ip);
-  const response = NextResponse.json({
-    success: true,
-    redirectTo: "/admin/dashboard",
-  });
-
-  const lifetime = adminSessionLifetime(remember);
-  response.cookies.set(ADMIN_SESSION_COOKIE, createAdminSessionToken(lifetime), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-    ...(remember ? { maxAge: lifetime } : {}),
-  });
 
   return response;
 }

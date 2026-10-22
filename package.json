@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:auth": "node scripts/admin-login.test.mjs",
+    "auth:unlock": "node scripts/reset-admin-lockout.mjs"
   },
   "dependencies": {
     "@devnomic/marquee": "^1.0.2",
