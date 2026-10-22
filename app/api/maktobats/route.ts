@@ -1,3 +1,4 @@
+import { contentSource, getAdminCatalog } from "@/lib/admin-catalog";
 import { AUDIO_CATALOG_URL } from "@/lib/media-api";
 import { fallbackAudioCatalog } from "@/lib/fallback-audio-catalog";
 
@@ -5,6 +6,14 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET() {
+  if (contentSource() === "admin") {
+    try {
+      return Response.json((await getAdminCatalog()).catalog.maktubat?.sessions || []);
+    } catch (error) {
+      console.error("GET /api/maktobats admin catalog failed, using the emergency fallback:", error);
+    }
+  }
+
   if (!AUDIO_CATALOG_URL) {
     return Response.json(fallbackAudioCatalog.maktubat?.sessions || []);
   }

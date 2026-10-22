@@ -40,6 +40,7 @@ export const plannedSections: PlannedSection[] = [
     title: "برهان امکان و وجوب · اثبات صفات الله تعالی",
     description: "متن، صوت و فایل‌های مرتبط",
     icon: Sparkles,
+    href: "/admin/dashboard/burhan",
   },
   {
     kicker: "اخلاق",
@@ -53,6 +54,7 @@ export const plannedSections: PlannedSection[] = [
     title: "دروس شرح کتاب تجرید الاعتقاد",
     description: "شرح، جزوه و صوت جلسات",
     icon: BookOpenText,
+    href: "/admin/dashboard/tajrid",
   },
   {
     kicker: "تنظیمات",

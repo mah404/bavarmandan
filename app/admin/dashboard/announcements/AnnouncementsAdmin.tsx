@@ -6,6 +6,7 @@ import "./admin-announcements.css";
 import { initAnnouncementsAdmin } from "./admin-announcements";
 import { announcementsMarkup } from "./markup";
 import { logoutAdminSession } from "../logout-client";
+import { toggleAudioOn } from "../secret-audio";
 import { useThemeFlow } from "../use-theme-flow";
 
 type PickerPosition = { top: number; left: number };
@@ -46,6 +47,11 @@ export function AnnouncementsAdmin() {
     // The dashboard owns this subtree; fresh markup per mount keeps StrictMode from doubling listeners.
     root.innerHTML = announcementsMarkup;
 
+    // Same as the site's navbar: the logo plays the audio.
+    const logoAudio = { current: null as HTMLAudioElement | null };
+    const onLogo = () => toggleAudioOn(logoAudio);
+    root.querySelector("#logoAudio")?.addEventListener("click", onLogo);
+
     const dispose = initAnnouncementsAdmin(root, {
       onLogout: logoutAdminSession,
       toggleTheme: () => latest.current.toggleTheme(),
@@ -64,6 +70,7 @@ export function AnnouncementsAdmin() {
 
     return () => {
       dispose();
+      logoAudio.current?.pause();
       root.innerHTML = "";
     };
   }, [closePicker]);

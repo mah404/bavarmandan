@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Card } from "@/components/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -278,12 +277,20 @@ const scrollToId = async (id: string, tries = 20) => {
   return (
     <>
       <HoverLift className="h-full">
-      <Card
+      <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            event.currentTarget.click();
+          }
+        }}
         onClick={() => {
           fetchDescription();
           setOpen(true);
         }}
-        className="service-tile group flex h-full min-h-[168px] cursor-pointer flex-col justify-between"
+        className="service-tile group flex h-full min-h-[142px] cursor-pointer flex-col justify-between"
       >
         <div className="service-tile-header">
           <span className="service-tile-kicker">اخلاق</span>
@@ -295,7 +302,7 @@ const scrollToId = async (id: string, tries = 20) => {
           <h3>مباحث اخلاقی</h3>
           <p>گفتارها و فایل‌های صوتی</p>
         </div>
-      </Card>
+      </div>
       </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>

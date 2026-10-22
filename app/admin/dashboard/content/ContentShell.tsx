@@ -4,7 +4,9 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import "../admin-home.css";
 import "./content.css";
+import { DEMO_MODE } from "./api";
 import { logoutAdminSession } from "../logout-client";
+import { useLogoAudio } from "../secret-audio";
 import { useThemeFlow } from "../use-theme-flow";
 
 export interface Crumb {
@@ -15,6 +17,7 @@ export interface Crumb {
 /** Page frame shared by the content pages: pattern, top bar with the breadcrumb, theme and sign-out. */
 export function ContentShell({ crumbs, children }: { crumbs: Crumb[]; children: ReactNode }) {
   const { toggleTheme } = useThemeFlow();
+  const toggleLogoAudio = useLogoAudio();
   const parent = crumbs.length > 1 ? crumbs[crumbs.length - 2] : undefined;
 
   return (
@@ -34,12 +37,12 @@ export function ContentShell({ crumbs, children }: { crumbs: Crumb[]; children: 
 
       <div className="wrap">
         <header className="top ct-top">
-          <Link className="brand" href="/admin/dashboard" aria-label="بازگشت به پیشخوان مدیریت">
-            <span className="logo" aria-hidden="true">
+          <div className="brand">
+            <button type="button" className="logo logo-btn" onClick={toggleLogoAudio} aria-label="پخش صوت مجمع باورمندان">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/mainicon.jpg" alt="" draggable={false} />
-            </span>
-          </Link>
+            </button>
+          </div>
 
           <nav className="ct-crumbs" aria-label="مسیر">
             {crumbs.map((crumb, index) => (
@@ -84,7 +87,8 @@ export function ContentShell({ crumbs, children }: { crumbs: Crumb[]; children: 
 
         {children}
 
-        <p className="ct-demo">داده‌های این صفحه نمایشی‌اند و فقط روی همین مرورگر می‌مانند.</p>
+        {DEMO_MODE ? <p className="ct-demo">پیشخوان به سرور وصل نیست؛ داده‌های این صفحه نمایشی‌اند و فقط روی همین مرورگر می‌مانند.</p> : null}
+
       </div>
     </div>
   );

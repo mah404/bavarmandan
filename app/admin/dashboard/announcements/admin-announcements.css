@@ -334,3 +334,6 @@
 .bv-admin .body-wrap{position:relative;overflow:hidden}
 .bv-admin .body-wrap::after{content:"📝";position:absolute;left:22px;bottom:10px;font-size:190px;line-height:1;opacity:.07;transform:rotate(-8deg);pointer-events:none;user-select:none;filter:saturate(.8)}
 .bv-admin .body-wrap .body{position:relative;z-index:1}
+.bv-admin .brand .logo-btn{appearance:none;border:0;padding:0;cursor:pointer;font:inherit}
+.bv-admin .brand .logo-btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.bv-admin .brand-text{color:inherit;text-decoration:none}

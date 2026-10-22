@@ -63,15 +63,19 @@ export const ToggleTheme = () => {
       variant="ghost"
       disabled={isTransitioning}
       aria-label="تغییر حالت رنگ"
-      className="w-full justify-start rounded-lg border border-primary/20 bg-background/15 px-4 transition-all duration-300 hover:border-primary/45 hover:bg-primary/10 disabled:opacity-100 lg:size-11 lg:rounded-full lg:justify-center lg:p-0"
+      className="group h-12 w-full justify-center rounded-xl border border-primary/70 bg-card/30 px-4 text-base font-bold transition-all duration-300 hover:border-primary hover:bg-primary/10 dark:border-muted-foreground/60 dark:hover:border-muted-foreground hover:text-primary disabled:opacity-100 lg:size-11 lg:rounded-full lg:border-primary/20 dark:lg:border-primary/20 lg:bg-background/15 lg:p-0 lg:text-sm lg:font-normal lg:hover:border-primary/45"
     >
-      <div className="flex gap-2 dark:hidden">
-        <Moon className="size-5" />
+      <div className="flex items-center gap-2.5 dark:hidden">
+        <span className="grid size-8 place-items-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/25 transition-all duration-500 group-hover:rotate-[24deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-[0_0_14px_hsl(var(--primary)/0.45)] lg:size-auto lg:bg-transparent lg:text-inherit lg:ring-0 lg:group-hover:rotate-0 lg:group-hover:scale-100 lg:group-hover:bg-transparent lg:group-hover:text-inherit lg:group-hover:shadow-none">
+          <Moon className="size-[18px] lg:size-5" />
+        </span>
         <span className="block lg:hidden">تاریک</span>
       </div>
 
-      <div className="hidden gap-2 dark:flex">
-        <Sun className="size-5" />
+      <div className="hidden items-center gap-2.5 dark:flex">
+        <span className="grid size-8 place-items-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/25 transition-all duration-500 group-hover:rotate-90 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-[0_0_14px_hsl(var(--primary)/0.45)] lg:size-auto lg:bg-transparent lg:text-inherit lg:ring-0 lg:group-hover:rotate-0 lg:group-hover:scale-100 lg:group-hover:bg-transparent lg:group-hover:text-inherit lg:group-hover:shadow-none">
+          <Sun className="size-[18px] lg:size-5" />
+        </span>
         <span className="block lg:hidden">روشن</span>
       </div>
 

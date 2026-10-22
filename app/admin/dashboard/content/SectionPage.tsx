@@ -4,23 +4,22 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ChevronDown, ChevronLeft, ChevronUp, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { ContentShell } from "./ContentShell";
-import type { Course, SectionSlug } from "./data";
+import { createCourse, listCourses, patchCourse, removeCourse, saveCourseOrder, useRemote, type Course } from "./api";
+import type { SectionSlug } from "./data";
 import { sectionMeta } from "./meta";
-import { addCourse, deleteCourse, moveCourse, renameCourse, setCourseVisible, useContent } from "./store";
 
 const fa = (value: number) => value.toLocaleString("fa-IR");
 
 function lastSessionLabel(course: Course) {
-  if (!course.sessions.length) return "هنوز جلسه‌ای نیست";
-  const last = course.sessions.reduce((a, b) => (a.createdAt > b.createdAt ? a : b));
-  return `آخرین جلسه: ${new Date(last.createdAt).toLocaleDateString("fa-IR", { day: "numeric", month: "long" })}`;
+  if (!course.sessionCount || !course.lastSessionAt) return "هنوز جلسه‌ای نیست";
+  return `آخرین جلسه: ${new Date(course.lastSessionAt).toLocaleDateString("fa-IR", { day: "numeric", month: "long" })}`;
 }
 
 export function SectionPage({ slug }: { slug: SectionSlug }) {
   const meta = sectionMeta[slug];
   const Icon = meta.icon;
-  const content = useContent();
-  const courses = useMemo(() => content[slug] ?? [], [content, slug]);
+  const { data, setData, loading, error: loadError, reload } = useRemote(() => listCourses(slug), [slug]);
+  const courses = useMemo(() => data ?? [], [data]);
 
   const [query, setQuery] = useState("");
   const [adding, setAdding] = useState(false);
@@ -30,22 +29,60 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
   const [editTitle, setEditTitle] = useState("");
   const [dragId, setDragId] = useState<string | null>(null);
   const [dropHint, setDropHint] = useState<{ id: string; after: boolean } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  /** The server's message for a failed change on one row, shown inside that row (the page banner may be out of view). */
+  const [rowError, setRowError] = useState<{ id: string; message: string } | null>(null);
 
-  const sessionTotal = useMemo(() => courses.reduce((sum, course) => sum + course.sessions.length, 0), [courses]);
+  const sessionTotal = useMemo(() => courses.reduce((sum, course) => sum + course.sessionCount, 0), [courses]);
   const q = query.trim();
   const rows = courses.filter((course) => !q || course.title.includes(q));
-  const canReorder = !q;
+  const canReorder = !q && !busy;
 
-  const submitNew = () => {
+  /** Runs one change on the server, then loads the real data again. A failure shows the server's message. */
+  const run = async (action: () => Promise<unknown>, rowId?: string) => {
+    setBusy(true);
+    setError("");
+    setRowError(null);
+    try {
+      await action();
+    } catch (failure) {
+      const message = failure instanceof Error ? failure.message : "درخواست انجام نشد.";
+      if (rowId) setRowError({ id: rowId, message });
+      else setError(message);
+    } finally {
+      await reload();
+      setBusy(false);
+    }
+  };
+
+  const submitNew = async () => {
     if (!newTitle.trim()) return;
-    addCourse(slug, newTitle);
+    await run(() => createCourse(slug, newTitle));
     setNewTitle("");
     setAdding(false);
   };
 
-  const submitRename = (id: string) => {
-    if (editTitle.trim()) renameCourse(slug, id, editTitle);
+  const submitRename = async (id: string) => {
+    const title = editTitle.trim();
     setEditId(null);
+    if (title) await run(() => patchCourse(slug, id, { title }), id);
+  };
+
+  const toggleVisible = (course: Course) => {
+    // Shown at once, then confirmed (or rolled back) by the reload after the request.
+    setData(courses.map((item) => (item.id === course.id ? { ...item, visible: !course.visible } : item)));
+    void run(() => patchCourse(slug, course.id, { visible: !course.visible }), course.id);
+  };
+
+  const move = (id: string, toIndex: number) => {
+    const from = courses.findIndex((item) => item.id === id);
+    if (from < 0 || from === toIndex || toIndex < 0 || toIndex >= courses.length) return;
+    const next = [...courses];
+    const [item] = next.splice(from, 1);
+    next.splice(toIndex, 0, item);
+    setData(next);
+    void run(() => saveCourseOrder(slug, next.map((course) => course.id)));
   };
 
   return (
@@ -72,7 +109,7 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
           className="ct-card ct-new rise"
           onSubmit={(event) => {
             event.preventDefault();
-            submitNew();
+            void submitNew();
           }}
         >
           <label htmlFor="ct-new-title">عنوان دوره</label>
@@ -85,14 +122,20 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
               placeholder="مثلاً: حسادت"
               autoFocus
             />
-            <button type="submit" className="ct-primary" disabled={!newTitle.trim()}>
-              افزودن دوره
+            <button type="submit" className="ct-primary" disabled={!newTitle.trim() || busy}>
+              {busy ? "در حال افزودن…" : "افزودن دوره"}
             </button>
             <button type="button" className="ct-ghost" onClick={() => setAdding(false)}>
               انصراف
             </button>
           </div>
         </form>
+      ) : null}
+
+      {error || loadError ? (
+        <p className="ct-error" role="alert" style={{ marginTop: 16 }}>
+          {error || loadError}
+        </p>
       ) : null}
 
       <div className="ct-listhead rise">
@@ -113,8 +156,16 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
       </div>
 
       <div className="ct-list">
-        {rows.length === 0 ? (
+        {loading ? <div className="ct-empty">در حال بارگذاری…</div> : null}
+        {!loading && rows.length === 0 && !loadError ? (
           <div className="ct-empty">{courses.length ? "دوره‌ای با این جستجو پیدا نشد." : "هنوز دوره‌ای نیست. با «دوره‌ی جدید» شروع کنید."}</div>
+        ) : null}
+        {!loading && loadError && !data ? (
+          <div className="ct-empty">
+            <button type="button" className="ct-outline" onClick={() => void reload()}>
+              تلاش دوباره
+            </button>
+          </div>
         ) : null}
 
         {rows.map((course) => {
@@ -152,20 +203,20 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
                 const from = courses.findIndex((item) => item.id === dragId);
                 let to = index + (after ? 1 : 0);
                 if (from < to) to -= 1;
-                moveCourse(slug, dragId, to);
+                move(dragId, to);
                 setDragId(null);
                 setDropHint(null);
               }}
             >
               <div className="ct-order">
                 {canReorder ? (
-                  <button type="button" aria-label="بردن بالاتر" disabled={index === 0} onClick={() => moveCourse(slug, course.id, index - 1)}>
+                  <button type="button" aria-label="بردن بالاتر" disabled={index === 0} onClick={() => move(course.id, index - 1)}>
                     <ChevronUp size={14} />
                   </button>
                 ) : null}
                 <b>{fa(index + 1)}</b>
                 {canReorder ? (
-                  <button type="button" aria-label="بردن پایین‌تر" disabled={index === courses.length - 1} onClick={() => moveCourse(slug, course.id, index + 1)}>
+                  <button type="button" aria-label="بردن پایین‌تر" disabled={index === courses.length - 1} onClick={() => move(course.id, index + 1)}>
                     <ChevronDown size={14} />
                   </button>
                 ) : null}
@@ -177,7 +228,7 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
                     className="ct-rename"
                     onSubmit={(event) => {
                       event.preventDefault();
-                      submitRename(course.id);
+                      void submitRename(course.id);
                     }}
                   >
                     <input className="ct-input" value={editTitle} onChange={(event) => setEditTitle(event.target.value)} autoFocus aria-label="عنوان دوره" />
@@ -188,7 +239,7 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
                   <>
                     <h3>{course.title}</h3>
                     <span>
-                      {fa(course.sessions.length)} جلسه · {lastSessionLabel(course)}
+                      {fa(course.sessionCount)} جلسه · {lastSessionLabel(course)}
                     </span>
                   </>
                 )}
@@ -197,9 +248,19 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
               {confirming ? (
                 <div className="ct-confirm" role="alertdialog" aria-label="تأیید حذف">
                   <span>
-                    حذف «{course.title}» با {fa(course.sessions.length)} جلسه؟
+                    حذف «{course.title}» با {fa(course.sessionCount)} جلسه؟
                   </span>
-                  <button type="button" className="ct-danger" onClick={() => deleteCourse(slug, course.id)}>حذف</button>
+                  <button
+                    type="button"
+                    className="ct-danger"
+                    disabled={busy}
+                    onClick={() => {
+                      setConfirmId(null);
+                      void run(() => removeCourse(slug, course.id), course.id);
+                    }}
+                  >
+                    حذف
+                  </button>
                   <button type="button" className="ct-ghost" onClick={() => setConfirmId(null)}>نه</button>
                 </div>
               ) : (
@@ -209,7 +270,8 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
                     role="switch"
                     aria-checked={course.visible}
                     className={`ct-switch${course.visible ? " on" : ""}`}
-                    onClick={() => setCourseVisible(slug, course.id, !course.visible)}
+                    disabled={busy}
+                    onClick={() => toggleVisible(course)}
                     aria-label={course.visible ? "پنهان کردن دوره از سایت" : "نمایش دوره در سایت"}
                   >
                     <i aria-hidden="true" />
@@ -235,6 +297,11 @@ export function SectionPage({ slug }: { slug: SectionSlug }) {
                   </Link>
                 </div>
               )}
+              {rowError?.id === course.id ? (
+                <p className="ct-error ct-row-error" role="alert">
+                  {rowError.message}
+                </p>
+              ) : null}
             </article>
           );
         })}

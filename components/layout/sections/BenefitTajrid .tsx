@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Card } from "@/components/ui/card";
 import {
   Sheet,
   SheetContent,
@@ -134,12 +133,20 @@ export const BenefitTajrid = () => {
   return (
     <>
       <HoverLift className="h-full">
-      <Card
+      <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            event.currentTarget.click();
+          }
+        }}
         onClick={() => {
           setOpen(true);
           load();
         }}
-        className="service-tile group flex h-full min-h-[168px] cursor-pointer flex-col justify-between"
+        className="service-tile group flex h-full min-h-[142px] cursor-pointer flex-col justify-between"
       >
         <div className="service-tile-header">
           <span className="service-tile-kicker">شرح کتاب</span>
@@ -151,7 +158,7 @@ export const BenefitTajrid = () => {
           <h3>دروس شرح کتاب تجرید الاعتقاد</h3>
           <p>شرح، جزوه و صوت جلسات</p>
         </div>
-      </Card>
+      </div>
       </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>

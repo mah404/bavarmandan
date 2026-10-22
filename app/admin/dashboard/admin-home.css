@@ -180,3 +180,6 @@
 .bv-home .plan-status.live::before{display:none}
 .bv-home .plan-status.live i{background:var(--ok);animation:none}
 .bv-home .plan-card.is-link .plan-soon{color:var(--gold);font-weight:700}
+.bv-home .brand .logo-btn{appearance:none;border:0;padding:0;cursor:pointer;font:inherit}
+.bv-home .brand .logo-btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.bv-home .brand-text{color:inherit;text-decoration:none}

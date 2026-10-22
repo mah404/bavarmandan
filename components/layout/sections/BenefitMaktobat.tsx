@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
+import { useEffect, useRef, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -93,7 +92,8 @@ export const BenefitMaktobat = () => {
   );
   const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer(); // ← use the global player
   const { target, clear } = useSheetNav();
-  const { loading: catalogLoading, error, load } = useAudioCatalog();
+  const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
+  const notesRef = useRef(new Map<string, MaktobatNotesDialogData>());
 
   const flashHighlight = (id: string) => {
     const element = document.getElementById(id);
@@ -225,6 +225,7 @@ export const BenefitMaktobat = () => {
         nextCatalog?.maktubat?.sessions || [],
         notesById,
       );
+      notesRef.current = notesById;
       setMaktobats(items);
       writeCache(items);
     } catch (err) {
@@ -233,6 +234,16 @@ export const BenefitMaktobat = () => {
       if (showSpinner) setLoading(false);
     }
   };
+
+  // The catalog is refreshed in the background (and right after the dashboard saves something): show the new list at once.
+  useEffect(() => {
+    const sessions = catalog?.maktubat?.sessions;
+    if (!sessions?.length) return;
+    const items = transformAndSort(sessions, notesRef.current);
+    setMaktobats(items);
+    writeCache(items);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalog]);
 
   // ---------- Prefetch on mount (SWR style) ----------
   useEffect(() => {
@@ -273,9 +284,17 @@ export const BenefitMaktobat = () => {
   return (
     <>
       <HoverLift className="h-full">
-        <Card
+        <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            event.currentTarget.click();
+          }
+        }}
           onClick={() => handleOpen(true)}
-          className="service-tile group flex h-full min-h-[168px] cursor-pointer flex-col justify-between"
+          className="service-tile group flex h-full min-h-[142px] cursor-pointer flex-col justify-between"
         >
           <div className="service-tile-header">
             <span className="service-tile-kicker">اصول عقاید</span>
@@ -290,7 +309,7 @@ export const BenefitMaktobat = () => {
             </h3>
             <p>متن، صوت و فایل‌های مرتبط</p>
           </div>
-        </Card>
+        </div>
       </HoverLift>
 
       <Sheet open={open} onOpenChange={handleOpen}>

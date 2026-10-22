@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { BookOpen, Download, Headphones, Play } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -162,9 +161,17 @@ export const BenefitTafsir = () => {
   return (
     <>
       <HoverLift className="h-full">
-        <Card
+        <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            event.currentTarget.click();
+          }
+        }}
           onClick={() => setOpen(true)}
-          className="service-tile group flex h-full min-h-[168px] cursor-pointer flex-col justify-between"
+          className="service-tile group flex h-full min-h-[142px] cursor-pointer flex-col justify-between"
         >
           <div className="service-tile-header">
             <span className="service-tile-kicker">تفسیر</span>
@@ -176,7 +183,7 @@ export const BenefitTafsir = () => {
             <h3>قرآن کریم</h3>
             <p>مجموعه ی تفسیر قرآن کریم به زبان ساده</p>
           </div>
-        </Card>
+        </div>
       </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>

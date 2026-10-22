@@ -1,3 +1,4 @@
+import { contentSource, getAdminCatalog } from "@/lib/admin-catalog";
 import { AUDIO_CATALOG_URL, MEDIA_API_BASE } from "@/lib/media-api";
 import { fallbackAudioCatalog } from "@/lib/fallback-audio-catalog";
 import {
@@ -302,7 +303,22 @@ async function fetchCatalogFromPublicSite() {
   return (await response.json()) as AudioCatalog;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  // One source for managed content: the media server's content API (what the dashboard edits).
+  // The old catalog below is only an emergency fallback when that API cannot be reached.
+  if (contentSource() === "admin") {
+    try {
+      // ?fresh=1 is sent right after the dashboard saved something, so the change is not held back by the short memory cache.
+      const fresh = new URL(request.url).searchParams.get("fresh") === "1";
+      const { catalog, stale } = await getAdminCatalog({ fresh });
+      return Response.json(catalog, {
+        headers: { "Cache-Control": "no-store", "X-Catalog-Source": stale ? "admin-stale" : "admin" },
+      });
+    } catch (error) {
+      console.error("GET /api/audios admin catalog failed, using the emergency fallback:", error);
+    }
+  }
+
   if (!AUDIO_CATALOG_URL) {
     return fallbackResponse();
   }

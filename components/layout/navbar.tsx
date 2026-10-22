@@ -10,7 +10,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { Separator } from "../ui/separator";
 import Link from "next/link";
 import Image from "next/image";
 import { ToggleTheme } from "./toogle-theme";
@@ -237,6 +236,8 @@ export const Navbar = () => {
               side="left"
               className="sheet-modern flex flex-col justify-between rounded-r-2xl"
             >
+              {/* The sheet wraps its children in one block, so this fills the sheet height (100dvh minus its p-6) and pushes the footer to the very bottom. */}
+              <div className="flex min-h-[calc(100dvh-3rem)] flex-col justify-between">
               <div>
                 <SheetHeader className="mb-6 h-14 pt-0">
                   <SheetTitle>
@@ -292,25 +293,16 @@ export const Navbar = () => {
                       key={href}
                       type="button"
                       onClick={(e) => handleMobileNav(e, href)}
-                      className="flex h-12 w-full items-center justify-between rounded-xl border border-secondary/35 bg-card/30 px-4 text-base font-bold transition hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                      className="flex h-12 w-full items-center justify-center rounded-xl border border-primary/70 bg-card/30 px-4 text-base font-bold transition hover:border-primary hover:bg-primary/10 hover:text-primary dark:border-muted-foreground/60 dark:hover:border-muted-foreground"
                     >
                       <span>{label}</span>
-                      <span className="h-px w-8 bg-primary/60" />
                     </button>
                   ))}
-                  <Link
-                    href="/admin"
-                    onClick={() => setIsOpen(false)}
-                    className="mt-1 flex h-12 w-full items-center justify-between rounded-xl border border-primary/50 bg-primary/10 px-4 text-base font-bold text-primary transition hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-                  >
-                    <span>ورود به پیشخوان مدیریت</span>
-                    <ShieldCheck className="size-5" aria-hidden="true" />
-                  </Link>
                 </div>
-              </div>
-
-              <SheetFooter className="flex-col items-start justify-start sm:flex-col">
-                <Separator className="mb-3" />
+              <SheetFooter className="mt-4 flex-col items-start justify-start sm:flex-col">
+                <div className="mb-3 w-full">
+                  <ToggleTheme />
+                </div>
                 <PWAInstallButton
                   fullWidth
                   label="اپلیکیشن باورمندان"
@@ -323,10 +315,22 @@ export const Navbar = () => {
                       className="size-7 rounded-full border border-primary/35 object-cover"
                     />
                   }
-                  className="mb-3 rounded-lg border-primary/70 bg-card/45 text-foreground hover:bg-card/70 hover:text-primary dark:bg-card/35 dark:text-foreground"
+                  className="rounded-lg border-primary/70 bg-card/45 text-foreground hover:bg-card/70 hover:text-primary dark:bg-card/35 dark:text-foreground"
                 />
-                <ToggleTheme />
               </SheetFooter>
+              </div>
+
+
+              <Link
+                  href="/admin"
+                  onClick={() => setIsOpen(false)}
+                  dir="rtl"
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-primary/50 bg-primary/10 px-4 text-base font-bold text-primary transition hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                >
+                  <span>ورود به پیشخوان مدیریت</span>
+                  <ShieldCheck className="size-5" aria-hidden="true" />
+                </Link>
+              </div>
             </SheetContent>
           </Sheet>
         </div>

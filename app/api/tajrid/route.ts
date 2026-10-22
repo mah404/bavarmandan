@@ -1,9 +1,18 @@
+import { contentSource, getAdminCatalog } from "@/lib/admin-catalog";
 import { AUDIO_CATALOG_URL } from "@/lib/media-api";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET() {
+  if (contentSource() === "admin") {
+    try {
+      return Response.json((await getAdminCatalog()).catalog.tajrid || { audios: [], pdfs: [] });
+    } catch (error) {
+      console.error("GET /api/tajrid admin catalog failed, using the emergency fallback:", error);
+    }
+  }
+
   if (!AUDIO_CATALOG_URL) {
     return Response.json(
       { error: "MEDIA_API_BASE is not configured" },

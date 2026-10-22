@@ -7,6 +7,7 @@ import { dashboardSections } from "./sections";
 import { LatestCard } from "./content/LatestCard";
 import { plannedSections } from "./upcoming";
 import { logoutAdminSession } from "./logout-client";
+import { useLogoAudio } from "./secret-audio";
 import { useThemeFlow } from "./use-theme-flow";
 
 const rise = (delay: number) => ({ animationDelay: `${delay}s` });
@@ -21,6 +22,7 @@ function greetingFor(hour: number) {
 
 export function DashboardHome() {
   const { toggleTheme } = useThemeFlow();
+  const toggleLogoAudio = useLogoAudio();
   const [hello, setHello] = useState({ text: "سلام، خوش آمدید", emoji: "👋" });
   const [today, setToday] = useState("");
 
@@ -53,15 +55,15 @@ export function DashboardHome() {
 
       <div className="wrap">
         <header className="top">
-          <Link className="brand" href="/admin/dashboard" aria-label="مجمع باورمندان، پیشخوان مدیریت">
-            <span className="logo" aria-hidden="true">
+          <div className="brand">
+            <button type="button" className="logo logo-btn" onClick={toggleLogoAudio} aria-label="پخش صوت مجمع باورمندان">
               <img src="/mainicon.jpg" alt="" draggable={false} />
-            </span>
-            <span>
+            </button>
+            <Link className="brand-text" href="/admin/dashboard" aria-label="مجمع باورمندان، پیشخوان مدیریت">
               <b>مجمع باورمندان</b>
               <small>پیشخوان مدیریت</small>
-            </span>
-          </Link>
+            </Link>
+          </div>
           <span className="grow" />
           <button className="icon-btn" type="button" onClick={toggleTheme} aria-label="تغییر روشن/تیره">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
