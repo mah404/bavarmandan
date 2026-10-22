@@ -735,7 +735,8 @@ const themeBtn = $('#themeBtn'); if (themeBtn) themeBtn.addEventListener('click'
 })();
 
 /* ---------- logout ---------- */
-$('#logoutBtn').addEventListener('click', async () => {
+const logoutBtn = $('#logoutBtn');
+if (logoutBtn) logoutBtn.addEventListener('click', async () => {
   try { if (opts.onLogout) await opts.onLogout(); } catch {}
   location.href = CONFIG.loginUrl;
 });

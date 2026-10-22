@@ -7,7 +7,6 @@ import "./content.css";
 import { DashboardFooter } from "../DashboardFooter";
 import { TopMenu } from "../TopMenu";
 import { DEMO_MODE } from "./api";
-import { logoutAdminSession } from "../logout-client";
 import { useLogoAudio } from "../secret-audio";
 
 export interface Crumb {
@@ -66,19 +65,6 @@ export function ContentShell({ crumbs, children }: { crumbs: Crumb[]; children: 
             </Link>
           ) : null}
           <TopMenu />
-          <button
-            className="icon-btn"
-            type="button"
-            aria-label="خروج"
-            onClick={async () => {
-              await logoutAdminSession();
-              window.location.href = "/admin";
-            }}
-          >
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M10 4H5v16h5M14 12H4M17 9l3 3-3 3" />
-            </svg>
-          </button>
         </header>
 
         {children}

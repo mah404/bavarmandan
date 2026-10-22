@@ -6,7 +6,6 @@ import "./admin-home.css";
 import { dashboardSections } from "./sections";
 import { LatestCard } from "./content/LatestCard";
 import { plannedSections } from "./upcoming";
-import { logoutAdminSession } from "./logout-client";
 import { DashboardFooter } from "./DashboardFooter";
 import { TopMenu } from "./TopMenu";
 import { useLogoAudio } from "./secret-audio";
@@ -66,19 +65,6 @@ export function DashboardHome() {
           </div>
           <span className="grow" />
           <TopMenu />
-          <button
-            className="icon-btn"
-            type="button"
-            aria-label="خروج"
-            onClick={async () => {
-              await logoutAdminSession();
-              window.location.href = "/admin";
-            }}
-          >
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M10 4H5v16h5M14 12H4M17 9l3 3-3 3" />
-            </svg>
-          </button>
         </header>
 
         <section className="hero">
