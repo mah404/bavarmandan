@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import "./admin-home.css";
 import { dashboardSections } from "./sections";
 import { LatestCard } from "./content/LatestCard";
+import { AnalyticsCard } from "./content/AnalyticsCard";
 import { plannedSections } from "./upcoming";
 import { DashboardFooter } from "./DashboardFooter";
 import { TopMenu } from "./TopMenu";
@@ -162,14 +163,21 @@ export function DashboardHome() {
                 </div>
               </>
             );
-            return item.href ? (
-              <Link key={item.title} href={item.href} className="plan-card is-link rise" style={rise(0.44 + index * 0.06)}>
+            const card = item.href ? (
+              <Link href={item.href} className="plan-card is-link rise" style={rise(0.44 + index * 0.06)}>
                 {body}
               </Link>
             ) : (
-              <article key={item.title} className="plan-card rise" style={rise(0.44 + index * 0.06)} aria-disabled="true">
+              <article className="plan-card rise" style={rise(0.44 + index * 0.06)} aria-disabled="true">
                 {body}
               </article>
+            );
+            // The visits card sits just before the site settings.
+            return (
+              <Fragment key={item.title}>
+                {item.title === "تنظیمات سایت" ? <AnalyticsCard style={rise(0.44 + index * 0.06 - 0.03)} /> : null}
+                {card}
+              </Fragment>
             );
           })}
         </div>

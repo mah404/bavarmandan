@@ -11,6 +11,7 @@ import React, {
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { toPersianDigits } from "@/lib/media-api";
+import { trackEvent } from "@/lib/track-client";
 import {
   useSheetNav,
   type SheetNavTarget,
@@ -346,6 +347,7 @@ export const AudioPlayerProvider = ({
       current?.lessonEnd === track.lessonEnd;
 
     if (!same) {
+      trackEvent("audio_play", track.title);
       setCurrent(track);
       audio.preload = "auto";
       audio.src = track.url;
