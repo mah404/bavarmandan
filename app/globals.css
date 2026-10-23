@@ -3238,3 +3238,482 @@ html body[data-scroll-locked][data-scroll-locked] {
 .light .announcements-medal-bell {
     stroke: hsl(var(--primary));
 }
+
+/* ===== Lessons slide (the panel that lists the sessions of a collection) =====
+   Everything is scoped to .sd-sheet. The colours are the site's own tokens, so both themes follow. */
+/* the dimmed, blurred layer behind the card */
+div.sd-backdrop {
+    background: rgba(3, 10, 9, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+/* the floating card: away from the edges, rounded on all four corners; only its list scrolls (the header stays) */
+.sheet-modern.sd-sheet {
+    top: 16px;
+    bottom: 16px;
+    right: 16px;
+    left: auto;
+    height: auto;
+    max-height: none;
+    width: min(440px, calc(100vw - 32px));
+    max-width: none;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.35) transparent;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--primary) / 0.22);
+    border-radius: 28px;
+    box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.85), 0 0 0 1px hsl(var(--primary) / 0.05), inset 0 1px 0 hsl(var(--primary) / 0.08);
+    color: hsl(var(--foreground));
+    text-align: right;
+    direction: rtl;
+}
+.sheet-modern.sd-sheet::-webkit-scrollbar {
+    width: 6px;
+}
+.sheet-modern.sd-sheet::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sheet-modern.sd-sheet::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.3);
+    border-radius: 6px;
+}
+@media (max-width: 520px) {
+    .sheet-modern.sd-sheet {
+        top: 10px;
+        bottom: 10px;
+        right: 10px;
+        width: calc(100vw - 20px);
+        border-radius: 24px;
+    }
+}
+.sheet-modern.sd-sheet > button {
+    display: none;
+}
+.sd-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    margin-inline-start: auto;
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--primary) / 0.35);
+    background: hsl(var(--background) / 0.6);
+    color: hsl(var(--foreground));
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+.sd-close:hover {
+    transform: rotate(90deg);
+}
+
+/* header */
+.sd-head {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 28px 24px 24px;
+    background: linear-gradient(180deg, hsl(var(--card)), hsl(var(--background)));
+    border-bottom: 1px solid hsl(var(--primary) / 0.13);
+    overflow: hidden;
+}
+.sd-pat {
+    position: absolute;
+    inset: 0 0 auto 0;
+    width: 100%;
+    height: 300px;
+    color: hsl(var(--primary));
+    opacity: 0.2;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(ellipse 90% 90% at 15% 0%, #000, transparent 75%);
+    mask-image: radial-gradient(ellipse 90% 90% at 15% 0%, #000, transparent 75%);
+}
+.sd-pat g {
+    animation: sd-drift 24s linear infinite;
+}
+@keyframes sd-drift {
+    to {
+        transform: translateY(-80px);
+    }
+}
+.sd-head-row {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+.sd-head .sd-title {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1.4;
+    color: hsl(var(--foreground));
+}
+.sd-head .sd-sub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: hsl(var(--primary));
+}
+.sd-head .sd-sub:not(:empty)::before {
+    content: "";
+    width: 18px;
+    height: 1px;
+    background: hsl(var(--primary));
+}
+
+/* timeline */
+.sheet-modern.sd-sheet .sd-list {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 22px 20px 30px;
+}
+.sheet-modern.sd-sheet .sd-item {
+    position: relative;
+    display: flex;
+    gap: 14px;
+    margin: 0;
+    padding: 0 0 14px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    text-align: right;
+    animation: sd-row 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes sd-row {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+.sd-item::before {
+    content: "";
+    position: absolute;
+    right: 21px;
+    top: 34px;
+    bottom: -34px;
+    width: 2px;
+    background: hsl(var(--primary) / 0.3);
+}
+.sd-item:last-child::before {
+    display: none;
+}
+.sd-node {
+    position: relative;
+    z-index: 1;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: hsl(var(--primary));
+}
+.sd-node::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    z-index: -1;
+    transform: rotate(45deg);
+    border-radius: 7px;
+    background: hsl(var(--card));
+    border: 1.5px solid hsl(var(--primary) / 0.4);
+    box-shadow: 0 0 0 5px var(--sd-ring, hsl(var(--background)));
+    transition: background 0.25s, border-color 0.25s;
+}
+.sd-item[data-state="open"] .sd-node {
+    color: hsl(var(--background));
+}
+.sd-item[data-state="open"] .sd-node::before {
+    background: hsl(var(--primary));
+    border-color: hsl(var(--primary));
+}
+
+/* session card */
+.sd-card {
+    flex: 1;
+    min-width: 0;
+    border-radius: 20px;
+    background: hsl(var(--card) / 0.8);
+    border: 1px solid hsl(var(--primary) / 0.13);
+    transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.sd-card:hover {
+    border-color: hsl(var(--primary) / 0.4);
+}
+.sd-item[data-state="open"] .sd-card {
+    background: hsl(var(--card));
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow: 0 20px 40px -26px rgba(0, 0, 0, 0.5);
+}
+.sheet-modern.sd-sheet .sd-toggle {
+    width: 100%;
+    gap: 10px;
+    padding: 16px;
+    text-align: right;
+    color: hsl(var(--foreground));
+}
+.sheet-modern.sd-sheet .sd-group .sd-toggle {
+    font-size: 16px;
+    font-weight: 800;
+}
+.sheet-modern.sd-sheet .sd-card .sd-toggle {
+    font-size: inherit;
+    font-weight: inherit;
+}
+.sd-toggle > svg {
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    margin-inline-start: auto;
+    border-radius: 10px;
+    background: hsl(var(--foreground) / 0.05);
+    color: hsl(var(--muted-foreground));
+}
+.sd-label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: hsl(var(--primary));
+}
+.sd-name {
+    display: block;
+    font-size: 15.5px;
+    font-weight: 700;
+    line-height: 1.75;
+}
+.sheet-modern.sd-sheet .sd-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 4px 16px 18px;
+}
+.sd-body > * {
+    width: 100%;
+}
+.sd-body .sd-doc {
+    width: 100%;
+    margin: 0;
+    padding: 4px 0 0;
+    box-shadow: none;
+}
+.sd-body .lesson-audio-card {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+}
+
+/* the line between the written part and the sound: the audio card draws it when something comes before it */
+.sd-sheet .lesson-audio-card {
+    position: relative;
+}
+.sd-sheet .lesson-audio-card:not(:first-child)::before {
+    content: "";
+    display: block;
+    height: 1px;
+    margin: 4px 0 14px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.2) 25%, hsl(var(--primary) / 0.2) 75%, transparent);
+}
+.sd-sheet .lesson-audio-card:not(:first-child)::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 1px;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    transform: rotate(45deg);
+    background: hsl(var(--primary));
+    opacity: 0.7;
+}
+.sd-sep {
+    position: relative;
+    align-self: stretch;
+    height: 1px;
+    margin: 4px 0;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.13) 25%, hsl(var(--primary) / 0.13) 75%, transparent);
+}
+.sd-sep::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    transform: rotate(45deg);
+    background: hsl(var(--primary));
+    opacity: 0.7;
+}
+
+/* a level above the sessions (a topic, a series): a card that holds a timeline */
+.sd-stack {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 20px 20px 30px;
+}
+.sheet-modern.sd-sheet .sd-group {
+    margin: 0 0 14px;
+    padding: 0;
+    border-radius: 20px;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--primary) / 0.13);
+    box-shadow: none;
+    backdrop-filter: none;
+    text-align: right;
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+.sheet-modern.sd-sheet .sd-group:hover {
+    border-color: hsl(var(--primary) / 0.4);
+}
+.sheet-modern.sd-sheet .sd-group[data-state="open"] {
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow: 0 20px 40px -26px rgba(0, 0, 0, 0.5);
+}
+.sheet-modern.sd-sheet .sd-group-body {
+    padding: 0 12px 14px;
+}
+.sd-group .sd-stack {
+    padding: 6px 0 0;
+}
+.sd-group .sd-list {
+    --sd-ring: hsl(var(--card));
+    padding: 14px 0 0;
+}
+.sheet-modern.sd-sheet .sd-group .sd-card {
+    background: hsl(var(--background) / 0.5);
+}
+.sheet-modern.sd-sheet .sd-group .sd-item[data-state="open"] .sd-card {
+    background: hsl(var(--background) / 0.85);
+}
+/* lists that are not collapsible (lessons shown in full) look like the session cards */
+.sheet-modern.sd-sheet .motion-list-item {
+    border-radius: 20px;
+    padding: 14px 16px;
+    background: hsl(var(--card) / 0.8);
+    border: 1px solid hsl(var(--primary) / 0.13);
+    box-shadow: none;
+}
+.sheet-modern.sd-sheet .sd-group .motion-list-item {
+    background: hsl(var(--background) / 0.5);
+}
+/* the sessions come in one after the other */
+.sd-item:nth-child(1) { animation-delay: 0.1s; }
+.sd-item:nth-child(2) { animation-delay: 0.17s; }
+.sd-item:nth-child(3) { animation-delay: 0.24s; }
+.sd-item:nth-child(4) { animation-delay: 0.31s; }
+.sd-item:nth-child(5) { animation-delay: 0.38s; }
+.sd-item:nth-child(6) { animation-delay: 0.45s; }
+.sd-item:nth-child(n + 7) { animation-delay: 0.5s; }
+
+/* sound wave instead of the headphones while the lesson plays */
+.sd-eq {
+    display: none;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+    color: hsl(var(--primary));
+}
+.sd-eq span {
+    width: 3px;
+    border-radius: 2px;
+    background: currentColor;
+    animation: sd-eq 1s ease-in-out infinite;
+}
+.sd-eq span:nth-child(2) {
+    animation-delay: -0.3s;
+}
+.sd-eq span:nth-child(3) {
+    animation-delay: -0.6s;
+}
+@keyframes sd-eq {
+    0%,
+    100% {
+        height: 4px;
+    }
+    50% {
+        height: 14px;
+    }
+}
+.sd-item[data-playing] .sd-eq {
+    display: inline-flex;
+}
+.sd-item[data-playing] .sd-headphone {
+    display: none;
+}
+
+@media (max-width: 380px) {
+    .sd-head .sd-title {
+        font-size: 22px;
+    }
+    .sheet-modern.sd-sheet .sd-list {
+        padding-inline: 14px;
+    }
+    .sd-body {
+        padding-inline: 12px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sheet-modern.sd-sheet .sd-item,
+    .sd-pat g,
+    .sd-eq span {
+        animation: none;
+    }
+}
+
+/* sessions inside a group have less room: a smaller node and tighter padding */
+.sheet-modern.sd-sheet .sd-group-body {
+    padding: 0 10px 14px;
+}
+.sheet-modern.sd-sheet .sd-group .sd-group-body {
+    padding: 0 6px 12px;
+}
+.sd-group .sd-item {
+    gap: 8px;
+}
+.sd-group .sd-node {
+    width: 38px;
+    height: 38px;
+    margin-top: 15px;
+    font-size: 13px;
+}
+.sd-group .sd-item::before {
+    right: 18px;
+    top: 34px;
+    bottom: -34px;
+}
+@media (max-width: 380px) {
+    .sd-stack {
+        padding-inline: 14px;
+    }
+}
+
+/* lessons shown in full (not collapsible): the list animates them, the card holds the title and the audio */
+.sheet-modern.sd-sheet .sd-item.sd-motion {
+    animation: none;
+}
+.sheet-modern.sd-sheet .sd-card.sd-plain {
+    padding: 14px 16px;
+}

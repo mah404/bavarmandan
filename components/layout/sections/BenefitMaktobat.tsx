@@ -1,13 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { SlideHeader, SoundWave } from "@/components/layout/sections/SessionSlide";
 import {
   Accordion,
   AccordionItem,
@@ -314,7 +309,8 @@ export const BenefitMaktobat = () => {
 
       <Sheet open={open} onOpenChange={handleOpen}>
         <SheetContent
-          className="max-h-screen overflow-y-auto"
+          overlayClassName="sd-backdrop"
+          className="sd-sheet max-h-screen overflow-y-auto"
           onInteractOutside={(event) => {
             const target = event.target as HTMLElement | null;
             if (activeNotes && target?.closest(".notes-overlay")) {
@@ -328,15 +324,10 @@ export const BenefitMaktobat = () => {
             }
           }}
         >
-          <SheetHeader>
-            <SheetTitle>برهان امکان و وجوب</SheetTitle>
-            <SheetDescription className="mb-4 text-white">
-              اثبات صفات الله تعالی{" "}
-            </SheetDescription>
-          </SheetHeader>
+          <SlideHeader title="برهان امکان و وجوب" subtitle="اثبات صفات الله تعالی" />
 
           {isLoading ? (
-            <div className="mt-4 flex w-full flex-col gap-3" aria-label="در حال بارگذاری">
+            <div className="mt-4 flex w-full flex-col gap-3 px-5" aria-label="در حال بارگذاری">
               {Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
@@ -345,37 +336,49 @@ export const BenefitMaktobat = () => {
               ))}
             </div>
           ) : error ? (
-            <p className="mt-4 text-center text-sm text-muted-foreground">
+            <p className="mt-4 px-5 text-center text-sm text-muted-foreground">
               {error}
             </p>
           ) : (
             <Accordion
               type="single"
               collapsible
-              className="w-full "
+              className="sd-list w-full"
               value={accordionValue}
               onValueChange={setAccordionValue}
             >
-              {maktobats.map((maktobat) => (
+              {maktobats.map((maktobat, index) => (
                 <AccordionItem
                   id={`maktobat-item-${maktobat.id}`} // ✅ ADD THIS
                   key={maktobat.id}
                   value={maktobat.id}
-                  className="text-right"
+                  className="sd-item"
+                  style={{ animationDelay: `${0.1 + index * 0.07}s` }}
+                  data-playing={
+                    isPlaying &&
+                    current?.navTarget?.sheetId === "maktobat" &&
+                    current.navTarget.accordionValue === maktobat.id
+                      ? ""
+                      : undefined
+                  }
                 >
-                  <AccordionTrigger className="gap-4 text-right text-muted-foreground">
-                    <span className="block flex-1 text-right leading-8">
-                      <span className="block">{maktobat.title}:</span>
+                  <span className="sd-node" aria-hidden="true">
+                    {toPersianDigits(index + 1)}
+                  </span>
+                  <div className="sd-card">
+                  <AccordionTrigger className="sd-toggle">
+                    <span className="block flex-1 text-right">
+                      <span className="sd-label">{maktobat.title}</span>
                       {maktobatTriggerContent(maktobat) ? (
-                        <span className="mt-2 block">
+                        <span className="sd-name">
                           {maktobatTriggerContent(maktobat)}
                         </span>
                       ) : null}
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="mb-4 pb-2">
-                      <div className="rounded-xl shadow-md p-4 mt-2">
+                    <div className="sd-body">
+                      <div className="sd-doc rounded-xl">
                         <p className="text-primary text-sm font-semibold mb-2 text-center">
                           <FileText className="ml-1 inline size-4 text-muted-foreground" />
                           {maktobatDocumentTitle(maktobat)}
@@ -414,7 +417,8 @@ export const BenefitMaktobat = () => {
                       <div className="lesson-audio-card">
                         <p className="lesson-audio-title">
                           <span>صوت</span>
-                          <Headphones aria-hidden="true" />
+                          <Headphones className="sd-headphone" aria-hidden="true" />
+                          <SoundWave />
                         </p>
 
                         {maktobat.audioUrl ? (
@@ -464,6 +468,7 @@ export const BenefitMaktobat = () => {
                       </div>
                     </div>
                   </AccordionContent>
+                  </div>
                 </AccordionItem>
               ))}
             </Accordion>

@@ -1,12 +1,11 @@
 "use client";
 
+import { SlideHeader, SoundWave, playingAttr } from "@/components/layout/sections/SessionSlide";
+
 import { useEffect, useMemo, useState } from "react";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
 } from "@/components/ui/sheet";
 import {
   Accordion,
@@ -162,14 +161,12 @@ export const BenefitTajrid = () => {
       </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="max-h-screen overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>دروس شرح کتاب تجرید الاعتقاد</SheetTitle>
-            <SheetDescription className="mb-4"></SheetDescription>
-          </SheetHeader>
+        <SheetContent overlayClassName="sd-backdrop"
+          className="sd-sheet max-h-screen overflow-y-auto">
+          <SlideHeader title="دروس شرح کتاب تجرید الاعتقاد" />
 
           {loading ? (
-            <div className="mt-4 flex w-full flex-col gap-3" aria-label="در حال بارگذاری">
+            <div className="mt-4 flex w-full flex-col gap-3 px-5" aria-label="در حال بارگذاری">
               {Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
@@ -178,7 +175,7 @@ export const BenefitTajrid = () => {
               ))}
             </div>
           ) : error ? (
-            <p className="mt-4 text-center text-sm text-muted-foreground">
+            <p className="mt-4 px-5 text-center text-sm text-muted-foreground">
               {error}
             </p>
           ) : (
@@ -187,12 +184,18 @@ export const BenefitTajrid = () => {
               collapsible
               value={accordionValue}
               onValueChange={setAccordionValue}
-              className="w-full mt-4"
+              className="sd-list w-full"
             >
                   {/* PDFs */}
-                  <AccordionItem value="tajrid-pdfs">
-                    <AccordionTrigger>کتاب شرح تجرید الاعتقاد</AccordionTrigger>
-                    <AccordionContent>
+                  <AccordionItem value="tajrid-pdfs" className="sd-item">
+                    <span className="sd-node" aria-hidden="true">
+                      <BookOpenText size={18} strokeWidth={2} />
+                    </span>
+                    <div className="sd-card">
+                    <AccordionTrigger className="sd-toggle">
+                      <span className="sd-name block flex-1 text-right">کتاب شرح تجرید الاعتقاد</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="sd-body">
                       <MotionList className="flex flex-col gap-3">
                       {sections.map((section, index) => {
                         const vol = index + 1;
@@ -239,6 +242,7 @@ export const BenefitTajrid = () => {
                       })}
                       </MotionList>
                     </AccordionContent>
+                    </div>
                   </AccordionItem>
 
                   {/* Audios */}
@@ -268,11 +272,17 @@ export const BenefitTajrid = () => {
                         key={`audio-${sessionNumber}`}
                         id={`tajrid-audio-${sessionNumber}`}
                         value={`audio-${sessionNumber}`}
+                        className="sd-item"
+                        data-playing={playingAttr(current, isPlaying, `tajrid-audio-${sessionNumber}`)}
                       >
-                        <AccordionTrigger>
-                          {sessionTitle}
+                        <span className="sd-node" aria-hidden="true">
+                          {toPersianDigits(sessionNumber)}
+                        </span>
+                        <div className="sd-card">
+                        <AccordionTrigger className="sd-toggle">
+                          <span className="sd-name block flex-1 text-right">{sessionTitle}</span>
                         </AccordionTrigger>
-                   <AccordionContent>
+                   <AccordionContent className="sd-body">
   <div className="space-y-4">
     {subtitleLines.length > 0 ? (
       <div
@@ -292,7 +302,8 @@ export const BenefitTajrid = () => {
     <div className="lesson-audio-card">
       <p className="lesson-audio-title">
         <span>صوت</span>
-        <Headphones aria-hidden="true" />
+        <Headphones className="sd-headphone" aria-hidden="true" />
+<SoundWave />
       </p>
 
 
@@ -335,6 +346,7 @@ export const BenefitTajrid = () => {
     </div>
   </div>
 </AccordionContent>
+                        </div>
                       </AccordionItem>
                     );
                   })}

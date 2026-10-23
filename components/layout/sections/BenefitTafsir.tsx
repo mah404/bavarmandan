@@ -1,5 +1,7 @@
 "use client";
 
+import { SlideHeader, SoundWave, playingAttr } from "@/components/layout/sections/SessionSlide";
+
 import { useEffect, useMemo, useState } from "react";
 import { BookOpen, Download, Headphones, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,9 +14,6 @@ import {
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
 } from "@/components/ui/sheet";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import {
@@ -187,27 +186,23 @@ export const BenefitTafsir = () => {
       </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="h-dvh overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>{toPersianDigits(tafsir?.title || "تفسیر قرآن")}</SheetTitle>
-            <SheetDescription className="mb-4">
-              {toPersianDigits(tafsir?.description || "")}
-            </SheetDescription>
-          </SheetHeader>
+        <SheetContent overlayClassName="sd-backdrop"
+          className="sd-sheet h-dvh overflow-y-auto">
+          <SlideHeader title={toPersianDigits(tafsir?.title || "تفسیر قرآن")} subtitle={toPersianDigits(tafsir?.description || "")} />
 
           <Accordion
             type="single"
             collapsible
             value={sectionValue}
             onValueChange={setSectionValue}
-            className="mt-4 w-full"
+            className="sd-stack"
             dir="rtl"
           >
-            <AccordionItem value="tafsir-tartibi">
-              <AccordionTrigger className="text-right">
+            <AccordionItem value="tafsir-tartibi" className="sd-group">
+              <AccordionTrigger className="sd-toggle">
                 تفسیر ترتیبی
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="sd-group-body">
                 {loading && !tafsirSessions.length ? (
                   <div className="space-y-3 py-2">
                     {[1, 2, 3].map((item) => (
@@ -227,20 +222,20 @@ export const BenefitTafsir = () => {
                     collapsible
                     value={tartibiTopicValue}
                     onValueChange={setTartibiTopicValue}
-                    className="w-full"
+                    className="sd-stack"
                     dir="rtl"
                   >
-                    <AccordionItem value="tafsir-tartibi-hamd">
-                      <AccordionTrigger className="text-right font-bold text-primary">
+                    <AccordionItem value="tafsir-tartibi-hamd" className="sd-group">
+                      <AccordionTrigger className="sd-toggle">
                         سوره حمد
                       </AccordionTrigger>
-                      <AccordionContent>
+                      <AccordionContent className="sd-group-body">
                         <Accordion
                           type="single"
                           collapsible
                           value={sessionValue}
                           onValueChange={setSessionValue}
-                          className="w-full"
+                          className="sd-list"
                           dir="rtl"
                         >
                           {[...tafsirSessions].reverse().map((session, index) => {
@@ -275,11 +270,17 @@ export const BenefitTafsir = () => {
                                 key={session.id || `${session.title}-${index}`}
                                 id={itemId}
                                 value={itemId}
+                                className="sd-item"
+                                data-playing={playingAttr(current, isPlaying, itemId)}
                               >
-                                <AccordionTrigger className="text-right">
-                                  {sessionTitle}
+                                <span className="sd-node" aria-hidden="true">
+                                  {toPersianDigits(sessionNumber)}
+                                </span>
+                                <div className="sd-card">
+                                <AccordionTrigger className="sd-toggle">
+                                  <span className="sd-name block flex-1 text-right">{sessionTitle}</span>
                                 </AccordionTrigger>
-                                <AccordionContent>
+                                <AccordionContent className="sd-body">
                                   {session.isPlaceholder ? (
                                     <p className="py-4 text-center text-lg font-semibold text-muted-foreground">
                                       به زودی
@@ -298,7 +299,8 @@ export const BenefitTafsir = () => {
                                       <div className="lesson-audio-card">
                                         <p className="lesson-audio-title">
                                           <span>صوت</span>
-                                          <Headphones aria-hidden="true" />
+                                          <Headphones className="sd-headphone" aria-hidden="true" />
+<SoundWave />
                                         </p>
 
 
@@ -399,6 +401,7 @@ export const BenefitTafsir = () => {
                                   </div>
                                   )}
                                 </AccordionContent>
+                                </div>
                               </AccordionItem>
                             );
                           })}
@@ -414,21 +417,21 @@ export const BenefitTafsir = () => {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="tafsir-mozooei">
-              <AccordionTrigger className="text-right">
+            <AccordionItem value="tafsir-mozooei" className="sd-group">
+              <AccordionTrigger className="sd-toggle">
                 تفسیر موضوعی
               </AccordionTrigger>
-                <AccordionContent>
+                <AccordionContent className="sd-group-body">
                   <Accordion
                     type="single"
                     collapsible
                     value={thematicTopicValue}
                     onValueChange={setThematicTopicValue}
-                    className="w-full"
+                    className="sd-stack"
                     dir="rtl"
                   >
-                    <AccordionItem value="tafsir-mozooei-ahsan">
-                      <AccordionTrigger className="text-right">
+                    <AccordionItem value="tafsir-mozooei-ahsan" className="sd-group">
+                      <AccordionTrigger className="sd-toggle">
                         <span className="flex w-full flex-col items-start gap-1 text-right leading-7">
                           <span className="font-bold text-primary">احسن الحدیث</span>
                           <span className="text-sm font-normal text-muted-foreground">
@@ -436,13 +439,13 @@ export const BenefitTafsir = () => {
                           </span>
                         </span>
                       </AccordionTrigger>
-                      <AccordionContent>
+                      <AccordionContent className="sd-group-body">
                         <Accordion
                           type="single"
                           collapsible
                           value={sessionValue}
                           onValueChange={setSessionValue}
-                          className="w-full"
+                          className="sd-list"
                           dir="rtl"
                         >
                           {thematicTafsirSessions.map((session, index) => {
@@ -477,11 +480,17 @@ export const BenefitTafsir = () => {
                                 key={session.id || `${session.title}-${index}`}
                                 id={itemId}
                                 value={itemId}
+                                className="sd-item"
+                                data-playing={playingAttr(current, isPlaying, itemId)}
                               >
-                                <AccordionTrigger className="text-right">
-                                  {sessionTitle}
+                                <span className="sd-node" aria-hidden="true">
+                                  {toPersianDigits(sessionNumber)}
+                                </span>
+                                <div className="sd-card">
+                                <AccordionTrigger className="sd-toggle">
+                                  <span className="sd-name block flex-1 text-right">{sessionTitle}</span>
                                 </AccordionTrigger>
-                                <AccordionContent>
+                                <AccordionContent className="sd-body">
                                   {session.isPlaceholder ? (
                                     <p className="py-4 text-center text-lg font-semibold text-muted-foreground">
                                       به زودی
@@ -500,7 +509,8 @@ export const BenefitTafsir = () => {
                                         <div className="lesson-audio-card">
                                           <p className="lesson-audio-title">
                                             <span>صوت</span>
-                                            <Headphones aria-hidden="true" />
+                                            <Headphones className="sd-headphone" aria-hidden="true" />
+<SoundWave />
                                           </p>
 
 
@@ -601,6 +611,7 @@ export const BenefitTafsir = () => {
                                     </div>
                                   )}
                                 </AccordionContent>
+                                </div>
                               </AccordionItem>
                             );
                           })}

@@ -1,12 +1,11 @@
 "use client";
 
+import { SessionList, SessionRow, SlideHeader, SoundWave, playingAttr } from "@/components/layout/sections/SessionSlide";
+
 import { useEffect, useMemo, useState } from "react";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
 } from "@/components/ui/sheet";
 import {
   Accordion,
@@ -34,7 +33,7 @@ import { resolveLessonSegment, type AudioSegmentInput } from "@/lib/audio-segmen
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
 import { akhlaghOrderIndex, normalizePersianText } from "@/lib/akhlagh-order";
-import { HoverLift, MotionItem, MotionList } from "./reveal";
+import { HoverLift } from "./reveal";
 import { Download, Headphones, HeartHandshake, Play } from "lucide-react";
 
 const AkhlaghSkeleton = () => (
@@ -155,6 +154,9 @@ export const BenefitsCard = () => {
   // otherwise its content never mounts and the glow target is never found.
   const [nashaatSessionValues, setNashaatSessionValues] = useState<string[]>([]);
 
+  // the lessons of the other topics are collapsible rows too; a "latest" click opens the one it points at
+  const [fileSessionValues, setFileSessionValues] = useState<string[]>([]);
+
   const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer();
   const { target, clear } = useSheetNav();
   const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
@@ -255,6 +257,11 @@ const scrollToId = async (id: string, tries = 20) => {
           setNashaatSessionValues((prev) =>
             prev.includes(sessionValue) ? prev : [...prev, sessionValue]
           );
+        } else if (group && group.files.length > 1) {
+          const fileValue = `${group.key}-file-${nashaatMatch[2]}`;
+          setFileSessionValues((prev) =>
+            prev.includes(fileValue) ? prev : [...prev, fileValue]
+          );
         }
       }
     }
@@ -307,22 +314,20 @@ const scrollToId = async (id: string, tries = 20) => {
 
       <Sheet open={open} onOpenChange={setOpen}>
         {/* ✅ make sure the SheetContent can scroll */}
-        <SheetContent className="h-dvh overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>مباحث اخلاقی</SheetTitle>
-            <SheetDescription className="mb-4"></SheetDescription>
-          </SheetHeader>
+        <SheetContent overlayClassName="sd-backdrop"
+          className="sd-sheet h-dvh overflow-y-auto">
+          <SlideHeader title="مباحث اخلاقی" />
 
           {isLoading ? (
             <AkhlaghSkeleton />
           ) : error ? (
-            <p className="mt-4 text-center text-sm text-muted-foreground">
+            <p className="mt-4 px-5 text-center text-sm text-muted-foreground">
               {error}
             </p>
           ) : (
             <Accordion
               type="multiple"
-              className="w-full"
+              className="sd-stack"
               value={accordionValues}
               onValueChange={setAccordionValues}
             >
@@ -330,16 +335,17 @@ const scrollToId = async (id: string, tries = 20) => {
                 <AccordionItem
                   key={group.key}
                   value={`group-${groupIndex}`}
+                  className="sd-group"
                 >
-                  <AccordionTrigger className="text-right">
+                  <AccordionTrigger className="sd-toggle">
                     {akhlaghTopicDisplayTitle(group.subject)}
                   </AccordionTrigger>
 
-                  <AccordionContent className="justify-center mt-2 text-center">
+                  <AccordionContent className="sd-group-body">
                     {isNeshaatTopic(group.subject) ? (
                       <Accordion
                         type="multiple"
-                        className="w-full"
+                        className="sd-list"
                         value={nashaatSessionValues}
                         onValueChange={setNashaatSessionValues}
                       >
@@ -360,12 +366,18 @@ const scrollToId = async (id: string, tries = 20) => {
                           <AccordionItem
                             key={`${group.key}-${fileIndex}`}
                             value={`${group.key}-session-${fileIndex}`}
+                            className="sd-item"
+                            data-playing={playingAttr(current, isPlaying, `audio-benefitsCard-${groupIndex}-${fileIndex}`)}
                           >
-                            <AccordionTrigger className="text-right">
-                              {sessionLabel}
+                            <span className="sd-node" aria-hidden="true">
+                              {toPersianDigits(fileIndex + 1)}
+                            </span>
+                            <div className="sd-card">
+                            <AccordionTrigger className="sd-toggle">
+                              <span className="sd-name block flex-1 text-right">{sessionLabel}</span>
                             </AccordionTrigger>
 
-                            <AccordionContent className="mt-2 text-center">
+                            <AccordionContent className="sd-body">
                               <div
                                 id={`audio-benefitsCard-${groupIndex}-${fileIndex}`}
                                 className="scroll-mt-24 rounded-2xl bg-background/20 px-4 py-5"
@@ -383,7 +395,8 @@ const scrollToId = async (id: string, tries = 20) => {
                                   <div className="lesson-audio-card">
                                     <p className="lesson-audio-title">
                                       <span>صوت</span>
-                                      <Headphones aria-hidden="true" />
+                                      <Headphones className="sd-headphone" aria-hidden="true" />
+<SoundWave />
                                     </p>
 
 
@@ -482,17 +495,25 @@ const scrollToId = async (id: string, tries = 20) => {
                                 ) : null}
                               </div>
                             </AccordionContent>
+                            </div>
                           </AccordionItem>
                           );
                         })}
 
-                        <AccordionItem value={`${group.key}-coming-soon`}>
-                          <AccordionTrigger className="text-right">
-                            {formatSessionTitle(group.sessions.length + 1)}
+                        <AccordionItem value={`${group.key}-coming-soon`} className="sd-item">
+                          <span className="sd-node" aria-hidden="true">
+                            {toPersianDigits(group.sessions.length + 1)}
+                          </span>
+                          <div className="sd-card">
+                          <AccordionTrigger className="sd-toggle">
+                            <span className="sd-name block flex-1 text-right">
+                              {formatSessionTitle(group.sessions.length + 1)}
+                            </span>
                           </AccordionTrigger>
-                          <AccordionContent className="text-center text-sm text-muted-foreground">
+                          <AccordionContent className="sd-body text-center text-sm text-muted-foreground">
                             به زودی
                           </AccordionContent>
+                          </div>
                         </AccordionItem>
                       </Accordion>
                     ) : group.files.length === 0 ? (
@@ -500,21 +521,27 @@ const scrollToId = async (id: string, tries = 20) => {
                         فعلاً صوتی اضافه نشده.
                       </div>
                     ) : (
-                    <MotionList className="flex flex-col gap-3">
+                    <SessionList
+                      multi={group.files.length > 1}
+                      value={fileSessionValues}
+                      onValueChange={setFileSessionValues}
+                    >
                       {group.files.map((file, fileIndex) => (
-                      <MotionItem
+                      <SessionRow
                         // ✅ IMPORTANT: id must match what you generate in getLatestAudios
                         id={`audio-benefitsCard-${groupIndex}-${fileIndex}`}
                         key={fileIndex}
-                        className="motion-list-item scroll-mt-24"
+                        multi={group.files.length > 1}
+                        value={`${group.key}-file-${fileIndex}`}
+                        node={toPersianDigits(fileIndex + 1)}
+                        title={akhlaghSessionLabel(file, fileIndex)}
+                        playing={playingAttr(current, isPlaying, `audio-benefitsCard-${groupIndex}-${fileIndex}`)}
                       >
-                        <div className="mb-2 text-center font-semibold text-primary">
-                          {akhlaghSessionLabel(file, fileIndex)}
-                        </div>
                         <div className="lesson-audio-card">
                           <p className="lesson-audio-title">
                             <span>صوت</span>
-                            <Headphones aria-hidden="true" />
+                            <Headphones className="sd-headphone" aria-hidden="true" />
+<SoundWave />
                           </p>
 
                           <div className="lesson-action-row">
@@ -548,9 +575,9 @@ const scrollToId = async (id: string, tries = 20) => {
                             </button>
                           </div>
                         </div>
-                      </MotionItem>
+                      </SessionRow>
                       ))}
-                    </MotionList>
+                    </SessionList>
                     )}
                   </AccordionContent>
                 </AccordionItem>

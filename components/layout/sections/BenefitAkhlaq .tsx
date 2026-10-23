@@ -1,12 +1,11 @@
 "use client";
 
+import { SessionList, SessionRow, SlideHeader, SoundWave, playingAttr } from "@/components/layout/sections/SessionSlide";
+
 import { useEffect, useState } from "react";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
 } from "@/components/ui/sheet";
 import {
   Accordion,
@@ -31,7 +30,7 @@ import {
 import { resolveLessonSegment, type AudioSegmentInput } from "@/lib/audio-segments";
 import { useAudioCatalog } from "@/lib/use-audio-catalog";
 import { useSheetNav } from "@/components/layout/sections/SheetNavProvider";
-import { HoverLift, MotionItem, MotionList } from "./reveal";
+import { HoverLift } from "./reveal";
 
 const AghayedSkeleton = () => (
   <div className="mt-4 flex w-full flex-col gap-3" aria-label="در حال بارگذاری">
@@ -58,6 +57,8 @@ export const BenefitAkhlaq = () => {
   const [openBeliefSession, setOpenBeliefSession] = useState<string | null>(
     null
   );
+  // the lessons of the other topics are collapsible rows; a "latest" click opens the one it points at
+  const [openTopicSessions, setOpenTopicSessions] = useState<string[]>([]);
 
   const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer();
   const { target, clear } = useSheetNav();
@@ -138,6 +139,10 @@ export const BenefitAkhlaq = () => {
 
     setOpen(true);
     if (target.accordionValue) setAccordionValue(target.accordionValue);
+    if (target.itemDomId) {
+      const itemDomId = target.itemDomId;
+      setOpenTopicSessions((prev) => (prev.includes(itemDomId) ? prev : [...prev, itemDomId]));
+    }
 
     // wait for the sheet + accordion transition to mount/expand before
     // scrolling and highlighting (requestAnimationFrame is unreliable here
@@ -196,28 +201,26 @@ export const BenefitAkhlaq = () => {
       </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="h-dvh overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>اصول عقاید</SheetTitle>
-            <SheetDescription className="mb-4"></SheetDescription>
-          </SheetHeader>
+        <SheetContent overlayClassName="sd-backdrop"
+          className="sd-sheet h-dvh overflow-y-auto">
+          <SlideHeader title="اصول عقاید" />
 
           {isLoading ? (
             <AghayedSkeleton />
           ) : error ? (
-            <p className="mt-4 text-center text-sm text-muted-foreground">
+            <p className="mt-4 px-5 text-center text-sm text-muted-foreground">
               {error}
             </p>
           ) : (
             <Accordion
               type="single"
               collapsible
-              className="w-full"
+              className="sd-stack"
               value={accordionValue}
               onValueChange={setAccordionValue}
             >
-              <AccordionItem value="belief">
-                <AccordionTrigger className="text-right">
+              <AccordionItem value="belief" className="sd-group">
+                <AccordionTrigger className="sd-toggle">
                   <span className="flex flex-col items-start gap-1">
                     <span>باورداشت</span>
                     <span className="text-sm font-medium leading-6 text-muted-foreground">
@@ -225,8 +228,8 @@ export const BenefitAkhlaq = () => {
                     </span>
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="justify-center mt-2 text-center">
-                  <div className="flex w-full flex-col gap-1">
+                <AccordionContent className="sd-group-body">
+                  <div className="sd-list flex w-full flex-col">
                     {beliefAudiosNewestFirst.map(({ file, originalIndex }) => {
                       const streamUrl = toStreamableUrl(file.url);
                       const lessonSegment = resolveLessonSegment(
@@ -242,13 +245,19 @@ export const BenefitAkhlaq = () => {
                       <div
                         id={`audio-akhlagh-belief-${originalIndex}`}
                         key={`${file.title}-${file.url || originalIndex}`}
+                        data-state={openBeliefSession === `belief-session-${originalIndex}` ? "open" : "closed"}
+                        data-playing={playingAttr(current, isPlaying, `audio-akhlagh-belief-${originalIndex}`)}
                         className={[
-                          "border-b border-secondary bg-card/70 dark:bg-card px-4 my-3 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40",
+                          "sd-item",
                           highlightId === `audio-akhlagh-belief-${originalIndex}`
                             ? "nav-highlight"
                             : "",
                         ].join(" ")}
                       >
+                        <span className="sd-node" aria-hidden="true">
+                          {toPersianDigits(originalIndex + 1)}
+                        </span>
+                        <div className="sd-card">
                         <button
                           type="button"
                           onClick={() =>
@@ -258,9 +267,9 @@ export const BenefitAkhlaq = () => {
                               : `belief-session-${originalIndex}`
                             )
                           }
-                          className="flex w-full items-center justify-between gap-4 py-4 text-right text-sm font-semibold text-muted-foreground transition-all hover:text-primary"
+                          className="sd-toggle flex w-full items-center justify-between"
                         >
-                          <span>
+                          <span className="sd-name">
                             {toPersianDigits(
                               normalizeSessionTitle(file.title, originalIndex + 1)
                             )}
@@ -288,7 +297,7 @@ export const BenefitAkhlaq = () => {
                               }}
                               className="overflow-hidden"
                             >
-                          <div className="pb-4 pt-0">
+                          <div className="sd-body">
                             {file.points.length > 0 ? (
                               <div
                                 className="motion-list-item space-y-2 text-right text-sm font-semibold leading-7 text-primary"
@@ -305,7 +314,8 @@ export const BenefitAkhlaq = () => {
                             <div className="lesson-audio-card">
                               <p className="lesson-audio-title">
                                 <span>صوت</span>
-                                <Headphones aria-hidden="true" />
+                                <Headphones className="sd-headphone" aria-hidden="true" />
+<SoundWave />
                               </p>
 
 
@@ -399,10 +409,15 @@ export const BenefitAkhlaq = () => {
                             </motion.div>
                           ) : null}
                         </AnimatePresence>
+                        </div>
                       </div>
                       );
                     })}
-                    <div className="order-first border-b border-secondary bg-card/70 dark:bg-card px-4 my-3 border rounded-xl shadow-sm backdrop-blur transition-colors hover:border-primary/40">
+                    <div className="sd-item order-first" data-state={openBeliefSession === nextBeliefSessionValue ? "open" : "closed"}>
+                      <span className="sd-node" aria-hidden="true">
+                        {toPersianDigits(nextBeliefSessionIndex + 1)}
+                      </span>
+                      <div className="sd-card">
                       <button
                         type="button"
                         onClick={() =>
@@ -412,9 +427,9 @@ export const BenefitAkhlaq = () => {
                               : nextBeliefSessionValue
                           )
                         }
-                        className="flex w-full items-center justify-between gap-4 py-4 text-right text-sm font-semibold text-muted-foreground transition-all hover:text-primary"
+                        className="sd-toggle flex w-full items-center justify-between"
                       >
-                        <span>{nextBeliefSessionTitle}</span>
+                        <span className="sd-name">{nextBeliefSessionTitle}</span>
                         <ChevronDown
                           className={[
                             "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
@@ -447,21 +462,26 @@ export const BenefitAkhlaq = () => {
                           </motion.div>
                         ) : null}
                       </AnimatePresence>
+                      </div>
                     </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
 
               {flatAghayedTopics.map((topic) => (
-                <AccordionItem key={topic.key} value={topic.value}>
-                  <AccordionTrigger>{toPersianDigits(topic.title)}</AccordionTrigger>
-                  <AccordionContent className="justify-center text-center scroll-mt-24">
+                <AccordionItem key={topic.key} value={topic.value} className="sd-group">
+                  <AccordionTrigger className="sd-toggle">{toPersianDigits(topic.title)}</AccordionTrigger>
+                  <AccordionContent className="sd-group-body scroll-mt-24">
                     {topic.files.length === 0 ? (
                       <div className="text-muted-foreground py-4">
                         فعلاً صوتی اضافه نشده.
                       </div>
                     ) : (
-                      <MotionList className="flex flex-col gap-3">
+                      <SessionList
+                        multi={topic.files.length > 1}
+                        value={openTopicSessions}
+                        onValueChange={setOpenTopicSessions}
+                      >
                         {topic.files.map((file, i) => {
                           const itemId = `${topic.idPrefix}-${i}`;
                           const streamUrl = toStreamableUrl(file.url);
@@ -475,25 +495,23 @@ export const BenefitAkhlaq = () => {
                             isCurrentTrack && current?.segmentMode !== "lesson";
 
                           return (
-                            <MotionItem
+                            <SessionRow
                               id={itemId}
                               key={file.url || itemId}
-                              className={[
-                                "motion-list-item transition",
-                                highlightId === itemId
-                                  ? "nav-highlight border"
-                                  : "",
-                              ].join(" ")}
+                              multi={topic.files.length > 1}
+                              value={itemId}
+                              node={toPersianDigits(i + 1)}
+                              title={toPersianDigits(
+                                normalizeSessionTitle(file.title || "", i + 1)
+                              )}
+                              playing={playingAttr(current, isPlaying, itemId)}
+                              className={highlightId === itemId ? "nav-highlight" : ""}
                             >
-                              <div className="font-semibold mb-2 text-primary">
-                                {toPersianDigits(
-                                  normalizeSessionTitle(file.title || "", i + 1)
-                                )}
-                              </div>
                               <div className="lesson-audio-card">
                                 <p className="lesson-audio-title">
                                   <span>صوت</span>
-                                  <Headphones aria-hidden="true" />
+                                  <Headphones className="sd-headphone" aria-hidden="true" />
+<SoundWave />
                                 </p>
 
 
@@ -533,10 +551,10 @@ export const BenefitAkhlaq = () => {
                                   </button>
                                 </div>
                               </div>
-                            </MotionItem>
+                            </SessionRow>
                           );
                         })}
-                      </MotionList>
+                      </SessionList>
                     )}
                   </AccordionContent>
                 </AccordionItem>
