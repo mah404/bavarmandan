@@ -1,6 +1,6 @@
 "use client";
 
-import { SlideHeader, SoundWave, playingAttr } from "@/components/layout/sections/SessionSlide";
+import { SlideHeader, SoundWave, playingAttr, revealItem } from "@/components/layout/sections/SessionSlide";
 
 import { useEffect, useMemo, useState } from "react";
 import { BookOpen, Download, Headphones, Play } from "lucide-react";
@@ -48,17 +48,10 @@ export const BenefitTafsir = () => {
   const [sessionValue, setSessionValue] = useState<string | undefined>();
   const [tartibiTopicValue, setTartibiTopicValue] = useState<string | undefined>();
   const [thematicTopicValue, setThematicTopicValue] = useState<string | undefined>();
+  const [surahValue, setSurahValue] = useState<string | undefined>();
   const { catalog, loading, error, load } = useAudioCatalog();
   const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer();
   const { target, clear } = useSheetNav();
-
-  const flashHighlight = (id: string) => {
-    const element = document.getElementById(id);
-    if (!element) return;
-
-    element.classList.add("nav-highlight");
-    window.setTimeout(() => element.classList.remove("nav-highlight"), 1700);
-  };
 
   useEffect(() => {
     if (open) load(true);
@@ -107,22 +100,13 @@ export const BenefitTafsir = () => {
       (a, b) =>
         tafsirSessionNumber(a, 0) - tafsirSessionNumber(b, 0)
     );
-    const lastSessionNumber = sessions.reduce(
-      (max, session, index) =>
-        Math.max(max, tafsirSessionNumber(session, index)),
-      0
-    );
-    const nextSessionNumber = lastSessionNumber + 1;
-
-    return [
-      ...sessions,
-      {
-        id: String(nextSessionNumber),
-        title: tafsirSessionTitle(nextSessionNumber),
-        isPlaceholder: true,
-      },
-    ];
+    // the sessions of this surah are all there is, so there is no «به زودی» row after them
+    return sessions as TafsirSessionItem[];
   }, [catalog]);
+  const lastThematicNumber = thematicTafsirSessions.reduce(
+    (max, session, index) => (session.isPlaceholder ? max : Math.max(max, tafsirSessionNumber(session, index))),
+    0
+  );
 
   useEffect(() => {
     if (!target || target.sheetId !== SHEET_ID) return;
@@ -141,18 +125,11 @@ export const BenefitTafsir = () => {
       target.itemDomId?.startsWith("tafsir-mozooei-session-")
     ) {
       setThematicTopicValue("tafsir-mozooei-ahsan");
+      setSurahValue("tafsir-mozooei-waqia");
     }
 
-    const timer = setTimeout(() => {
-      if (target.itemDomId) {
-        document.getElementById(target.itemDomId)?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-        flashHighlight(target.itemDomId);
-      }
-      clear();
-    }, 650);
+    if (target.itemDomId) void revealItem(target.itemDomId);
+    const timer = setTimeout(() => clear(), 650);
 
     return () => clearTimeout(timer);
   }, [target, clear]);
@@ -188,7 +165,7 @@ export const BenefitTafsir = () => {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent overlayClassName="sd-backdrop"
           className="sd-sheet h-dvh overflow-y-auto">
-          <SlideHeader title={toPersianDigits(tafsir?.title || "تفسیر قرآن")} subtitle={toPersianDigits(tafsir?.description || "")} />
+          <SlideHeader title="قرآن کریم" subtitle="تفسیر" />
 
           <Accordion
             type="single"
@@ -408,6 +385,28 @@ export const BenefitTafsir = () => {
                         </Accordion>
                       </AccordionContent>
                     </AccordionItem>
+
+                    {/* سوره اسراء: the sessions are not recorded yet */}
+                    <AccordionItem value="tafsir-tartibi-isra" className="sd-group">
+                      <AccordionTrigger className="sd-toggle">سوره اسراء</AccordionTrigger>
+                      <AccordionContent className="sd-group-body">
+                        <Accordion type="single" collapsible className="sd-list" dir="rtl">
+                          <AccordionItem value="tafsir-isra-session-1" id="tafsir-isra-session-1" className="sd-item">
+                            <span className="sd-node" aria-hidden="true">
+                              {toPersianDigits(1)}
+                            </span>
+                            <div className="sd-card">
+                              <AccordionTrigger className="sd-toggle">
+                                <span className="sd-name block flex-1 text-right">جلسه اول</span>
+                              </AccordionTrigger>
+                              <AccordionContent className="sd-body">
+                                <p className="py-2 text-center text-lg font-semibold text-muted-foreground">به زودی</p>
+                              </AccordionContent>
+                            </div>
+                          </AccordionItem>
+                        </Accordion>
+                      </AccordionContent>
+                    </AccordionItem>
                   </Accordion>
                 ) : (
                   <p className="py-4 text-center text-lg font-semibold text-muted-foreground">
@@ -432,15 +431,23 @@ export const BenefitTafsir = () => {
                   >
                     <AccordionItem value="tafsir-mozooei-ahsan" className="sd-group">
                       <AccordionTrigger className="sd-toggle">
-                        <span className="flex w-full flex-col items-start gap-1 text-right leading-7">
-                          <span className="font-bold text-primary">احسن الحدیث</span>
-                          <span className="text-sm font-normal text-muted-foreground">
-                            سوره واقعه ـ مباحث معاد
-                          </span>
-                        </span>
+                        احسن الحدیث
                       </AccordionTrigger>
                       <AccordionContent className="sd-group-body">
                         <Accordion
+                          type="single"
+                          collapsible
+                          value={surahValue}
+                          onValueChange={setSurahValue}
+                          className="sd-stack"
+                          dir="rtl"
+                        >
+                          <AccordionItem value="tafsir-mozooei-waqia" className="sd-group">
+                            <AccordionTrigger className="sd-toggle">
+                              سوره واقعه ـ مباحث معاد
+                            </AccordionTrigger>
+                            <AccordionContent className="sd-group-body">
+                              <Accordion
                           type="single"
                           collapsible
                           value={sessionValue}
@@ -488,7 +495,12 @@ export const BenefitTafsir = () => {
                                 </span>
                                 <div className="sd-card">
                                 <AccordionTrigger className="sd-toggle">
-                                  <span className="sd-name block flex-1 text-right">{sessionTitle}</span>
+                                  <span className="sd-name block flex-1 text-right">
+                                    {sessionTitle}
+                                    {!session.isPlaceholder && sessionNumber === lastThematicNumber ? (
+                                      <span className="sd-last">(جلسه آخر)</span>
+                                    ) : null}
+                                  </span>
                                 </AccordionTrigger>
                                 <AccordionContent className="sd-body">
                                   {session.isPlaceholder ? (
@@ -615,6 +627,9 @@ export const BenefitTafsir = () => {
                               </AccordionItem>
                             );
                           })}
+                        </Accordion>
+                            </AccordionContent>
+                          </AccordionItem>
                         </Accordion>
                       </AccordionContent>
                     </AccordionItem>

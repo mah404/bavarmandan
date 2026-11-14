@@ -3717,3 +3717,52 @@ div.sd-backdrop {
 .sheet-modern.sd-sheet .sd-card.sd-plain {
     padding: 14px 16px;
 }
+
+/* «(جلسه آخر)» next to the last session of a series */
+.sd-last {
+    margin-inline-start: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: hsl(var(--primary));
+    white-space: nowrap;
+}
+
+/* the glow that shows a file after a jump from «جدیدترین محتواها» goes round the session's card, not the whole timeline row */
+.sheet-modern.sd-sheet .sd-item.nav-highlight {
+    border-width: 0 !important;
+    animation: none;
+}
+/* the glow is a layer on top of the card that only fades in and out: nothing in the card changes size, colour or shadow, so there is no jump at the end */
+.sd-card {
+    position: relative;
+}
+.sheet-modern.sd-sheet .sd-item.nav-highlight > .sd-card::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    border: 2px solid hsl(var(--primary));
+    box-shadow: 0 0 26px 3px hsl(var(--primary) / 0.5), inset 0 0 18px hsl(var(--primary) / 0.12);
+    pointer-events: none;
+    animation: sd-glow 2.4s cubic-bezier(0.35, 0, 0.25, 1) both;
+}
+@keyframes sd-glow {
+    0% {
+        opacity: 0;
+    }
+    28% {
+        opacity: 1;
+    }
+    55% {
+        opacity: 0.85;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sheet-modern.sd-sheet .sd-item.nav-highlight > .sd-card::after {
+        animation: none;
+        opacity: 0.9;
+    }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { SessionList, SessionRow, SlideHeader, SoundWave, playingAttr } from "@/components/layout/sections/SessionSlide";
+import { SessionList, SessionRow, SlideHeader, SoundWave, playingAttr, revealItem } from "@/components/layout/sections/SessionSlide";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -195,34 +195,7 @@ export const BenefitsCard = () => {
     });
   const isLoading = catalogLoading;
 
-  // ✅ wait-until-exists scroll helper
-const scrollToId = async (id: string, tries = 20) => {
-  for (let i = 0; i < tries; i++) {
-    const el = document.getElementById(id);
-
-    if (el) {
-      el.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-
-      // ✨ add highlight
-      el.classList.add("nav-highlight");
-
-      // ✨ remove highlight after animation
-      setTimeout(() => {
-        el.classList.remove("nav-highlight");
-      }, 1700);
-
-      return;
-    }
-
-    await new Promise((r) => setTimeout(r, 80));
-  }
-};
-
-
-  useEffect(() => {
+    useEffect(() => {
     if (!open) return;
     load(false);
   }, [open, load]);
@@ -266,13 +239,8 @@ const scrollToId = async (id: string, tries = 20) => {
       }
     }
 
-    // 3) wait for accordion content to mount, then scroll
-    if (target.itemDomId) {
-      // small delay helps with sheet + accordion animation
-      setTimeout(() => {
-        scrollToId(target.itemDomId!);
-      }, 150);
-    }
+    // 3) wait for the item to exist (the slide and the lists open one after the other), then scroll and glow
+    if (target.itemDomId) void revealItem(target.itemDomId);
 
     const t = setTimeout(() => clear(), 1000);
     return () => clearTimeout(t);

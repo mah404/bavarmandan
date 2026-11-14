@@ -1,6 +1,6 @@
 "use client";
 
-import { SessionList, SessionRow, SlideHeader, SoundWave, playingAttr } from "@/components/layout/sections/SessionSlide";
+import { SessionList, SessionRow, SlideHeader, SoundWave, playingAttr, revealItem } from "@/components/layout/sections/SessionSlide";
 
 import { useEffect, useState } from "react";
 import {
@@ -62,14 +62,7 @@ export const BenefitAkhlaq = () => {
 
   const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer();
   const { target, clear } = useSheetNav();
-  const [highlightId, setHighlightId] = useState<string | null>(null);
   const { catalog, loading: catalogLoading, error, load } = useAudioCatalog();
-
-  const flashHighlight = (id: string) => {
-    setHighlightId(id);
-    // remove after animation finishes (match your CSS duration)
-    window.setTimeout(() => setHighlightId(null), 1500);
-  };
 
   const fetchDescription = async () => {
     setLoading(true);
@@ -142,21 +135,16 @@ export const BenefitAkhlaq = () => {
     if (target.itemDomId) {
       const itemDomId = target.itemDomId;
       setOpenTopicSessions((prev) => (prev.includes(itemDomId) ? prev : [...prev, itemDomId]));
+      // a «باورداشت» session is a row of its own: open it
+      const belief = itemDomId.match(/^audio-akhlagh-belief-(\d+)$/);
+      if (belief) setOpenBeliefSession(`belief-session-${belief[1]}`);
+      void revealItem(itemDomId);
     }
 
     // wait for the sheet + accordion transition to mount/expand before
     // scrolling and highlighting (requestAnimationFrame is unreliable here
     // since it gets throttled while the sheet is transitioning in).
     const scrollTimer = setTimeout(() => {
-      if (target.itemDomId) {
-        document.getElementById(target.itemDomId)?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-
-        flashHighlight(target.itemDomId);
-      }
-
       if (target.autoplay) {
         play(target.autoplay);
       }
@@ -249,9 +237,6 @@ export const BenefitAkhlaq = () => {
                         data-playing={playingAttr(current, isPlaying, `audio-akhlagh-belief-${originalIndex}`)}
                         className={[
                           "sd-item",
-                          highlightId === `audio-akhlagh-belief-${originalIndex}`
-                            ? "nav-highlight"
-                            : "",
                         ].join(" ")}
                       >
                         <span className="sd-node" aria-hidden="true">
@@ -505,7 +490,6 @@ export const BenefitAkhlaq = () => {
                                 normalizeSessionTitle(file.title || "", i + 1)
                               )}
                               playing={playingAttr(current, isPlaying, itemId)}
-                              className={highlightId === itemId ? "nav-highlight" : ""}
                             >
                               <div className="lesson-audio-card">
                                 <p className="lesson-audio-title">

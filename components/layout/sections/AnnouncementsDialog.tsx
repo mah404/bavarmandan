@@ -321,7 +321,7 @@ export function AnnouncementsDialog() {
                       strokeWidth="3"
                       strokeLinejoin="round"
                     />
-                    <g transform="translate(26 25) scale(2)">
+                    <g transform="translate(32 31) scale(1.5)">
                       <g
                         className="announcements-medal-bell"
                         fill="none"

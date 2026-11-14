@@ -1,6 +1,6 @@
 "use client";
 
-import { SlideHeader, SoundWave, playingAttr } from "@/components/layout/sections/SessionSlide";
+import { SlideHeader, SoundWave, playingAttr, revealItem } from "@/components/layout/sections/SessionSlide";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -99,14 +99,6 @@ export const BenefitTajrid = () => {
   const sections = useMemo(() => catalog?.tajrid?.pdfs || [], [catalog]);
   const tajridAudios = useMemo(() => catalog?.tajrid?.audios || [], [catalog]);
 
-  const flashHighlight = (id: string) => {
-    const element = document.getElementById(id);
-    if (!element) return;
-
-    element.classList.add("nav-highlight");
-    window.setTimeout(() => element.classList.remove("nav-highlight"), 1700);
-  };
-
   useEffect(() => {
     if (!target || target.sheetId !== SHEET_ID) return;
 
@@ -114,14 +106,8 @@ export const BenefitTajrid = () => {
     load();
     if (target.accordionValue) setAccordionValue(target.accordionValue);
 
+    if (target.itemDomId) void revealItem(target.itemDomId);
     const timer = window.setTimeout(() => {
-      if (target.itemDomId) {
-        document.getElementById(target.itemDomId)?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-        flashHighlight(target.itemDomId);
-      }
       if (target.autoplay) play(target.autoplay);
       clear();
     }, 450);

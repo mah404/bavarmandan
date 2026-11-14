@@ -129,3 +129,41 @@ export function SessionRow({
     </MotionItem>
   );
 }
+
+const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+// A jump can be requested again while the first one is still running (the lists re-render as data arrives): once is enough.
+const lastReveal = new Map<string, number>();
+
+/**
+ * After a jump from «جدیدترین محتواها»: waits until the item exists (the slide and the lists open one after the other,
+ * and the data may still be loading), lets the accordions finish opening, scrolls to it and makes it glow.
+ */
+export async function revealItem(id: string, { tries = 150, interval = 100, settle = 650 } = {}) {
+  const now = Date.now();
+  if (now - (lastReveal.get(id) ?? 0) < 6000) return;
+  lastReveal.set(id, now);
+
+  for (let attempt = 0; attempt < tries; attempt++) {
+    const found = document.getElementById(id);
+    if (found) {
+      // the glow goes round the whole session (some ids sit on something inside it)
+      const target = found.closest<HTMLElement>(".sd-item") ?? found;
+      // let the lists above finish opening, so the page is scrolled once, to the final place
+      await wait(settle);
+      // an open session is taller than the card: show its top (under the fixed header) rather than its middle
+      const scroller = target.closest(".sd-sheet");
+      const tall = scroller ? target.getBoundingClientRect().height > scroller.clientHeight * 0.6 : false;
+      target.style.scrollMarginTop = "130px";
+      target.scrollIntoView({ behavior: "smooth", block: tall ? "start" : "center" });
+      // the glow starts when the scrolling is nearly done
+      await wait(500);
+      target.classList.remove("nav-highlight");
+      void target.offsetWidth; // so the glow starts over when the same item is reached twice
+      target.classList.add("nav-highlight");
+      window.setTimeout(() => target.classList.remove("nav-highlight"), 2600);
+      return;
+    }
+    await wait(interval);
+  }
+}
