@@ -279,7 +279,7 @@ export const BenefitMaktobat = () => {
           </OrnateMedal>
           <span className="ic-body">
             <span className="ic-tag">اصول عقاید</span>
-            <h3 className="ic-title">برهان امکان و وجوب</h3>
+            <h3 className="ic-title ic-oneline">برهان امکان و وجوب</h3>
             <span className="ic-title2">اثبات صفات الله تعالی</span>
             <span className="ic-desc">متن، صوت و فایل‌های مرتبط</span>
           </span>

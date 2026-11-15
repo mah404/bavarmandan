@@ -4875,3 +4875,108 @@ html:not(.dark) .lt-item:hover .lt-play {
         font-size: clamp(14px, 11.5cqw, 21px);
     }
 }
+
+/* medium screens (two columns, the cards are narrow): a smaller star and smaller titles, so nothing collides */
+@media (min-width: 761px) and (max-width: 1180px) {
+    .ic-card:not(.ic-wide) {
+        padding-left: 56px;
+        padding-right: 56px;
+    }
+    .ic-card:not(.ic-wide) .ic-medal {
+        left: 10px;
+        width: 40px;
+        height: 40px;
+        margin-top: -20px;
+    }
+    .ic-card:not(.ic-wide) .ic-ico {
+        width: 16px;
+        height: 16px;
+    }
+    .ic-card:not(.ic-wide) .ic-title,
+    .ic-card:not(.ic-wide) .ic-title.ic-oneline {
+        font-size: 18px;
+        white-space: normal;
+    }
+}
+
+/* back to the layout with the title in the area right of the star, with the star moved inward (not at the very edge) */
+.ic-card {
+    min-height: 168px;
+    padding: 22px 24px 22px 108px;
+}
+.ic-card.ic-wide {
+    min-height: 168px;
+    padding: 22px 24px 22px 150px;
+}
+.ic-medal {
+    left: 36px;
+    width: 56px;
+    height: 56px;
+    margin-top: -28px;
+}
+.ic-card.ic-wide .ic-medal {
+    left: 56px;
+    width: 72px;
+    height: 72px;
+    margin-top: -36px;
+}
+.ic-ico {
+    width: 21px;
+    height: 21px;
+}
+.ic-title {
+    font-size: 26px;
+    text-align: center;
+}
+.ic-card.ic-wide .ic-title {
+    font-size: 34px;
+}
+.ic-title.ic-oneline {
+    font-size: clamp(14px, 11.5cqw, 24px);
+}
+@media (max-width: 760px) {
+    .ic-card,
+    .ic-card.ic-wide {
+        min-height: 150px;
+        padding: 20px 18px 20px 92px;
+    }
+    .ic-medal,
+    .ic-card.ic-wide .ic-medal {
+        left: 22px;
+        width: 50px;
+        height: 50px;
+        margin-top: -25px;
+    }
+    .ic-ico {
+        width: 19px;
+        height: 19px;
+    }
+    .ic-title,
+    .ic-card.ic-wide .ic-title {
+        font-size: 22px;
+    }
+    .ic-title.ic-oneline {
+        font-size: clamp(14px, 11.5cqw, 22px);
+    }
+}
+@media (min-width: 761px) and (max-width: 1180px) {
+    .ic-card:not(.ic-wide) {
+        padding-left: 84px;
+        padding-right: 22px;
+    }
+    .ic-card:not(.ic-wide) .ic-medal {
+        left: 18px;
+        width: 40px;
+        height: 40px;
+        margin-top: -20px;
+    }
+    .ic-card:not(.ic-wide) .ic-ico {
+        width: 16px;
+        height: 16px;
+    }
+    .ic-card:not(.ic-wide) .ic-title,
+    .ic-card:not(.ic-wide) .ic-title.ic-oneline {
+        font-size: 18px;
+        white-space: normal;
+    }
+}
