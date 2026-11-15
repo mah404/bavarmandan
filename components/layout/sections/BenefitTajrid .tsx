@@ -1,5 +1,7 @@
 "use client";
 
+import { OrnateFrame, OrnateMedal, OrnateShine } from "@/components/layout/sections/OrnateCard";
+
 import { SlideHeader, SoundWave, playingAttr, revealItem } from "@/components/layout/sections/SessionSlide";
 
 import { useEffect, useMemo, useState } from "react";
@@ -131,19 +133,19 @@ export const BenefitTajrid = () => {
           setOpen(true);
           load();
         }}
-        className="service-tile group flex h-full min-h-[142px] cursor-pointer flex-col justify-between"
-      >
-        <div className="service-tile-header">
-          <span className="service-tile-kicker">شرح کتاب</span>
-          <span className="service-tile-mark" aria-hidden="true">
-            <BookOpenText className="size-5" />
+        className="ic-card group h-full cursor-pointer"
+        >
+          <OrnateFrame />
+          <OrnateMedal>
+            <BookOpenText className="ic-ico" strokeWidth={1.7} />
+          </OrnateMedal>
+          <span className="ic-body">
+            <span className="ic-tag">شرح کتاب</span>
+            <h3 className="ic-title">دروس شرح کتاب تجرید الاعتقاد</h3>
+            <span className="ic-desc">شرح، جزوه و صوت جلسات</span>
           </span>
+          <OrnateShine />
         </div>
-        <div className="service-tile-copy">
-          <h3>دروس شرح کتاب تجرید الاعتقاد</h3>
-          <p>شرح، جزوه و صوت جلسات</p>
-        </div>
-      </div>
       </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>

@@ -1,5 +1,7 @@
 "use client";
 
+import { OrnateFrame, OrnateMedal, OrnateShine } from "@/components/layout/sections/OrnateCard";
+
 import { SlideHeader, SoundWave, playingAttr, revealItem } from "@/components/layout/sections/SessionSlide";
 
 import { useEffect, useMemo, useState } from "react";
@@ -19,6 +21,7 @@ import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import {
   formatSessionTitle,
   normalizeSessionTitle,
+  sessionNumberFromText,
   toPersianDigits,
   type MaktubatSession,
   toDownloadUrl,
@@ -32,7 +35,10 @@ import { HoverLift } from "./reveal";
 
 type TafsirSessionItem = MaktubatSession & { isPlaceholder?: boolean };
 
+/** The number of a session: the one written in its title («جلسه نوزدهم»), else a numeric id, else its place in the list. */
 function tafsirSessionNumber(session: MaktubatSession, index: number) {
+  const fromTitle = sessionNumberFromText(session.title || "");
+  if (fromTitle && fromTitle > 0) return fromTitle;
   const idNumber = Number(session.id);
   return Number.isFinite(idNumber) && idNumber > 0 ? idNumber : index + 1;
 }
@@ -64,24 +70,13 @@ export const BenefitTafsir = () => {
         tafsirSessionNumber(a, 0) - tafsirSessionNumber(b, 0)
     );
 
-    if (!sessions.length) return [];
-
-    const lastSessionNumber = sessions.reduce(
-      (max, session, index) =>
-        Math.max(max, tafsirSessionNumber(session, index)),
-      0
-    );
-    const nextSessionNumber = lastSessionNumber + 1;
-
-    return [
-      ...sessions,
-      {
-        id: String(nextSessionNumber),
-        title: tafsirSessionTitle(nextSessionNumber),
-        isPlaceholder: true,
-      },
-    ];
+    // the sessions of this surah are all there is, so there is no «به زودی» row after them
+    return sessions as TafsirSessionItem[];
   }, [tafsir?.sessions]);
+  const lastTartibiNumber = tafsirSessions.reduce(
+    (max, session, index) => (session.isPlaceholder ? max : Math.max(max, tafsirSessionNumber(session, index))),
+    0
+  );
 
   const thematicTafsirSessions = useMemo<TafsirSessionItem[]>(() => {
     const rawSessions =
@@ -147,18 +142,18 @@ export const BenefitTafsir = () => {
           }
         }}
           onClick={() => setOpen(true)}
-          className="service-tile group flex h-full min-h-[142px] cursor-pointer flex-col justify-between"
+          className="ic-card group h-full cursor-pointer ic-wide"
         >
-          <div className="service-tile-header">
-            <span className="service-tile-kicker">تفسیر</span>
-            <span className="service-tile-mark" aria-hidden="true">
-              <BookOpen className="size-5" />
-            </span>
-          </div>
-          <div className="service-tile-copy">
-            <h3>قرآن کریم</h3>
-            <p>مجموعه ی تفسیر قرآن کریم به زبان ساده</p>
-          </div>
+          <OrnateFrame />
+          <OrnateMedal>
+            <BookOpen className="ic-ico" strokeWidth={1.7} />
+          </OrnateMedal>
+          <span className="ic-body">
+            <span className="ic-tag">تفسیر</span>
+            <h3 className="ic-title">قرآن کریم</h3>
+            <span className="ic-desc">مجموعه ی تفسیر قرآن کریم به زبان ساده</span>
+          </span>
+          <OrnateShine />
         </div>
       </HoverLift>
 
@@ -255,7 +250,12 @@ export const BenefitTafsir = () => {
                                 </span>
                                 <div className="sd-card">
                                 <AccordionTrigger className="sd-toggle">
-                                  <span className="sd-name block flex-1 text-right">{sessionTitle}</span>
+                                  <span className="sd-name block flex-1 text-right">
+                                    {sessionTitle}
+                                    {!session.isPlaceholder && sessionNumber === lastTartibiNumber ? (
+                                      <span className="sd-last">(جلسه آخر)</span>
+                                    ) : null}
+                                  </span>
                                 </AccordionTrigger>
                                 <AccordionContent className="sd-body">
                                   {session.isPlaceholder ? (

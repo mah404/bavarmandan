@@ -1,5 +1,7 @@
 "use client";
 
+import { OrnateFrame, OrnateMedal, OrnateShine } from "@/components/layout/sections/OrnateCard";
+
 import { SessionList, SessionRow, SlideHeader, SoundWave, playingAttr, revealItem } from "@/components/layout/sections/SessionSlide";
 
 import { useEffect, useMemo, useState } from "react";
@@ -265,19 +267,19 @@ export const BenefitsCard = () => {
           fetchDescription();
           setOpen(true);
         }}
-        className="service-tile group flex h-full min-h-[142px] cursor-pointer flex-col justify-between"
-      >
-        <div className="service-tile-header">
-          <span className="service-tile-kicker">اخلاق</span>
-          <span className="service-tile-mark" aria-hidden="true">
-            <HeartHandshake className="size-5" />
+        className="ic-card group h-full cursor-pointer"
+        >
+          <OrnateFrame />
+          <OrnateMedal>
+            <HeartHandshake className="ic-ico" strokeWidth={1.7} />
+          </OrnateMedal>
+          <span className="ic-body">
+            <span className="ic-tag">اخلاق</span>
+            <h3 className="ic-title">مباحث اخلاقی</h3>
+            <span className="ic-desc">گفتارها و فایل‌های صوتی</span>
           </span>
+          <OrnateShine />
         </div>
-        <div className="service-tile-copy">
-          <h3>مباحث اخلاقی</h3>
-          <p>گفتارها و فایل‌های صوتی</p>
-        </div>
-      </div>
       </HoverLift>
 
       <Sheet open={open} onOpenChange={setOpen}>

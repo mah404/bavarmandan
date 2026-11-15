@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { Fragment, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { X } from "lucide-react";
 import { SheetClose, SheetDescription, SheetTitle } from "@/components/ui/sheet";
@@ -12,8 +12,39 @@ import { MotionItem, MotionList } from "./reveal";
  * sheet's own (it is moved into place by the «sd-sheet» styles), so closing works exactly as before.
  */
 export function SlideHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+  const header = useRef<HTMLElement>(null);
+  const words = title.trim().split(/\s+/);
+
+  // When a row is opened and its bottom is below the visible part of the slide, the slide scrolls (only the slide)
+  // so that the row is in view, never further than its own top allows (the header stays fixed on top).
+  useEffect(() => {
+    const head = header.current;
+    const sheet = head?.closest<HTMLElement>(".sd-sheet");
+    if (!head || !sheet) return;
+    let timer = 0;
+    const onClick = (event: MouseEvent) => {
+      const toggle = (event.target as Element | null)?.closest?.(".sd-toggle");
+      const row = toggle?.closest<HTMLElement>(".sd-item, .sd-group");
+      if (!row) return;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        if (row.getAttribute("data-state") !== "open") return;
+        const box = row.getBoundingClientRect();
+        const view = sheet.getBoundingClientRect();
+        const below = box.bottom - (view.bottom - 20);
+        const room = box.top - (head.getBoundingClientRect().bottom + 12);
+        if (below > 0 && room > 0) sheet.scrollBy({ top: Math.min(below, room), behavior: "smooth" });
+      }, 280);
+    };
+    sheet.addEventListener("click", onClick);
+    return () => {
+      window.clearTimeout(timer);
+      sheet.removeEventListener("click", onClick);
+    };
+  }, []);
+
   return (
-    <header className="sd-head">
+    <header ref={header} className="sd-head">
       <svg className="sd-pat" aria-hidden="true">
         <defs>
           <pattern id="sd-khatam" width="80" height="80" patternUnits="userSpaceOnUse">
@@ -30,7 +61,18 @@ export function SlideHeader({ title, subtitle }: { title: string; subtitle?: str
       </svg>
       <div className="sd-head-row">
         <div>
-          <SheetTitle className="sd-title">{title}</SheetTitle>
+          <SheetTitle className="sd-title m-title">
+            {words.map((word, index) => (
+              <Fragment key={index}>
+                {index > 0 ? " " : null}
+                <span className="m-mask">
+                  <span className="m-word" style={{ "--i": index } as CSSProperties}>
+                    {word}
+                  </span>
+                </span>
+              </Fragment>
+            ))}
+          </SheetTitle>
           <SheetDescription className="sd-sub">{subtitle ?? ""}</SheetDescription>
         </div>
         <SheetClose className="sd-close" aria-label="بستن">

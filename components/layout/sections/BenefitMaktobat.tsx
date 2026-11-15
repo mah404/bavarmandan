@@ -1,5 +1,7 @@
 "use client";
 
+import { OrnateFrame, OrnateMedal, OrnateShine } from "@/components/layout/sections/OrnateCard";
+
 import { useEffect, useRef, useState } from "react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { SlideHeader, SoundWave, revealItem } from "@/components/layout/sections/SessionSlide";
@@ -269,21 +271,19 @@ export const BenefitMaktobat = () => {
           }
         }}
           onClick={() => handleOpen(true)}
-          className="service-tile group flex h-full min-h-[142px] cursor-pointer flex-col justify-between"
+          className="ic-card group h-full cursor-pointer"
         >
-          <div className="service-tile-header">
-            <span className="service-tile-kicker">اصول عقاید</span>
-            <span className="service-tile-mark" aria-hidden="true">
-              <Sparkles className="size-5" />
-            </span>
-          </div>
-          <div className="service-tile-copy">
-            <h3 className="space-y-1">
-              <span className="block">برهان امکان و وجوب</span>
-              <span className="block">اثبات صفات الله تعالی</span>
-            </h3>
-            <p>متن، صوت و فایل‌های مرتبط</p>
-          </div>
+          <OrnateFrame />
+          <OrnateMedal>
+            <Sparkles className="ic-ico" strokeWidth={1.7} />
+          </OrnateMedal>
+          <span className="ic-body">
+            <span className="ic-tag">اصول عقاید</span>
+            <h3 className="ic-title">برهان امکان و وجوب</h3>
+            <span className="ic-title2">اثبات صفات الله تعالی</span>
+            <span className="ic-desc">متن، صوت و فایل‌های مرتبط</span>
+          </span>
+          <OrnateShine />
         </div>
       </HoverLift>
 
