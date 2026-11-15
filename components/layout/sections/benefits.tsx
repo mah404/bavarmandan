@@ -24,7 +24,7 @@ export const BenefitsSection = () => {
           </p>
         </div>
 
-        <div className="grid items-start gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+        <div className="grid items-start gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-stretch">
           <div className="order-2 lg:order-1">
             <FeaturesSection />
           </div>

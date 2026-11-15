@@ -4189,47 +4189,6 @@ html:not(.dark) .ic-card {
     bottom: 4.5px;
 }
 
-/* the four ornamented corners */
-.ic-cn {
-    position: absolute;
-    width: 26px;
-    height: 26px;
-    color: hsl(var(--primary));
-    pointer-events: none;
-    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.ic-cn.ic-tr {
-    top: 4px;
-    right: 4px;
-}
-.ic-cn.ic-tl {
-    top: 4px;
-    left: 4px;
-    transform: scaleX(-1);
-}
-.ic-cn.ic-br {
-    bottom: 4px;
-    right: 4px;
-    transform: scaleY(-1);
-}
-.ic-cn.ic-bl {
-    bottom: 4px;
-    left: 4px;
-    transform: scale(-1);
-}
-.ic-card:hover .ic-cn.ic-tr {
-    transform: rotate(-8deg) scale(1.1);
-}
-.ic-card:hover .ic-cn.ic-tl {
-    transform: scaleX(-1) rotate(-8deg) scale(1.1);
-}
-.ic-card:hover .ic-cn.ic-br {
-    transform: scaleY(-1) rotate(-8deg) scale(1.1);
-}
-.ic-card:hover .ic-cn.ic-bl {
-    transform: scale(-1) rotate(-8deg) scale(1.1);
-}
-
 /* the eight-pointed star and the icon */
 .ic-medal {
     position: absolute;
@@ -4344,10 +4303,6 @@ html:not(.dark) .ic-card {
     .ic-card.ic-wide .ic-title {
         font-size: 18px;
     }
-    .ic-cn {
-        width: 24px;
-        height: 24px;
-    }
 }
 @media (prefers-reduced-motion: reduce) {
     .ic-card,
@@ -4370,6 +4325,7 @@ html:not(.dark) .ic-ico {
     position: relative;
     display: flex;
     flex-direction: column;
+    height: 100%;
     box-sizing: border-box;
     overflow: hidden;
     padding: 40px 26px 22px;
@@ -4669,5 +4625,253 @@ html:not(.dark) .lt-card {
     }
     .lt-card * {
         transition: none !important;
+    }
+}
+
+/* layout: text on the right, the star on the left, both centred in height.
+   The cards are small enough that the five of them are about as tall as the latest-content card beside them; the grid
+   stretches them to exactly its height. */
+.ic-card {
+    justify-content: center;
+    min-height: 140px;
+    padding: 22px 24px 22px 112px;
+}
+.ic-card.ic-wide {
+    min-height: 140px;
+    padding-left: 132px;
+}
+
+/* the eight-pointed star, on the left */
+.ic-medal {
+    top: 50%;
+    left: 24px;
+    margin: -33px 0 0;
+    width: 66px;
+    height: 66px;
+}
+.ic-card.ic-wide .ic-medal {
+    left: 32px;
+    width: 76px;
+    height: 76px;
+    margin-top: -38px;
+}
+.ic-ico {
+    width: 23px;
+    height: 23px;
+}
+
+/* the text: right-aligned */
+.ic-body {
+    text-align: right;
+}
+.ic-tag {
+    font-size: 12.5px;
+}
+.ic-title {
+    margin-top: 2px;
+    font-size: 22px;
+    line-height: 1.4;
+    text-align: right;
+}
+.ic-card.ic-wide .ic-title {
+    font-size: 28px;
+}
+.ic-title2 {
+    font-size: 14.5px;
+}
+.ic-desc {
+    margin-top: 3px;
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+@media (max-width: 760px) {
+    .ic-card,
+    .ic-card.ic-wide {
+        min-height: 130px;
+        padding: 20px 18px 20px 92px;
+    }
+    .ic-medal,
+    .ic-card.ic-wide .ic-medal {
+        left: 18px;
+        width: 56px;
+        height: 56px;
+        margin-top: -28px;
+    }
+    .ic-ico {
+        width: 20px;
+        height: 20px;
+    }
+    .ic-title,
+    .ic-card.ic-wide .ic-title {
+        font-size: 19px;
+    }
+    .ic-desc {
+        font-size: 13px;
+    }
+}
+
+/* light theme, «جدیدترین محتواها»: the numbers and the play icons are yellow, on the site's blue (filled), so they read */
+html:not(.dark) .lt-item .lt-num,
+html:not(.dark) .lt-item:hover .lt-num,
+html:not(.dark) .lt-item.lt-first .lt-num {
+    color: #fde047;
+}
+html:not(.dark) .lt-item .lt-num::before {
+    background: hsl(var(--primary));
+    border-color: hsl(var(--primary));
+}
+html:not(.dark) .lt-item .lt-play,
+html:not(.dark) .lt-item:hover .lt-play {
+    background: hsl(var(--primary));
+    color: #fde047;
+}
+
+/* the card's text: the title in the middle, the small word at the top right (grey), the description at the bottom right */
+.ic-card {
+    container-type: inline-size;
+}
+.ic-body {
+    display: contents;
+}
+.ic-tag {
+    position: absolute;
+    top: 22px;
+    right: 24px;
+    margin: 0;
+    color: hsl(var(--muted-foreground));
+}
+.ic-desc {
+    position: absolute;
+    bottom: 22px;
+    right: 24px;
+    margin: 0;
+}
+/* a title that must stay on one line: it shrinks with the card instead of wrapping */
+.ic-title.ic-oneline {
+    white-space: nowrap;
+    font-size: clamp(14px, 11cqw, 22px); /* cqw counts the card's inner width, between its paddings */
+}
+@media (max-width: 760px) {
+    .ic-tag {
+        top: 18px;
+        right: 18px;
+    }
+    .ic-desc {
+        bottom: 18px;
+        right: 18px;
+    }
+}
+
+/* titles: bigger, and centred in the card (the part of it right of the star), both across and in height */
+.ic-card {
+    padding: 22px 24px 22px 100px;
+}
+.ic-card.ic-wide {
+    padding-left: 124px;
+}
+.ic-medal {
+    left: 22px;
+    margin-top: -30px;
+    width: 60px;
+    height: 60px;
+}
+.ic-card.ic-wide .ic-medal {
+    left: 30px;
+    margin-top: -36px;
+    width: 72px;
+    height: 72px;
+}
+.ic-title {
+    font-size: 26px;
+    text-align: center;
+}
+.ic-card.ic-wide .ic-title {
+    font-size: 34px;
+}
+.ic-title2 {
+    text-align: center;
+}
+.ic-title.ic-oneline {
+    font-size: clamp(14px, 11.5cqw, 26px);
+}
+@media (max-width: 760px) {
+    .ic-card,
+    .ic-card.ic-wide {
+        padding: 20px 18px 20px 84px;
+    }
+    .ic-medal,
+    .ic-card.ic-wide .ic-medal {
+        left: 16px;
+        width: 54px;
+        height: 54px;
+        margin-top: -27px;
+    }
+    .ic-title,
+    .ic-card.ic-wide .ic-title {
+        font-size: 23px;
+    }
+    .ic-title.ic-oneline {
+        font-size: clamp(14px, 11.5cqw, 23px);
+    }
+}
+
+/* titles exactly in the middle of the card: the card has equal room on both sides, the star sits in the left room */
+.ic-card {
+    min-height: 168px;
+    padding: 22px 82px;
+}
+.ic-card.ic-wide {
+    min-height: 168px;
+    padding: 22px 112px;
+}
+.ic-medal {
+    left: 18px;
+    width: 52px;
+    height: 52px;
+    margin-top: -26px;
+}
+.ic-card.ic-wide .ic-medal {
+    left: 30px;
+    width: 64px;
+    height: 64px;
+    margin-top: -32px;
+}
+.ic-ico {
+    width: 20px;
+    height: 20px;
+}
+.ic-title {
+    font-size: 24px;
+}
+.ic-card.ic-wide .ic-title {
+    font-size: 34px;
+}
+.ic-title.ic-oneline {
+    font-size: clamp(14px, 11.5cqw, 24px);
+}
+@media (max-width: 760px) {
+    .ic-card,
+    .ic-card.ic-wide {
+        min-height: 150px;
+        padding: 20px 68px;
+    }
+    .ic-medal,
+    .ic-card.ic-wide .ic-medal {
+        left: 12px;
+        width: 46px;
+        height: 46px;
+        margin-top: -23px;
+    }
+    .ic-ico {
+        width: 18px;
+        height: 18px;
+    }
+    .ic-title,
+    .ic-card.ic-wide .ic-title {
+        font-size: 21px;
+    }
+    .ic-title.ic-oneline {
+        font-size: clamp(14px, 11.5cqw, 21px);
     }
 }

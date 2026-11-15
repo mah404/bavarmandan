@@ -141,7 +141,7 @@ export const BenefitTajrid = () => {
           </OrnateMedal>
           <span className="ic-body">
             <span className="ic-tag">شرح کتاب</span>
-            <h3 className="ic-title">دروس شرح کتاب تجرید الاعتقاد</h3>
+            <h3 className="ic-title ic-oneline">شرح کتاب تجرید الاعتقاد</h3>
             <span className="ic-desc">شرح، جزوه و صوت جلسات</span>
           </span>
           <OrnateShine />

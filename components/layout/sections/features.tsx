@@ -186,7 +186,7 @@ export const FeaturesSection = () => {
   }, [load]);
 
   return (
-    <section id="features" className="w-full">
+    <section id="features" className="h-full w-full">
       <div className="lt-card" dir="rtl">
         <div className="lt-head">
           <span className="lt-live">
