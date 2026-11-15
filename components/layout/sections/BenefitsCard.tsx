@@ -348,12 +348,12 @@ export const BenefitsCard = () => {
                             <AccordionContent className="sd-body">
                               <div
                                 id={`audio-benefitsCard-${groupIndex}-${fileIndex}`}
-                                className="scroll-mt-24 rounded-2xl bg-background/20 px-4 py-5"
+                                className="scroll-mt-24 sd-inner"
                               >
                                 {subtitle ? (
                                   <div
                                     dir="rtl"
-                                    className="mb-4 whitespace-pre-line text-center font-semibold leading-8 text-primary"
+                                    className="sd-intro"
                                   >
                                     {toPersianDigits(subtitle)}
                                   </div>
@@ -411,8 +411,8 @@ export const BenefitsCard = () => {
                                 )}
 
                                 {pdfs.length ? (
-                                  <div className="mt-5 space-y-3">
-                                    <p className="text-center text-sm font-semibold text-primary">
+                                  <div className="space-y-3 sd-written">
+                                    <p className="sd-written-title">
                                       خلاصه متن محتوا
                                     </p>
 
@@ -422,7 +422,7 @@ export const BenefitsCard = () => {
                                       return (
                                         <div
                                           key={`${pdf.title || "pdf"}-${pdfIndex}`}
-                                          className="rounded-xl p-4 shadow-md"
+                                          className="sd-written-card"
                                         >
                                           <p className="mb-3 text-center text-sm font-semibold text-primary">
                                             {toPersianDigits(

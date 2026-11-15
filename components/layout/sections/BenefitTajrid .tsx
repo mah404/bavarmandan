@@ -272,7 +272,7 @@ export const BenefitTajrid = () => {
   <div className="space-y-4">
     {subtitleLines.length > 0 ? (
       <div
-        className="text-sm text-primary leading-relaxed text-right whitespace-pre-line"
+        className="sd-intro"
         dir="rtl"
       >
         {subtitleLines.map((point) => (
@@ -280,7 +280,7 @@ export const BenefitTajrid = () => {
         ))}
       </div>
     ) : (
-      <p className="text-sm text-muted-foreground text-center">
+      <p className="sd-intro sd-intro-muted">
         توضیحی برای این جلسه موجود نیست
       </p>
     )}

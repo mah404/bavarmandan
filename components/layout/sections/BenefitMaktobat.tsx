@@ -358,42 +358,6 @@ export const BenefitMaktobat = () => {
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="sd-body">
-                      <div className="sd-doc rounded-xl">
-                        <p className="text-primary text-sm font-semibold mb-2 text-center">
-                          <FileText className="ml-1 inline size-4 text-muted-foreground" />
-                          {maktobatDocumentTitle(maktobat)}
-                        </p>
-
-                        <div className="flex justify-center gap-2 text-center">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={!maktobat.pdfUrl}
-                            onClick={() => {
-                              if (maktobat.pdfUrl)
-                                window.open(
-                                  toPdfViewUrl(maktobat.pdfUrl),
-                                  "_blank",
-                                );
-                            }}
-                          >
-                            مشاهده
-                          </Button>
-
-                          <a
-                            href={maktobat.pdfUrl || "#"}
-                            download={`${maktobat.title || "maktobat"}.pdf`}
-                          >
-                            <Button size="sm" className="text-background">
-                              دانلود
-                            </Button>
-                          </a>
-                        </div>
-                        <MaktobatNotesButton
-                          notes={maktobat.notes}
-                          onOpen={openNotes}
-                        />
-                      </div>
                       <div className="lesson-audio-card">
                         <p className="lesson-audio-title">
                           <span>صوت</span>
@@ -445,6 +409,44 @@ export const BenefitMaktobat = () => {
                             فایل صوتی موجود نیست
                           </p>
                         )}
+                      </div>
+                      <div className="sd-written">
+                        <p className="sd-written-title">
+                          <FileText className="ml-1 inline size-4 text-muted-foreground" />
+                          {maktobatDocumentTitle(maktobat)}
+                        </p>
+
+                        <div className="sd-written-card">
+                        <div className="flex justify-center gap-2 text-center">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={!maktobat.pdfUrl}
+                            onClick={() => {
+                              if (maktobat.pdfUrl)
+                                window.open(
+                                  toPdfViewUrl(maktobat.pdfUrl),
+                                  "_blank",
+                                );
+                            }}
+                          >
+                            مشاهده
+                          </Button>
+
+                          <a
+                            href={maktobat.pdfUrl || "#"}
+                            download={`${maktobat.title || "maktobat"}.pdf`}
+                          >
+                            <Button size="sm" className="text-background">
+                              دانلود
+                            </Button>
+                          </a>
+                        </div>
+                        <MaktobatNotesButton
+                          notes={maktobat.notes}
+                          onOpen={openNotes}
+                        />
+                        </div>
                       </div>
                     </div>
                   </AccordionContent>

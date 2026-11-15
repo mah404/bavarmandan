@@ -3452,16 +3452,14 @@ div.sd-backdrop {
     flex: 1;
     min-width: 0;
     border-radius: 20px;
-    background: hsl(var(--card) / 0.8);
-    border: 1px solid hsl(var(--primary) / 0.13);
-    transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+    background: hsl(var(--background) / 0.85);
+    border: 1px solid hsl(var(--primary) / 0.45);
+    transition: border-color 0.25s, box-shadow 0.25s;
 }
 .sd-card:hover {
-    border-color: hsl(var(--primary) / 0.4);
+    border-color: hsl(var(--primary) / 0.75);
 }
 .sd-item[data-state="open"] .sd-card {
-    background: hsl(var(--card));
-    border-color: hsl(var(--primary) / 0.45);
     box-shadow: 0 20px 40px -26px rgba(0, 0, 0, 0.5);
 }
 .sheet-modern.sd-sheet .sd-toggle {
@@ -3524,47 +3522,95 @@ div.sd-backdrop {
     box-shadow: none;
 }
 
-/* the line between the written part and the sound: the audio card draws it when something comes before it */
+/*
+ * One pattern for the inside of every session, whatever it is called:
+ *   [intro text]   (.sd-intro)    optional: a line about the session
+ *   [sound]        (.lesson-audio-card)
+ *   ◆ separator ◆  (drawn by .sd-written)
+ *   [written part] (.sd-written: a title, then one card per file)
+ */
 .sd-sheet .lesson-audio-card {
     position: relative;
 }
-.sd-sheet .lesson-audio-card:not(:first-child)::before {
+.sheet-modern.sd-sheet .sd-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+}
+.sheet-modern.sd-sheet .sd-intro {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    text-align: center;
+    white-space: pre-line;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 2;
+    color: hsl(var(--primary));
+}
+.sheet-modern.sd-sheet .sd-intro-muted {
+    color: hsl(var(--muted-foreground));
+    font-weight: 600;
+}
+.sheet-modern.sd-sheet .sd-written {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-top: 6px;
+    padding-top: 22px;
+}
+.sd-written::before {
     content: "";
-    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 1px;
-    margin: 4px 0 14px;
     background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.2) 25%, hsl(var(--primary) / 0.2) 75%, transparent);
 }
-.sd-sheet .lesson-audio-card:not(:first-child)::after {
+.sd-written::after {
     content: "";
     position: absolute;
-    left: 50%;
-    top: 1px;
-    width: 6px;
-    height: 6px;
-    margin-left: -3px;
-    transform: rotate(45deg);
-    background: hsl(var(--primary));
-    opacity: 0.7;
-}
-.sd-sep {
-    position: relative;
-    align-self: stretch;
-    height: 1px;
-    margin: 4px 0;
-    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.13) 25%, hsl(var(--primary) / 0.13) 75%, transparent);
-}
-.sd-sep::after {
-    content: "";
-    position: absolute;
-    left: 50%;
     top: -3px;
+    left: 50%;
     width: 6px;
     height: 6px;
     margin-left: -3px;
     transform: rotate(45deg);
     background: hsl(var(--primary));
     opacity: 0.7;
+}
+.sheet-modern.sd-sheet .sd-written-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.6;
+    color: hsl(var(--primary));
+}
+.sheet-modern.sd-sheet .sd-written-card {
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    border: 0;
+    background: hsl(var(--foreground) / 0.04);
+    box-shadow: none;
+    text-align: center;
+}
+.sd-written-card > p {
+    margin-bottom: 12px;
 }
 
 /* a level above the sessions (a topic, a series): a card that holds a timeline */
@@ -3578,18 +3624,17 @@ div.sd-backdrop {
     margin: 0 0 14px;
     padding: 0;
     border-radius: 20px;
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--primary) / 0.13);
+    background: hsl(var(--background) / 0.85);
+    border: 1px solid hsl(var(--primary) / 0.45);
     box-shadow: none;
     backdrop-filter: none;
     text-align: right;
     transition: border-color 0.25s, box-shadow 0.25s;
 }
 .sheet-modern.sd-sheet .sd-group:hover {
-    border-color: hsl(var(--primary) / 0.4);
+    border-color: hsl(var(--primary) / 0.75);
 }
 .sheet-modern.sd-sheet .sd-group[data-state="open"] {
-    border-color: hsl(var(--primary) / 0.45);
     box-shadow: 0 20px 40px -26px rgba(0, 0, 0, 0.5);
 }
 .sheet-modern.sd-sheet .sd-group-body {
@@ -3599,14 +3644,7 @@ div.sd-backdrop {
     padding: 6px 0 0;
 }
 .sd-group .sd-list {
-    --sd-ring: hsl(var(--card));
     padding: 14px 0 0;
-}
-.sheet-modern.sd-sheet .sd-group .sd-card {
-    background: hsl(var(--background) / 0.5);
-}
-.sheet-modern.sd-sheet .sd-group .sd-item[data-state="open"] .sd-card {
-    background: hsl(var(--background) / 0.85);
 }
 /* lists that are not collapsible (lessons shown in full) look like the session cards */
 .sheet-modern.sd-sheet .motion-list-item {

@@ -285,7 +285,7 @@ export const BenefitAkhlaq = () => {
                           <div className="sd-body">
                             {file.points.length > 0 ? (
                               <div
-                                className="motion-list-item space-y-2 text-right text-sm font-semibold leading-7 text-primary"
+                                className="sd-intro space-y-2"
                                 dir="rtl"
                               >
                                 {file.points.map((point, index) => (
@@ -344,8 +344,8 @@ export const BenefitAkhlaq = () => {
                             </div>
 
                             {file.summaries.length > 0 ? (
-                            <div className="mt-4 text-right" dir="rtl">
-                              <p className="mb-3 text-sm font-bold text-primary">
+                            <div className="sd-written" dir="rtl">
+                              <p className="sd-written-title">
                                 خلاصه متن محتوا
                               </p>
 
@@ -353,7 +353,7 @@ export const BenefitAkhlaq = () => {
                                 {file.summaries.map((summary) => (
                                   <div
                                     key={summary.url}
-                                    className="motion-list-item"
+                                    className="sd-written-card"
                                   >
                                     <p className="mb-2 text-sm font-semibold text-primary">
                                       {toPersianDigits(summary.title)}

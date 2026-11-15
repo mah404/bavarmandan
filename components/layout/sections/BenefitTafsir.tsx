@@ -265,7 +265,7 @@ export const BenefitTafsir = () => {
                                   ) : (
                                   <div className="space-y-5 text-center">
                                     {session.subtitle ? (
-                                      <p className="whitespace-pre-line text-sm font-semibold leading-8 text-primary">
+                                      <p className="sd-intro">
                                         {Array.isArray(session.subtitle)
                                           ? toPersianDigits(session.subtitle.join("\n"))
                                           : toPersianDigits(session.subtitle)}
@@ -322,8 +322,8 @@ export const BenefitTafsir = () => {
                                     ) : null}
 
                                     {pdfs.length ? (
-                                      <div className="space-y-3">
-                                        <p className="text-center text-sm font-semibold text-primary">
+                                      <div className="space-y-3 sd-written">
+                                        <p className="sd-written-title">
                                           خلاصه متن محتوا
                                         </p>
 
@@ -333,7 +333,7 @@ export const BenefitTafsir = () => {
                                           return (
                                             <div
                                               key={`${pdf.title || "pdf"}-${pdfIndex}`}
-                                              className="rounded-xl p-4 shadow-md"
+                                              className="sd-written-card"
                                             >
                                               <p className="mb-3 text-center text-sm font-semibold text-primary">
                                                 {toPersianDigits(
@@ -510,7 +510,7 @@ export const BenefitTafsir = () => {
                                   ) : (
                                     <div className="space-y-5 text-center">
                                       {session.subtitle ? (
-                                        <p className="whitespace-pre-line text-sm font-semibold leading-8 text-primary">
+                                        <p className="sd-intro">
                                           {Array.isArray(session.subtitle)
                                             ? toPersianDigits(session.subtitle.join("\n"))
                                             : toPersianDigits(session.subtitle)}
@@ -566,8 +566,8 @@ export const BenefitTafsir = () => {
                                       ) : null}
 
                                       {pdfs.length ? (
-                                        <div className="space-y-3">
-                                          <p className="text-center text-sm font-semibold text-primary">
+                                        <div className="space-y-3 sd-written">
+                                          <p className="sd-written-title">
                                             خلاصه متن محتوا
                                           </p>
 
@@ -578,7 +578,7 @@ export const BenefitTafsir = () => {
                                             return (
                                               <div
                                                 key={`${pdf.title || "pdf"}-${pdfIndex}`}
-                                                className="rounded-xl p-4 shadow-md"
+                                                className="sd-written-card"
                                               >
                                                 <p className="mb-3 text-center text-sm font-semibold text-primary">
                                                   {toPersianDigits(
