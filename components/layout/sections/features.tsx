@@ -14,7 +14,6 @@ import {
   type MaktubatSession,
 } from "@/lib/media-api";
 import { akhlaghOrderIndex, normalizePersianText } from "@/lib/akhlagh-order";
-import { MotionItem, MotionList } from "./reveal";
 
 const featureMeta = {
   title: "جدیدترین محتواها",
@@ -163,6 +162,20 @@ function latestTarget(
   return null;
 }
 
+/** «تفسیر ترتیبی - سوره حمد - جلسه نوزدهم» → the series on a small line and the session on a big one. */
+function splitLatestTitle(text: string) {
+  const index = text.lastIndexOf(" - ");
+  if (index === -1) return { series: "", session: text.trim() };
+  return {
+    series: text
+      .slice(0, index)
+      .split(" - ")
+      .map((part) => part.trim())
+      .join(" · "),
+    session: text.slice(index + 3).trim(),
+  };
+}
+
 export const FeaturesSection = () => {
   const { catalog, loading, error, load } = useAudioCatalog();
   const latest5 = (catalog?.latest || []).slice(0, 5);
@@ -174,83 +187,73 @@ export const FeaturesSection = () => {
 
   return (
     <section id="features" className="w-full">
-      <div
-        className="relative flex flex-col overflow-hidden rounded-[1.75rem] border border-primary/25 bg-card/45 p-5 text-right shadow-[0_18px_44px_rgba(0,0,0,0.08)] backdrop-blur-xl transition duration-300 hover:border-primary/45 sm:p-6 dark:bg-card/70"
-        dir="rtl"
-      >
-        <div className="absolute right-0 top-8 h-24 w-1 rounded-l-full bg-primary" />
-        <div className="absolute left-6 top-6 h-px w-20 bg-gradient-to-l from-primary to-transparent" />
-
-        <div className="relative z-10">
-          <p className="mb-3 text-sm font-bold text-primary">تازه‌ها</p>
-          <h3 className="max-w-sm text-3xl font-extrabold leading-[1.7] text-foreground md:text-4xl">
-            {featureMeta.title}
-          </h3>
-          <p className="mt-3 text-base leading-8 text-muted-foreground md:text-lg">
-            برای شنیدن یا رفتن به بخش مربوط، روی هر مورد کلیک کنید.
-          </p>
+      <div className="lt-card" dir="rtl">
+        <div className="lt-head">
+          <span className="lt-live">
+            <i aria-hidden="true" />
+            تازه‌ها
+          </span>
+          <h3 className="lt-title">{featureMeta.title}</h3>
+          <p className="lt-lead">برای شنیدن یا رفتن به بخش مربوط، روی هر مورد کلیک کنید.</p>
         </div>
 
-        <div className="relative z-10 mt-6">
-          {loading && latest5.length === 0 ? (
-            <div className="flex flex-col gap-3">
-              {[1, 2, 3, 4, 5].map((item) => (
-                <div
-                  key={item}
-                  className="h-16 skeleton-shimmer rounded-2xl border border-secondary/40 bg-background/25"
-                />
-              ))}
-            </div>
-          ) : error && latest5.length === 0 ? (
-            <p className="rounded-2xl border border-secondary/50 bg-card/60 p-4 text-center text-base text-muted-foreground">
-              {error}
-            </p>
-          ) : latest5.length === 0 ? (
-            <p className="rounded-2xl border border-secondary/50 bg-card/60 p-4 text-center text-base text-muted-foreground">
-              هنوز محتوای جدیدی ثبت نشده.
-            </p>
-          ) : (
-            <MotionList className="flex flex-col gap-4">
-              {latest5.map((item, index) => {
-                const target = latestTarget(item, catalog, index);
+        {loading && latest5.length === 0 ? (
+          <div className="mt-5 flex flex-col gap-3">
+            {[1, 2, 3, 4, 5].map((item) => (
+              <div key={item} className="h-14 skeleton-shimmer rounded-2xl border border-secondary/40 bg-background/25" />
+            ))}
+          </div>
+        ) : error && latest5.length === 0 ? (
+          <p className="lt-note">{error}</p>
+        ) : latest5.length === 0 ? (
+          <p className="lt-note">هنوز محتوای جدیدی ثبت نشده.</p>
+        ) : (
+          <ol className="lt-list">
+            {latest5.map((item, index) => {
+              const target = latestTarget(item, catalog, index);
+              const { series, session } = splitLatestTitle(latestTitle(item, index));
 
-                return (
-                  <MotionItem key={item.key || `${item.collection}-${item.id}-${index}`}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        document.getElementById("mohtava")?.scrollIntoView({
-                          behavior: "smooth",
-                          block: "start",
-                        });
+              return (
+                <li key={item.key || `${item.collection}-${item.id}-${index}`}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      document.getElementById("mohtava")?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
 
-                        if (target) goTo(target);
-                      }}
-                      className="group flex w-full items-center justify-between gap-2 rounded-2xl border border-secondary/40 bg-background/25 px-3 py-3 text-right shadow-sm backdrop-blur transition-[transform,border-color,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[3px] hover:border-primary/50 hover:bg-card/70 hover:shadow-[0_10px_30px_-12px_hsl(var(--primary)/0.35)] focus-visible:-translate-y-[3px] focus-visible:border-primary/60 focus-visible:outline-none active:translate-y-0 active:duration-150 sm:gap-4 sm:px-4 dark:bg-background/20"
-                    >
-                      <span className="hidden h-px w-8 shrink-0 bg-primary/70 origin-right transition-[transform,background-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-[1.75] group-hover:bg-primary group-focus-visible:scale-x-[1.75] sm:block" />
-                      <span className="block min-w-0 flex-1 text-balance text-base font-bold leading-8 text-primary transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-foreground sm:text-xl md:text-2xl">
-                        {latestTitle(item, index)}
-                      </span>
-                    </button>
-                  </MotionItem>
-                );
-              })}
-
-              {loading ? (
-                <MotionItem>
-                  <div
-                    className="flex min-h-16 items-center justify-center rounded-2xl border border-secondary/40 bg-background/20 p-4 text-sm font-semibold text-muted-foreground"
-                    dir="rtl"
+                      if (target) goTo(target);
+                    }}
+                    className={index === 0 ? "lt-item lt-first" : "lt-item"}
                   >
-                    <Loader2 className="ml-2 size-4 animate-spin" />
-                    در حال به‌روزرسانی
-                  </div>
-                </MotionItem>
-              ) : null}
-            </MotionList>
-          )}
-        </div>
+                    <span className="lt-num" aria-hidden="true">
+                      <span>{toPersianDigits(index + 1)}</span>
+                    </span>
+                    <span className="lt-txt">
+                      {series ? <span className="lt-series">{series}</span> : null}
+                      <span className="lt-session">
+                        {session}
+                        {index === 0 ? <span className="lt-new">تازه</span> : null}
+                      </span>
+                    </span>
+                    <span className="lt-play" aria-hidden="true">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5.5v13a1 1 0 001.5.9l10.4-6.5a1 1 0 000-1.8L9.5 4.6A1 1 0 008 5.5z" />
+                      </svg>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+            {loading ? (
+              <li className="lt-loading">
+                <Loader2 className="ml-2 size-4 animate-spin" />
+                در حال به‌روزرسانی
+              </li>
+            ) : null}
+          </ol>
+        )}
       </div>
     </section>
   );
