@@ -6184,3 +6184,36 @@ html:not(.dark) .scal-pick { box-shadow: 0 8px 20px -10px rgba(2, 62, 138, 0.4),
 .scal-ev-item.open .scal-ev-text p { animation: none; }
 .scal-ev-more svg, .scal-ev-item.open .scal-ev-more svg { transition: none; transform: none; }
 .scal-ev-item.open .scal-ev-preview { display: block; }
+
+/* the card of an occasion never grows beyond the calendar: its row is exactly as tall as the layer, and the list inside scrolls */
+.scal-evlayer {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    overflow: hidden;
+}
+.scal-ev { max-height: 100%; min-height: 0; align-self: center; }
+.scal-ev-text { max-height: none; }
+.scal-ev-list { overscroll-behavior: contain; }
+
+/* the scroll bars of the calendar: thin and in the site's yellow, like the lessons slides */
+.scal-ev-list, .scal-ev-text, .scal-wrap, .scal-panel {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.35) transparent;
+}
+.scal-ev-list::-webkit-scrollbar, .scal-ev-text::-webkit-scrollbar, .scal-wrap::-webkit-scrollbar, .scal-panel::-webkit-scrollbar { width: 6px; }
+.scal-ev-list::-webkit-scrollbar-track, .scal-ev-text::-webkit-scrollbar-track, .scal-wrap::-webkit-scrollbar-track, .scal-panel::-webkit-scrollbar-track { background: transparent; }
+.scal-ev-list::-webkit-scrollbar-thumb, .scal-ev-text::-webkit-scrollbar-thumb, .scal-wrap::-webkit-scrollbar-thumb, .scal-panel::-webkit-scrollbar-thumb { background: hsl(var(--primary) / 0.3); border-radius: 6px; }
+.scal-ev-list::-webkit-scrollbar-thumb:hover, .scal-ev-text::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary) / 0.5); }
+.scal-ev-list::-webkit-scrollbar-button, .scal-ev-text::-webkit-scrollbar-button, .scal-wrap::-webkit-scrollbar-button, .scal-panel::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.scal-ev-list, .scal-ev-text { padding-right: 2px; }
+
+/* the scroll bar of the announcements: thin and in the site's yellow, like the lessons slides */
+.notes-body {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.35) transparent;
+}
+.notes-body::-webkit-scrollbar { width: 6px; }
+.notes-body::-webkit-scrollbar-track { background: transparent; }
+.notes-body::-webkit-scrollbar-thumb { background: hsl(var(--primary) / 0.3); border-radius: 6px; }
+.notes-body::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary) / 0.5); }
+.notes-body::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
