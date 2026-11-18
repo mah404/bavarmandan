@@ -4980,3 +4980,1207 @@ html:not(.dark) .lt-item:hover .lt-play {
         white-space: normal;
     }
 }
+
+/* ===== Shia calendar (scal-): nav button and pop-up. Dark = the site's green and gold, light = the site's blue ===== */
+.scal-btn,
+.scal-wrap {
+    /* all colours come from the site's own tokens: green and yellow in the dark theme, blue in the light one */
+    --scal-ink: hsl(var(--foreground));
+    --scal-soft: hsl(var(--foreground) / 0.8);
+    --scal-muted: hsl(var(--muted-foreground));
+    --scal-faint: hsl(var(--muted-foreground) / 0.8);
+    --scal-gold: hsl(var(--primary));
+    --scal-gold2: hsl(var(--primary));
+    --scal-rgb: 253, 224, 71;
+    --scal-rgb2: 253, 224, 71;
+    --scal-hair: hsl(var(--primary) / 0.28);
+    --scal-fri: #e58a72;
+    --scal-fill: hsl(var(--primary));
+    --scal-fill-ic: hsl(var(--primary));
+    --scal-on: hsl(var(--background));
+    --scal-on-soft: hsl(var(--background) / 0.7);
+    --scal-panel: linear-gradient(180deg, hsl(var(--card)), hsl(var(--background)));
+    --scal-btnbg: linear-gradient(180deg, hsl(var(--card)), hsl(var(--background)));
+    --scal-gt: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary)));
+    font-family: inherit;
+}
+html:not(.dark) .scal-btn,
+html:not(.dark) .scal-wrap {
+    --scal-rgb: 2, 62, 138;
+    --scal-rgb2: 2, 62, 138;
+    --scal-fri: #d6453d;
+    --scal-on: #ffffff;
+    --scal-on-soft: rgba(255, 255, 255, 0.8);
+}
+.scal-gt {
+    background: var(--scal-gt);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* --- the button of the navigation bar --- */
+.scal-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    height: 54px;
+    padding: 0 12px 0 22px;
+    border: 0;
+    border-radius: 18px;
+    color: var(--scal-gold2);
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    background: var(--scal-btnbg);
+    box-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(var(--scal-rgb), 0.08);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s;
+}
+html:not(.dark) .scal-btn {
+    box-shadow: 0 10px 24px -16px rgba(2, 62, 138, 0.5);
+}
+.scal-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(var(--scal-rgb), 0.85), rgba(var(--scal-rgb2), 0.18) 45%, rgba(var(--scal-rgb2), 0.5));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+.scal-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    right: -90px;
+    transform: skewX(-20deg);
+    background: linear-gradient(90deg, transparent, rgba(var(--scal-rgb), 0.16), transparent);
+    transition: right 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scal-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 40px -18px rgba(var(--scal-rgb), 0.35), inset 0 1px 0 rgba(var(--scal-rgb), 0.12);
+}
+.scal-btn:hover::after {
+    right: calc(100% + 30px);
+}
+.scal-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+.scal-ic {
+    position: relative;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    color: var(--scal-on);
+    background: var(--scal-fill-ic);
+    box-shadow: 0 6px 16px -6px rgba(var(--scal-rgb), 0.6);
+}
+.scal-ic svg {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 24px;
+    height: 24px;
+}
+.scal-ic b {
+    position: relative;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1;
+}
+.scal-rings {
+    transform-origin: 50% 100%;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.scal-btn:hover .scal-rings {
+    transform: translateY(-1.5px);
+}
+.scal-lb {
+    font-size: 17px;
+    font-weight: 900;
+}
+@media (max-width: 1023px) {
+    .scal-btn {
+        height: 44px;
+        gap: 8px;
+        padding: 0 8px 0 14px;
+        border-radius: 14px;
+    }
+    .scal-ic {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+    }
+    .scal-ic svg {
+        width: 20px;
+        height: 20px;
+    }
+    .scal-ic b {
+        font-size: 10.5px;
+        margin-top: 5px;
+    }
+    .scal-lb {
+        font-size: 13.5px;
+    }
+}
+@media (max-width: 400px) {
+    .scal-btn {
+        gap: 6px;
+        padding: 0 6px 0 10px;
+    }
+    .scal-lb {
+        font-size: 12.5px;
+    }
+}
+
+/* --- the pop-up --- */
+.scal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+}
+.scal-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 71;
+    display: flex;
+    overflow: auto;
+    padding: 16px;
+    pointer-events: none;
+    outline: none;
+}
+.scal-panel {
+    pointer-events: auto;
+    position: relative;
+    margin: auto;
+    width: 440px;
+    max-width: 100%;
+    border-radius: 30px;
+    padding: 26px 26px 22px;
+    color: var(--scal-ink);
+    background: var(--scal-panel);
+    box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.95);
+    animation: scalIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.scal-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(var(--scal-rgb), 0.7), rgba(var(--scal-rgb2), 0.12) 35%, rgba(var(--scal-rgb2), 0.12) 75%, rgba(var(--scal-rgb2), 0.4));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+@keyframes scalIn {
+    from { opacity: 0; transform: translateY(18px) scale(0.97); }
+    to { opacity: 1; transform: none; }
+}
+.scal-grab {
+    display: none;
+    width: 44px;
+    height: 5px;
+    margin: 0 auto 14px;
+    border-radius: 9px;
+    background: rgba(var(--scal-rgb2), 0.3);
+}
+.scal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.scal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.scal-star {
+    color: var(--scal-gold);
+    stroke: currentColor;
+}
+.scal-title h2 {
+    font-size: 25px;
+    font-weight: 900;
+    line-height: 1.4;
+}
+.scal-x {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--scal-hair);
+    background: transparent;
+    color: var(--scal-soft);
+    display: grid;
+    place-items: center;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s, color 0.3s;
+}
+.scal-x:hover {
+    transform: rotate(90deg);
+    border-color: var(--scal-gold);
+    color: var(--scal-gold2);
+}
+.scal-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.scal-seg {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 54px;
+    margin-top: 20px;
+    padding: 5px;
+    border-radius: 18px;
+    background: rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0 0 0 1px var(--scal-hair);
+}
+html:not(.dark) .scal-seg {
+    background: rgba(2, 62, 138, 0.05);
+}
+.scal-thumb {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    right: 5px;
+    width: calc(50% - 5px);
+    border-radius: 14px;
+    background: var(--scal-fill);
+    box-shadow: 0 8px 20px -8px rgba(var(--scal-rgb), 0.6);
+    transition: right 0.55s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+.scal-seg.is-miladi .scal-thumb {
+    right: 50%;
+}
+.scal-seg button {
+    position: relative;
+    border: 0;
+    background: transparent;
+    font-size: 15.5px;
+    font-weight: 800;
+    color: var(--scal-muted);
+    transition: color 0.4s;
+}
+.scal-seg button.active {
+    color: var(--scal-on);
+}
+
+.scal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 22px;
+}
+.scal-arrow {
+    flex: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    border: 1px solid var(--scal-hair);
+    background: rgba(255, 255, 255, 0.015);
+    color: var(--scal-gold2);
+    display: grid;
+    place-items: center;
+    transition: background 0.3s, border-color 0.3s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.scal-arrow:hover {
+    background: rgba(var(--scal-rgb), 0.08);
+    border-color: rgba(var(--scal-rgb), 0.55);
+}
+.scal-arrow.prev:hover {
+    transform: translateX(3px);
+}
+.scal-arrow.next:hover {
+    transform: translateX(-3px);
+}
+.scal-month {
+    min-width: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+.scal-month strong {
+    font-size: 25px;
+    font-weight: 900;
+    line-height: 1.4;
+}
+.scal-month span {
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: var(--scal-muted);
+}
+.scal-rule {
+    height: 1px;
+    margin: 18px 0 8px;
+    background: linear-gradient(90deg, transparent, var(--scal-hair), transparent);
+}
+
+.scal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+.scal-gA { animation: scalGA 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.scal-gB { animation: scalGB 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes scalGA { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes scalGB { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.scal-wd {
+    height: 34px;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--scal-faint);
+}
+.scal-wd.friday {
+    color: var(--scal-fri);
+}
+.scal-blank {
+    pointer-events: none;
+}
+.scal-day {
+    position: relative;
+    height: 54px;
+    border: 0;
+    border-radius: 15px;
+    background: transparent;
+    color: var(--scal-ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    transition: background 0.3s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.scal-day:hover {
+    background: rgba(var(--scal-rgb), 0.07);
+    transform: translateY(-2px);
+}
+.scal-day .n {
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+.scal-day .h {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(var(--scal-rgb2), 0.6);
+}
+.scal-day.friday .n {
+    color: var(--scal-fri);
+}
+.scal-day.today {
+    background: var(--scal-fill);
+    box-shadow: 0 10px 24px -10px rgba(var(--scal-rgb), 0.75);
+}
+.scal-day.today .n {
+    color: var(--scal-on);
+}
+.scal-day.today .h {
+    color: var(--scal-on-soft);
+}
+.scal-day.has-event::after {
+    content: "";
+    position: absolute;
+    top: 7px;
+    left: 9px;
+    width: 5px;
+    height: 5px;
+    transform: rotate(45deg);
+    background: var(--scal-gold2);
+    box-shadow: 0 0 8px rgba(var(--scal-rgb), 0.8);
+}
+.scal-day.today.has-event::after {
+    background: var(--scal-on);
+    box-shadow: none;
+}
+
+.scal-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    margin-top: 18px;
+}
+.scal-bt {
+    height: 52px;
+    border-radius: 16px;
+    border: 1px solid var(--scal-hair);
+    background: rgba(255, 255, 255, 0.015);
+    color: var(--scal-ink);
+    font-size: 15px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.3s, border-color 0.3s;
+}
+.scal-bt:hover {
+    border-color: rgba(var(--scal-rgb), 0.55);
+    background: rgba(var(--scal-rgb), 0.06);
+}
+.scal-bt.scal-gold {
+    color: var(--scal-gold2);
+}
+.scal-bt.scal-today {
+    padding: 0 22px;
+}
+.scal-dot {
+    width: 8px;
+    height: 8px;
+    transform: rotate(45deg);
+    background: var(--scal-gold2);
+    transition: box-shadow 0.4s, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.scal-bt.on {
+    background: rgba(var(--scal-rgb), 0.1);
+    border-color: rgba(var(--scal-rgb), 0.6);
+}
+.scal-bt.on .scal-dot {
+    transform: rotate(225deg);
+    box-shadow: 0 0 10px rgba(var(--scal-rgb), 0.9);
+}
+
+.scal-events {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    max-height: 190px;
+    overflow-y: auto;
+    border: 1px solid var(--scal-hair);
+    border-radius: 18px;
+}
+.scal-events li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-top: 1px solid rgba(var(--scal-rgb2), 0.1);
+}
+.scal-events li:first-child {
+    border-top: 0;
+}
+.scal-events em {
+    flex: none;
+    font-style: normal;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--scal-gold2);
+    background: rgba(var(--scal-rgb), 0.08);
+    border-radius: 9px;
+    padding: 3px 9px;
+}
+.scal-events span {
+    font-size: 14.5px;
+    line-height: 1.8;
+    color: var(--scal-soft);
+}
+.scal-note {
+    margin: 14px 0 0;
+    font-size: 13.5px;
+    color: var(--scal-muted);
+}
+
+.scal-card {
+    position: relative;
+    overflow: hidden;
+    margin-top: 14px;
+    padding: 18px 20px;
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(var(--scal-rgb), 0.07), rgba(var(--scal-rgb), 0.02));
+}
+.scal-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 20px;
+    left: 20px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(var(--scal-rgb), 0.6), transparent);
+}
+.scal-card small {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--scal-gold2);
+}
+.scal-card h3 {
+    font-size: 19px;
+    font-weight: 900;
+    line-height: 1.6;
+}
+.scal-card p {
+    font-size: 14px;
+    color: var(--scal-muted);
+}
+
+.scal-adjust {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+}
+.scal-adjust span {
+    flex: 1;
+    font-size: 13.5px;
+    color: var(--scal-muted);
+}
+.scal-adjust output {
+    min-width: 34px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--scal-gold2);
+}
+.scal-sm {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid var(--scal-hair);
+    background: transparent;
+    color: var(--scal-gold2);
+    font-size: 18px;
+    display: grid;
+    place-items: center;
+    transition: background 0.3s, border-color 0.3s;
+}
+.scal-sm:hover {
+    background: rgba(var(--scal-rgb), 0.08);
+    border-color: rgba(var(--scal-rgb), 0.55);
+}
+.scal-sm:disabled {
+    opacity: 0.4;
+}
+
+.scal-btn:focus-visible,
+.scal-wrap button:focus-visible {
+    outline: 2px solid var(--scal-gold2);
+    outline-offset: 3px;
+}
+
+@media (max-width: 520px) {
+    .scal-wrap {
+        padding: 0;
+    }
+    .scal-panel {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        width: auto;
+        max-width: none;
+        max-height: 92vh;
+        max-height: 92dvh;
+        overflow: auto;
+        border-radius: 30px 30px 0 0;
+        padding: 14px 18px 20px;
+        animation: scalSheet 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .scal-grab {
+        display: block;
+    }
+    .scal-day {
+        height: 48px;
+    }
+    .scal-day .n {
+        font-size: 17px;
+    }
+}
+@keyframes scalSheet {
+    from { transform: translateY(100%); }
+    to { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .scal-panel,
+    .scal-gA,
+    .scal-gB {
+        animation: none;
+    }
+}
+
+/* shorter pop-up: tighter rows and spacing, same look */
+.scal-panel { padding: 20px 22px 18px; border-radius: 26px; }
+.scal-title h2 { font-size: 22px; }
+.scal-x { width: 38px; height: 38px; }
+.scal-seg { height: 46px; margin-top: 14px; border-radius: 16px; }
+.scal-thumb { border-radius: 12px; }
+.scal-seg button { font-size: 14.5px; }
+.scal-nav { margin-top: 14px; }
+.scal-arrow { width: 40px; height: 40px; border-radius: 13px; }
+.scal-month strong { font-size: 22px; line-height: 1.3; }
+.scal-month span { font-size: 11.5px; line-height: 1.6; }
+.scal-rule { margin: 10px 0 4px; }
+.scal-wd { height: 28px; font-size: 12.5px; }
+.scal-grid { gap: 3px; }
+.scal-day { height: 42px; border-radius: 13px; gap: 0; }
+.scal-day .n { font-size: 17px; }
+.scal-day .h { font-size: 10px; }
+.scal-day.has-event::after { top: 6px; left: 8px; }
+.scal-bar { margin-top: 14px; }
+.scal-bt { height: 46px; border-radius: 14px; font-size: 14px; }
+.scal-events { margin-top: 10px; max-height: 130px; }
+.scal-events li { padding: 9px 14px; }
+.scal-events span { font-size: 14px; line-height: 1.7; }
+.scal-card { margin-top: 10px; padding: 12px 18px; border-radius: 18px; }
+.scal-card h3 { font-size: 17px; line-height: 1.5; }
+.scal-card p { font-size: 13px; }
+.scal-adjust { margin-top: 10px; }
+.scal-adjust span { font-size: 12.5px; }
+.scal-sm { width: 34px; height: 34px; border-radius: 11px; }
+@media (max-width: 520px) {
+    .scal-panel { padding: 12px 16px 16px; border-radius: 26px 26px 0 0; }
+    .scal-day { height: 40px; }
+    .scal-day .n { font-size: 16px; }
+}
+
+/* the same fonts as the rest of the site (the pop-up lives outside the page, so it must name them): Persian digits in Vazirmatn keep their weight */
+.scal-btn,
+.scal-wrap,
+.scal-wrap button {
+    font-family: var(--font-arabic), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* even shorter on desktop */
+.scal-panel { padding: 16px 20px 14px; }
+.scal-seg { height: 42px; margin-top: 10px; }
+.scal-nav { margin-top: 10px; }
+.scal-arrow { width: 36px; height: 36px; }
+.scal-month strong { font-size: 20px; }
+.scal-rule { margin: 8px 0 2px; }
+.scal-wd { height: 24px; }
+.scal-day { height: 37px; border-radius: 11px; }
+.scal-day .n { font-size: 16px; }
+.scal-bar { margin-top: 10px; }
+.scal-bt { height: 42px; }
+.scal-events { max-height: 110px; }
+.scal-card { margin-top: 8px; padding: 9px 16px; }
+.scal-adjust { margin-top: 8px; }
+.scal-sm { width: 32px; height: 32px; }
+@media (max-width: 520px) { .scal-panel { padding: 10px 14px 14px; } .scal-day { height: 38px; } }
+
+/* smooth growing and shrinking of the pop-up */
+.scal-fit {
+    overflow: hidden;
+    margin: -6px;
+    padding: 6px;
+    transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scal-fade { animation: scalFade 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes scalFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .scal-fit { transition: none; } .scal-fade { animation: none; } }
+
+/* The pop-up keeps one size whichever day or month is shown (six week rows, a two-line month note, the «امروز» line
+   always in place); only the events part opens and closes, and it does so smoothly. */
+.scal-fit { overflow: visible; margin: 0; padding: 0; transition: none; }
+.scal-grid { --scal-row: 37px; grid-template-rows: 24px repeat(6, var(--scal-row)); }
+.scal-day { height: var(--scal-row); }
+@media (max-width: 520px) { .scal-grid { --scal-row: 38px; } .scal-day { height: var(--scal-row); } }
+.scal-month span { min-height: 37px; }
+.scal-slot {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scal-slot.open { grid-template-rows: 1fr; }
+.scal-slot > div { min-height: 0; overflow: hidden; }
+.scal-slot .scal-evbox { margin-top: 10px; height: 96px; overflow-y: auto; }
+.scal-slot .scal-events { margin: 0; max-height: 96px; }
+.scal-slot .scal-note { margin: 0; padding-top: 6px; }
+@media (prefers-reduced-motion: reduce) { .scal-slot { transition: none; } }
+
+/* a narrower button */
+.scal-btn { height: 44px; gap: 9px; padding: 0 8px 0 15px; border-radius: 14px; }
+.scal-ic { width: 32px; height: 32px; border-radius: 10px; }
+.scal-ic svg { width: 21px; height: 21px; }
+.scal-ic b { font-size: 10.5px; margin-top: 5px; }
+.scal-lb { font-size: 14.5px; }
+@media (max-width: 1023px) {
+    .scal-btn { height: 40px; gap: 7px; padding: 0 7px 0 12px; border-radius: 12px; }
+    .scal-ic { width: 28px; height: 28px; border-radius: 9px; }
+    .scal-ic svg { width: 19px; height: 19px; }
+    .scal-ic b { font-size: 9.5px; margin-top: 4px; }
+    .scal-lb { font-size: 13px; }
+}
+@media (max-width: 400px) {
+    .scal-btn { gap: 6px; padding: 0 6px 0 10px; }
+    .scal-lb { font-size: 12.5px; }
+}
+
+/* the pop-up keeps one fixed place: its top does not move when the events open (it is placed for the tallest state) */
+.scal-wrap { align-items: flex-start; }
+.scal-panel { margin: max(12px, calc((100dvh - 740px) / 2)) auto 12px; }
+@media (max-width: 520px) { .scal-panel { margin: 0; } }
+
+/* the events of a day: a small pop-up over the calendar (the size of the calendar never changes) */
+.scal-panel { margin: max(12px, calc((100dvh - 640px) / 2)) auto 12px; }
+@media (max-width: 520px) { .scal-panel { margin: 0; } }
+.scal-body { position: relative; }
+.scal-evlayer {
+    position: absolute;
+    inset: -4px -8px -8px;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    padding: 14px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.58);
+    backdrop-filter: blur(2px);
+    animation: scalFade 0.25s ease both;
+}
+html:not(.dark) .scal-evlayer { background: hsl(var(--background) / 0.7); }
+.scal-evpop {
+    width: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px;
+    border-radius: 20px;
+    border: 1px solid hsl(var(--primary) / 0.5);
+    background: var(--scal-panel);
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.9);
+    animation: scalPopIn 0.38s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+@keyframes scalPopIn { from { opacity: 0; transform: scale(0.92) translateY(10px); } to { opacity: 1; transform: none; } }
+.scal-evhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.scal-evhead strong { font-size: 16px; font-weight: 900; color: var(--scal-gold2); }
+.scal-evpop .scal-events { margin: 0; max-height: 320px; border: 0; border-radius: 0; overflow-y: auto; }
+.scal-evpop .scal-events li { padding: 10px 4px; }
+.scal-evpop .scal-note { margin: 6px 0 0; padding: 0; }
+@media (prefers-reduced-motion: reduce) { .scal-evlayer, .scal-evpop { animation: none; } }
+
+/* the icon of the pop-up's title: the star turns slowly, the crescent breathes, the small star twinkles */
+.scal-star { color: var(--scal-gold); filter: drop-shadow(0 0 6px rgba(var(--scal-rgb), 0.45)); }
+.scal-star-ring { transform-origin: 38px 38px; animation: scalSpin 28s linear infinite; }
+.scal-star-moon { transform-origin: 37px 39px; animation: scalBreath 4.2s ease-in-out infinite; }
+.scal-star-spark { transform-origin: 50px 28px; animation: scalTwinkle 2.6s ease-in-out infinite; }
+@keyframes scalSpin { to { transform: rotate(360deg); } }
+@keyframes scalBreath { 0%, 100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 1; transform: scale(1.07); } }
+@keyframes scalTwinkle { 0%, 100% { opacity: 0.35; transform: scale(0.65) rotate(0deg); } 50% { opacity: 1; transform: scale(1.1) rotate(45deg); } }
+@media (prefers-reduced-motion: reduce) { .scal-star-ring, .scal-star-moon, .scal-star-spark { animation: none; } }
+
+/* closing: the pop-up and its backdrop fade away softly (Radix waits for these animations before removing them), like the announcements slide */
+.scal-overlay[data-state="open"] { animation: scalFade 0.4s ease both; }
+.scal-overlay[data-state="closed"] { animation: scalFadeOut 0.4s ease forwards; }
+.scal-wrap[data-state="closed"] { animation: scalHold 0.45s linear forwards; }
+.scal-wrap[data-state="closed"] .scal-panel { animation: scalOut 0.42s cubic-bezier(0.45, 0, 0.2, 1) forwards; }
+@keyframes scalFadeOut { to { opacity: 0; } }
+@keyframes scalHold { from { opacity: 1; } to { opacity: 1; } }
+@keyframes scalOut { to { opacity: 0; transform: translateY(14px) scale(0.97); } }
+@keyframes scalSheetOut { to { transform: translateY(100%); } }
+@media (max-width: 520px) { .scal-wrap[data-state="closed"] .scal-panel { animation: scalSheetOut 0.45s cubic-bezier(0.45, 0, 0.2, 1) forwards; } }
+@media (prefers-reduced-motion: reduce) {
+    .scal-overlay[data-state="open"], .scal-overlay[data-state="closed"], .scal-wrap[data-state="closed"], .scal-wrap[data-state="closed"] .scal-panel { animation: none; }
+}
+
+/* an occasion with its description that opens under the title */
+.scal-evpop .scal-events li.scal-evrow { display: block; padding: 0; border-top: 1px solid rgba(var(--scal-rgb2), 0.12); }
+.scal-evpop .scal-events li.scal-evrow:first-child { border-top: 0; }
+.scal-evtoggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 4px;
+    text-align: right;
+    color: var(--scal-ink);
+}
+.scal-evtoggle svg { flex: none; color: var(--scal-gold2); transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1); }
+.scal-evrow.open .scal-evtoggle svg { transform: rotate(180deg); }
+.scal-evtoggle:hover .scal-evtitle { color: var(--scal-gold2); }
+.scal-evtitle { font-size: 14.5px; font-weight: 700; line-height: 1.8; transition: color 0.3s; }
+.scal-evrow:not(:has(.scal-evtoggle)) .scal-evtitle { display: block; padding: 11px 4px; }
+.scal-evdesc {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scal-evrow.open .scal-evdesc { grid-template-rows: 1fr; }
+.scal-evdesc > div { min-height: 0; overflow: hidden; }
+.scal-evdesc p {
+    margin: 0 0 10px;
+    padding: 0 4px;
+    font-size: 13px;
+    line-height: 2;
+    color: var(--scal-soft);
+    text-align: justify;
+}
+.scal-evdesc > div > p:first-child { padding-top: 2px; }
+@media (prefers-reduced-motion: reduce) { .scal-evdesc, .scal-evtoggle svg { transition: none; } }
+
+.scal-evpop { overflow: hidden; }
+.scal-evpop .scal-events { max-height: none; flex: 1; min-height: 0; }
+
+/* «بیشتر»: a small pill that tells there is more to read; its arrow nudges downwards until the description is opened */
+.scal-more {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px 4px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(var(--scal-rgb), 0.45);
+    background: rgba(var(--scal-rgb), 0.1);
+    color: var(--scal-gold2);
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.4;
+    animation: scalGlow 2.4s ease-in-out infinite;
+    transition: background 0.3s;
+}
+.scal-evtoggle:hover .scal-more { background: rgba(var(--scal-rgb), 0.2); }
+.scal-evtoggle .scal-more svg { animation: scalNudge 1.6s ease-in-out infinite; }
+.scal-evrow.open .scal-more { animation: none; }
+.scal-evrow.open .scal-evtoggle .scal-more svg { animation: none; transform: rotate(180deg); }
+@keyframes scalNudge { 0%, 100% { transform: translateY(-1px); } 50% { transform: translateY(2.5px); } }
+@keyframes scalGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(var(--scal-rgb), 0); } 50% { box-shadow: 0 0 0 4px rgba(var(--scal-rgb), 0.12); } }
+@media (prefers-reduced-motion: reduce) { .scal-more, .scal-evtoggle .scal-more svg { animation: none; } }
+
+/* the nav button now looks like the other items of the bar: same height, corners, border and text, with the small calendar in the accent colour */
+.scal-btn {
+    height: 46px;
+    gap: 8px;
+    padding: 0 14px 0 12px;
+    border-radius: 8px;
+    background: hsl(var(--background) / 0.15);
+    backdrop-filter: blur(8px);
+    box-shadow: none;
+    border: 1px solid hsl(var(--secondary) / 0.35);
+    color: hsl(var(--foreground) / 0.85);
+    transition: background 0.3s, color 0.3s;
+}
+.scal-btn::before, .scal-btn::after { display: none; }
+.scal-btn:hover { transform: none; box-shadow: none; background: hsl(var(--primary)); color: var(--scal-on); }
+.scal-btn:active { transform: scale(0.98); }
+.scal-btn .scal-ic { width: 26px; height: 26px; border-radius: 0; background: none; box-shadow: none; color: var(--scal-gold); transition: color 0.3s; }
+.scal-btn:hover .scal-ic { color: var(--scal-on); }
+.scal-btn .scal-ic svg { width: 26px; height: 26px; }
+.scal-btn .scal-ic b { font-size: 10px; margin-top: 6px; }
+.scal-btn .scal-lb { background: none; -webkit-background-clip: border-box; background-clip: border-box; -webkit-text-fill-color: currentColor; color: inherit; font-size: 14px; font-weight: 700; }
+@media (max-width: 1023px) {
+    .scal-btn { height: 40px; gap: 6px; padding: 0 10px 0 8px; }
+    .scal-btn .scal-ic, .scal-btn .scal-ic svg { width: 22px; height: 22px; }
+    .scal-btn .scal-ic b { font-size: 8.5px; margin-top: 5px; }
+    .scal-btn .scal-lb { font-size: 12.5px; }
+}
+
+/* ===== the nav button (scal-nav-): like the frame of the menu links, the small calendar in the accent colour ===== */
+.scal-nav-btn {
+    --scal-ink: hsl(var(--foreground));
+    --scal-soft: hsl(var(--foreground) / 0.82);
+    --scal-gold: hsl(var(--primary));
+    --scal-gold2: hsl(var(--primary));
+    --scal-rgb: 253, 224, 71;
+    --scal-on: hsl(var(--background));
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 54px;
+    padding: 0 20px 0 18px;
+    border: 1px solid hsl(var(--secondary) / 0.35);
+    border-radius: 8px;
+    background: hsl(var(--background) / 0.15);
+    backdrop-filter: blur(8px);
+    color: hsl(var(--foreground) / 0.85);
+    font-family: var(--font-arabic), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.3s, background 0.3s;
+}
+html:not(.dark) .scal-nav-btn { --scal-rgb: 2, 62, 138; }
+/* the gold line under the text opens from the middle on hover */
+.scal-nav-btn::after {
+    content: "";
+    position: absolute;
+    right: 50%;
+    left: 50%;
+    bottom: 8px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+    transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1), left 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scal-nav-btn:hover { color: hsl(var(--primary)); background: rgba(var(--scal-rgb), 0.06); }
+.scal-nav-btn:hover::after { right: 18px; left: 18px; }
+.scal-nav-cal {
+    position: relative;
+    display: inline-block;
+    color: hsl(var(--primary));
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.scal-nav-cal svg { display: block; width: 28px; height: 28px; }
+.scal-nav-cal b { position: absolute; right: 0; left: 0; bottom: 4px; text-align: center; font-size: 11px; font-weight: 900; line-height: 1; }
+.scal-nav-btn:hover .scal-nav-cal { transform: translateY(-2px) rotate(-6deg); }
+.scal-nav-btn:active { transform: scale(0.98); }
+.scal-nav-btn:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 3px; }
+@media (max-width: 1023px) {
+    .scal-nav-btn { height: 40px; gap: 7px; padding: 0 10px 0 8px; font-size: 13px; }
+    .scal-nav-btn::after { bottom: 5px; }
+    .scal-nav-cal svg { width: 22px; height: 22px; }
+    .scal-nav-cal b { font-size: 8.5px; bottom: 3px; }
+}
+@media (max-width: 400px) { .scal-nav-btn { gap: 5px; padding: 0 8px 0 6px; font-size: 12.5px; } }
+@media (prefers-reduced-motion: reduce) { .scal-nav-btn, .scal-nav-btn::after, .scal-nav-cal { transition: none; } }
+
+/* ===== the card of an occasion (scal-ev-) ===== */
+.scal-ev {
+    position: relative;
+    width: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px 16px;
+    border-radius: 26px;
+    color: var(--scal-ink);
+    background: radial-gradient(90% 60% at 100% 0%, rgba(var(--scal-rgb), 0.08), transparent 60%), var(--scal-panel);
+    box-shadow: 0 34px 80px -30px rgba(0, 0, 0, 0.95);
+    animation: scalEvIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.scal-ev::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(var(--scal-rgb), 0.65), rgba(var(--scal-rgb), 0.12) 40%, rgba(var(--scal-rgb), 0.3));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+@keyframes scalEvIn { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: none; } }
+.scal-ev-head { display: flex; align-items: center; gap: 14px; flex: none; }
+.scal-ev-med { position: relative; flex: none; width: 54px; height: 54px; display: grid; place-items: center; color: var(--scal-gold); }
+.scal-ev-med svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scal-ev-med b { position: relative; font-size: 19px; font-weight: 900; color: var(--scal-gold); }
+.scal-ev-hd { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.scal-ev-month { font-size: 19px; font-weight: 900; line-height: 1.5; }
+.scal-ev-hd small { font-size: 12.5px; color: var(--scal-faint); }
+.scal-ev-x {
+    flex: none; width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid rgba(var(--scal-rgb), 0.22); background: transparent; color: var(--scal-muted);
+    display: grid; place-items: center; cursor: pointer;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s, color 0.3s;
+}
+.scal-ev-x:hover { transform: rotate(90deg); border-color: var(--scal-gold); color: var(--scal-gold); }
+.scal-ev-rule { flex: none; height: 1px; margin: 14px 0; background: linear-gradient(270deg, rgba(var(--scal-rgb), 0.55), rgba(var(--scal-rgb), 0.08)); }
+.scal-ev-list { flex: 1; min-height: 0; overflow-y: auto; padding-left: 4px; margin-left: -4px; }
+.scal-ev-item + .scal-ev-item { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(var(--scal-rgb), 0.12); }
+.scal-ev-title { margin: 0; font-size: 18px; font-weight: 900; line-height: 1.7; color: var(--scal-ink); }
+.scal-ev-preview {
+    margin: 6px 0 0;
+    max-height: 64px;
+    overflow: hidden;
+    font-size: 14.5px;
+    line-height: 2.1;
+    color: var(--scal-soft);
+    text-align: justify;
+    unicode-bidi: plaintext;
+    -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent);
+    mask-image: linear-gradient(180deg, #000 30%, transparent);
+}
+.scal-ev-item.open .scal-ev-preview { display: none; }
+.scal-ev-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+.scal-ev-body > div { min-height: 0; overflow: hidden; }
+.scal-ev-item.open .scal-ev-body { grid-template-rows: 1fr; }
+.scal-ev-text { padding-top: 8px; max-height: min(330px, 38dvh); overflow: auto; padding-left: 6px; margin-left: -6px; }
+.scal-ev-text::-webkit-scrollbar { width: 4px; }
+.scal-ev-text::-webkit-scrollbar-thumb { background: rgba(var(--scal-rgb), 0.35); border-radius: 4px; }
+.scal-ev-text p { margin: 0 0 12px; font-size: 15px; line-height: 2.1; color: var(--scal-soft); text-align: justify; unicode-bidi: plaintext; }
+.scal-ev-item.open .scal-ev-text p { animation: scalEvP 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.scal-ev-item.open .scal-ev-text p:nth-child(2) { animation-delay: 0.08s; }
+.scal-ev-item.open .scal-ev-text p:nth-child(3) { animation-delay: 0.16s; }
+@keyframes scalEvP { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.scal-ev-morerow { display: flex; justify-content: flex-end; margin-top: 10px; }
+.scal-ev-more {
+    display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 14px; border-radius: 12px;
+    border: 1px solid rgba(var(--scal-rgb), 0.22); background: rgba(var(--scal-rgb), 0.05); color: var(--scal-gold);
+    font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer; transition: background 0.3s, border-color 0.3s;
+}
+.scal-ev-more:hover { background: rgba(var(--scal-rgb), 0.1); border-color: rgba(var(--scal-rgb), 0.55); }
+.scal-ev-more svg { transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.scal-ev-item.open .scal-ev-more svg { transform: rotate(180deg); }
+.scal-ev-x:focus-visible, .scal-ev-more:focus-visible { outline: 2px solid var(--scal-gold); outline-offset: 3px; }
+.scal-ev .scal-note { margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+    .scal-ev, .scal-ev-item.open .scal-ev-text p { animation: none; }
+    .scal-ev-body, .scal-ev-more svg { transition: none; }
+}
+
+/* the drifting pattern behind the card of an occasion (the same as the lessons slides) */
+.scal-patwrap {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+}
+.scal-pat {
+    position: absolute;
+    inset: 0 0 auto 0;
+    width: 100%;
+    height: 300px;
+    color: var(--scal-gold);
+    opacity: 0.2;
+    -webkit-mask-image: radial-gradient(ellipse 90% 90% at 15% 0%, #000, transparent 75%);
+    mask-image: radial-gradient(ellipse 90% 90% at 15% 0%, #000, transparent 75%);
+    animation: scalPatIn 1.2s 0.15s ease backwards;
+}
+.scal-pat g { animation: scalDrift 24s linear infinite; }
+@keyframes scalDrift { to { transform: translateY(-80px); } }
+@keyframes scalPatIn { from { opacity: 0; transform: translateY(24px); } }
+.scal-ev > :not(.scal-patwrap) { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .scal-pat, .scal-pat g { animation: none; } }
+
+/* the close button and «بیشتر/کمتر» of the card of an occasion: stronger, so they are easy to see */
+.scal-ev-x {
+    border: 1px solid rgba(var(--scal-rgb), 0.7);
+    background: rgba(var(--scal-rgb), 0.16);
+    color: var(--scal-gold);
+}
+.scal-ev-x:hover { background: var(--scal-gold); border-color: var(--scal-gold); color: var(--scal-on); }
+.scal-ev-more {
+    border: 1px solid rgba(var(--scal-rgb), 0.7);
+    background: rgba(var(--scal-rgb), 0.16);
+    color: var(--scal-gold);
+}
+.scal-ev-more:hover { background: var(--scal-gold); border-color: var(--scal-gold); color: var(--scal-on); }
+
+/* opening of the card of an occasion: the same pace from the start to the end (it was fast at first and slow at the end) */
+.scal-evlayer { animation: scalFade 0.5s ease both; }
+.scal-ev { animation: scalEvIn 0.75s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.scal-ev-body { transition: grid-template-rows 0.65s cubic-bezier(0.4, 0, 0.2, 1); }
+.scal-ev-item.open .scal-ev-text p { animation: scalEvP 0.7s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.scal-ev-item.open .scal-ev-text p:nth-child(2) { animation-delay: 0.12s; }
+.scal-ev-item.open .scal-ev-text p:nth-child(3) { animation-delay: 0.24s; }
+@media (prefers-reduced-motion: reduce) { .scal-evlayer, .scal-ev, .scal-ev-item.open .scal-ev-text p { animation: none; } .scal-ev-body { transition: none; } }
+
+/* the close buttons: a solid green with a strong yellow edge, yellow on hover, focus and touch */
+.scal-x,
+.scal-ev-x {
+    background: hsl(var(--card));
+    border: 1.5px solid hsl(var(--primary) / 0.6);
+    color: hsl(var(--foreground));
+    box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.55);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s, border-color 0.25s, color 0.25s;
+}
+.scal-x:hover, .scal-x:active, .scal-x:focus-visible,
+.scal-ev-x:hover, .scal-ev-x:active, .scal-ev-x:focus-visible {
+    background: hsl(var(--primary));
+    border-color: hsl(var(--primary));
+    color: var(--scal-on);
+}
+.scal-x:active, .scal-ev-x:active { transform: rotate(90deg) scale(0.94); }
+
+/* light theme: the filled spots (selected tab, today, hovered buttons) are the site's yellow, and the numbers and icons on them the strong blue */
+html:not(.dark) .scal-wrap,
+html:not(.dark) .scal-btn,
+html:not(.dark) .scal-nav-btn {
+    --scal-fill: #fde047;
+    --scal-fill-ic: #fde047;
+    --scal-on: hsl(var(--primary));
+    --scal-on-soft: hsl(var(--primary) / 0.75);
+}
+html:not(.dark) .scal-thumb { box-shadow: 0 8px 20px -8px rgba(2, 62, 138, 0.35), inset 0 0 0 1px rgba(2, 62, 138, 0.18); }
+html:not(.dark) .scal-day.today { box-shadow: 0 8px 20px -10px rgba(2, 62, 138, 0.4), inset 0 0 0 1px rgba(2, 62, 138, 0.2); }
+html:not(.dark) .scal-x:hover, html:not(.dark) .scal-x:active, html:not(.dark) .scal-x:focus-visible,
+html:not(.dark) .scal-ev-x:hover, html:not(.dark) .scal-ev-x:active, html:not(.dark) .scal-ev-x:focus-visible,
+html:not(.dark) .scal-ev-more:hover {
+    background: #fde047;
+    border-color: #fde047;
+    color: hsl(var(--primary));
+}
+html:not(.dark) .scal-nav-btn:hover { background: #fde047; color: hsl(var(--primary)); }
+html:not(.dark) .scal-nav-btn:hover .scal-nav-cal { color: hsl(var(--primary)); }
+html:not(.dark) .scal-nav-btn:hover::after { background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent); }
+
+/* ===== smoothness: nothing heavy is repainted while the pop-up opens, closes or moves ===== */
+/* no blur of the page behind (re-blurring a page with moving patterns every frame is what made it stutter): a plain dimming instead */
+.scal-overlay { backdrop-filter: none; background: rgba(0, 0, 0, 0.62); will-change: opacity; }
+html:not(.dark) .scal-overlay { background: rgba(8, 20, 40, 0.5); }
+.scal-evlayer { backdrop-filter: none; background: rgba(0, 0, 0, 0.62); }
+html:not(.dark) .scal-evlayer { background: hsl(var(--background) / 0.78); }
+/* the pop-up and the card are lifted to their own layers, and they open and close with the same gentle curve */
+.scal-panel, .scal-ev { will-change: transform, opacity; backface-visibility: hidden; }
+.scal-panel { animation: scalIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.scal-overlay[data-state="open"] { animation: scalFade 0.45s ease both; }
+@keyframes scalSheet { from { transform: translateY(100%); } to { transform: none; } }
+@media (max-width: 520px) { .scal-panel { animation: scalSheet 0.6s cubic-bezier(0.4, 0, 0.2, 1) both; } }
+.scal-wrap[data-state="closed"] .scal-panel { animation: scalOut 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+@media (max-width: 520px) { .scal-wrap[data-state="closed"] .scal-panel { animation: scalSheetOut 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards; } }
+.scal-gA, .scal-gB { animation-duration: 0.45s; animation-timing-function: ease; }
+/* the star of the title: no filter that has to be redone on every frame of its movement */
+.scal-star { filter: none; }
+/* the pattern: the picture is fixed and the whole drawing is moved (a movement the graphics card does alone), instead of moving something inside a masked picture */
+.scal-patwrap {
+    inset: 0 0 auto 0;
+    height: 300px;
+    opacity: 0.2;
+    -webkit-mask-image: radial-gradient(ellipse 90% 90% at 15% 0%, #000, transparent 75%);
+    mask-image: radial-gradient(ellipse 90% 90% at 15% 0%, #000, transparent 75%);
+    animation: scalFade 1.2s 0.15s ease backwards;
+}
+.scal-pat { height: 380px; opacity: 1; -webkit-mask-image: none; mask-image: none; animation: scalDriftEl 24s linear infinite; will-change: transform; }
+.scal-pat g { animation: none; }
+@keyframes scalDriftEl { to { transform: translateY(-80px); } }
+@media (prefers-reduced-motion: reduce) { .scal-pat, .scal-patwrap, .scal-panel { animation: none; } }
+
+/* the backdrops only change their opacity (the fade used for text also moves things a little, which would show an edge) */
+@keyframes scalOpacity { from { opacity: 0; } to { opacity: 1; } }
+.scal-overlay[data-state="open"] { animation: scalOpacity 0.45s ease both; }
+.scal-evlayer { animation: scalOpacity 0.45s ease both; }
+.scal-patwrap { animation: scalOpacity 1.2s 0.15s ease backwards; }
+@media (prefers-reduced-motion: reduce) { .scal-overlay[data-state="open"], .scal-evlayer, .scal-patwrap { animation: none; } }
+@keyframes scalPatFade { from { opacity: 0; } }
+.scal-patwrap { animation: scalPatFade 1.2s 0.15s ease backwards; }
+@media (prefers-reduced-motion: reduce) { .scal-patwrap { animation: none; } }
+
+/* ===== the movements are now made by framer-motion: the old CSS animations and transitions of the same things are switched off ===== */
+.scal-overlay, .scal-overlay[data-state],
+.scal-wrap, .scal-wrap[data-state],
+.scal-panel, .scal-wrap[data-state] .scal-panel,
+.scal-evlayer, .scal-ev {
+    animation: none !important;
+}
+.scal-card { animation: none; }
+/* the yellow piece that glides between the two tabs */
+.scal-seg .scal-thumb, .scal-seg.is-miladi .scal-thumb { position: absolute; inset: 0; width: auto; right: 0; transition: none; }
+.scal-seg-label { position: relative; }
+/* the piece that glides to the chosen day */
+.scal-day.today { background: transparent; box-shadow: none; }
+.scal-pick {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--scal-fill);
+    box-shadow: 0 10px 24px -10px rgba(var(--scal-rgb), 0.75);
+}
+html:not(.dark) .scal-pick { box-shadow: 0 8px 20px -10px rgba(2, 62, 138, 0.4), inset 0 0 0 1px rgba(2, 62, 138, 0.2); }
+.scal-day .n, .scal-day .h { position: relative; z-index: 1; transition: color 0.3s ease; }
+/* the description of an occasion opens by height (framer-motion), not by the old grid trick */
+.scal-ev-body { display: block; transition: none; }
+.scal-ev-item.open .scal-ev-text p { animation: none; }
+.scal-ev-more svg, .scal-ev-item.open .scal-ev-more svg { transition: none; transform: none; }
+.scal-ev-item.open .scal-ev-preview { display: block; }

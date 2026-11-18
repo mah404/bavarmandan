@@ -15,6 +15,7 @@ import Image from "next/image";
 import { ToggleTheme } from "./toogle-theme";
 import { motion, useReducedMotion } from "framer-motion";
 import { PWAInstallButton } from "../pwa-install-button";
+import { ShiaCalendarButton } from "./shia-calendar";
 
 interface RouteProps {
   href: string;
@@ -199,20 +200,20 @@ export const Navbar = () => {
           </Link>
         </div>
 
-        <nav
-          className="absolute left-1/2 hidden -translate-x-1/2 rounded-lg border border-secondary/35 bg-background/15 p-1 backdrop-blur lg:flex"
-          dir="rtl"
-        >
-          {routeList.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="rounded-md px-4 py-2 text-sm font-bold text-foreground/80 transition duration-300 hover:bg-primary hover:text-primary-foreground"
-            >
-              {label}
-            </Link>
-          ))}
-        </nav>
+        <div className="absolute left-[46%] hidden xl:left-[53%] -translate-x-1/2 items-center gap-3 lg:flex" dir="rtl">
+          <ShiaCalendarButton />
+          <nav className="flex rounded-lg border border-secondary/35 bg-background/15 p-1 backdrop-blur">
+            {routeList.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className="rounded-md px-4 py-2 text-sm font-bold text-foreground/80 transition duration-300 hover:bg-primary hover:text-primary-foreground"
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+        </div>
 
         <div className="hidden items-center gap-2 lg:flex">
           <BackgroundMusicNavButton />
@@ -220,6 +221,7 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-2 lg:hidden">
+          <ShiaCalendarButton />
           <BackgroundMusicNavButton />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
