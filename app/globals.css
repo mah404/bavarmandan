@@ -5654,7 +5654,7 @@ html:not(.dark) .scal-seg {
 .scal-btn,
 .scal-wrap,
 .scal-wrap button {
-    font-family: var(--font-arabic), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    font-family: inherit;
 }
 
 /* even shorter on desktop */
@@ -5900,7 +5900,7 @@ html:not(.dark) .scal-evlayer { background: hsl(var(--background) / 0.7); }
     background: hsl(var(--background) / 0.15);
     backdrop-filter: blur(8px);
     color: hsl(var(--foreground) / 0.85);
-    font-family: var(--font-arabic), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    font-family: inherit;
     font-size: 16px;
     font-weight: 800;
     white-space: nowrap;
@@ -6222,7 +6222,7 @@ html:not(.dark) .scal-pick { box-shadow: 0 8px 20px -10px rgba(2, 62, 138, 0.4),
 .scal-ev-text p,
 .scal-ev-preview,
 .scal-ev-title {
-    font-family: var(--font-arabic), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    font-family: inherit;
     font-variant-numeric: normal;
 }
 

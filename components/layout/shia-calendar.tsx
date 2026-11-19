@@ -147,12 +147,19 @@ function ScalPattern({ id }: { id: string }) {
 }
 
 /**
- * The book was copied in the order the eye sees it, so its brackets are turned around and the digits touch the next word.
- * The brackets are turned back, the digits get a space and the site's own Persian digits.
+ * The book was copied from a PDF: its brackets are turned around, the digits touch the next word, and the blessings are broken
+ * into pieces by stretch marks and stray spaces («الّسـ لام»). All of that is put right here, and the digits become Persian.
  */
 const PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
 const tidy = (text: string) =>
   text
+    // a stretch mark inside a word, with the stray space it leaves behind, is dropped
+    .replace(/([ء-يً-ْپچژکگی])ـ+ ?(?=[ء-ي])/g, "$1")
+    .replace(/ـ+/g, "")
+    // the blessings that came apart
+    .replace(/الّ?سّ?\s*لام/g, "السلام")
+    .replace(/ال\s*َّ\s*لّ?\s*ه/g, "الله")
+    .replace(/(ص)ّ(ل)/g, "$1$2")
     .replace(/[()]/g, (c) => (c === "(" ? ")" : "("))
     .replace(/(\d)([؀-ۿ])/g, "$1 $2")
     .replace(/([؀-ۿ])(\d)/g, "$1 $2")
