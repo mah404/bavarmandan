@@ -146,11 +146,23 @@ function ScalPattern({ id }: { id: string }) {
   );
 }
 
+/**
+ * The book was copied in the order the eye sees it, so its brackets are turned around and the digits touch the next word.
+ * The brackets are turned back, the digits get a space and the site's own Persian digits.
+ */
+const PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
+const tidy = (text: string) =>
+  text
+    .replace(/[()]/g, (c) => (c === "(" ? ")" : "("))
+    .replace(/(\d)([؀-ۿ])/g, "$1 $2")
+    .replace(/([؀-ۿ])(\d)/g, "$1 $2")
+    .replace(/\d/g, (d) => PERSIAN_DIGITS[Number(d)]);
+
 /** The text of the book comes with the line breaks of its columns: a blank line starts a new paragraph, a single break is only the end of a printed line. */
 const paragraphs = (text: string) =>
   text
     .split(/\n\s*\n/)
-    .map((part) => part.replace(/\s*\n\s*/g, " ").trim())
+    .map((part) => tidy(part.replace(/\s*\n\s*/g, " ").trim()))
     .filter(Boolean);
 
 /** One occasion: its title and, when the book has one, a faded preview of the description that opens with «بیشتر». */
