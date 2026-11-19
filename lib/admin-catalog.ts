@@ -96,7 +96,10 @@ const keyFor = (table: Record<string, string>, course: RawCourse) => {
 };
 
 /** The معاد course of the قرآن section is shown as «تفسیر موضوعی»; the other one as «تفسیر ترتیبی». */
-const isMozooei = (course: RawCourse) => /معاد|واقعه|موضوعی|احسن/.test(course.title);
+const isMozooei = (course: RawCourse) => /معاد|واقعه|موضوعی|احسن|نور/.test(course.title);
+/** The سوره نور course of تفسیر موضوعی (احسن الحدیث) is kept apart from the سوره واقعه one. */
+const isNur = (course: RawCourse) => /نور/.test(course.title) && !/واقعه|معاد/.test(course.title);
+const mozooeiKey = (course: RawCourse) => (isNur(course) ? "nur" : "maad");
 
 /**
  * Media links come back relative ("/api/media/ID/audio"). They are made absolute here, and a harmless
@@ -162,7 +165,7 @@ export function adaptCatalog(raw: RawContent): AudioCatalog {
   let tafsir: MediaTopic | undefined;
   const tafsirmozooei: Record<string, MediaTopic> = {};
   for (const course of sorted(raw.content?.tafsir)) {
-    if (isMozooei(course)) tafsirmozooei.maad ??= topic(course);
+    if (isMozooei(course)) tafsirmozooei[mozooeiKey(course)] ??= topic(course);
     else tafsir ??= topic(course);
   }
 
@@ -172,7 +175,7 @@ export function adaptCatalog(raw: RawContent): AudioCatalog {
   // Where a latest item lives in the catalog above (the components find it by section + collection).
   const where = (item: RawLatest) => {
     const course = (item.section === "tafsir" ? raw.content?.tafsir : item.section === "akhlagh" ? raw.content?.akhlagh : raw.content?.aghayed)?.find((c) => c.id === item.courseId);
-    if (item.section === "tafsir") return { section: course && isMozooei(course) ? "tafsirmozooei" : "tafsir", collection: course && isMozooei(course) ? "maad" : "tafsir" };
+    if (item.section === "tafsir") return { section: course && isMozooei(course) ? "tafsirmozooei" : "tafsir", collection: course && isMozooei(course) ? mozooeiKey(course) : "tafsir" };
     if (item.section === "akhlagh") return { section: "akhlagh", collection: course ? keyFor(akhlaghKeys, course) : item.courseId ?? "" };
     return { section: "aghayed", collection: course ? keyFor(aghayedKeys, course) : item.courseId ?? "" };
   };

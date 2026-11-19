@@ -31,6 +31,10 @@ function latestTitle(item: LatestCatalogItem, fallbackIndex: number) {
     return toPersianDigits(`تفسیر ترتیبی - سوره حمد - ${title}`);
   }
 
+  if (item.section === "tafsirmozooei" && item.collection === "nur") {
+    return toPersianDigits(`تفسیر موضوعی - احسن الحدیث - سوره نور - ${title}`);
+  }
+
   if (item.section === "tafsirmozooei" && item.collection === "maad") {
     return toPersianDigits(`تفسیر موضوعی - احسن الحدیث - ${title}`);
   }
@@ -87,6 +91,14 @@ function latestTarget(
       sheetId: "tafsir",
       accordionValue: "tafsir-tartibi",
       itemDomId: `tafsir-session-${item.id || order}`,
+    };
+  }
+
+  if (item.section === "tafsirmozooei" && item.collection === "nur") {
+    return {
+      sheetId: "tafsir",
+      accordionValue: "tafsir-mozooei",
+      itemDomId: `tafsir-nur-session-${item.id || order}`,
     };
   }
 

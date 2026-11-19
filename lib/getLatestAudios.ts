@@ -298,6 +298,35 @@ export function getLatestAudios(
     );
   });
 
+  const nurTafsirSessions = catalog.tafsirmozooei?.nur?.sessions || [];
+  const maxNurTafsirRank = maxSessionRank(nurTafsirSessions);
+  nurTafsirSessions.forEach((session, index) => {
+    const url = fileUrl(session);
+    if (!isAudioUrl(url)) return;
+
+    const rank = sessionRank(session, index);
+    const isNewestNurSession = rank === maxNurTafsirRank;
+    const sessionTitle =
+      normalizeSessionTitle(session.title || "", rank) || formatSessionTitle(rank);
+
+    order = pushCandidate(
+      candidates,
+      order,
+      isNewestNurSession
+        ? thematicTafsirLatestRank(rank)
+        : thematicTafsirOldRank(rank),
+      {
+        title: sessionTitle,
+        url,
+        createdAt: firstDate(session),
+        description: `تفسیر موضوعی - احسن الحدیث - سوره نور - ${sessionTitle}`,
+        sheetId: "tafsir",
+        accordionValue: "tafsir-mozooei",
+        itemDomId: `tafsir-nur-session-${session.id || index}`,
+      }
+    );
+  });
+
   Object.entries(catalog.akhlagh || {})
     .map(([key, topic], originalIndex) => ({
       key,

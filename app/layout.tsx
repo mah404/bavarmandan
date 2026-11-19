@@ -1,3 +1,4 @@
+import { PatternFade } from "@/components/layout/pattern-fade";
 import type { Metadata, Viewport } from "next";
 import { Inter, Vazirmatn } from "next/font/google";
 import Script from "next/script";
@@ -200,6 +201,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
+          <PatternFade />
           <div className="bg-pattern" aria-hidden="true">
             <div className="bg-pattern__tiles" />
           </div>

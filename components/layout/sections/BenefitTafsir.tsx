@@ -103,6 +103,19 @@ export const BenefitTafsir = () => {
     0
   );
 
+  const nurSessions = useMemo<TafsirSessionItem[]>(() => {
+    const raw = (catalog?.tafsirmozooei?.nur?.sessions || []) as MaktubatSession[];
+    const sessions = [...raw].sort((a, b) => tafsirSessionNumber(a, 0) - tafsirSessionNumber(b, 0)) as TafsirSessionItem[];
+    // like the other courses: the next session is already there, and says «به زودی» until it is uploaded
+    if (!sessions.length) return sessions;
+    const next = sessions.reduce((max, session, index) => Math.max(max, tafsirSessionNumber(session, index)), 0) + 1;
+    return [...sessions, { id: `soon-${next}`, title: tafsirSessionTitle(next), isPlaceholder: true } as TafsirSessionItem];
+  }, [catalog]);
+  const lastNurNumber = nurSessions.reduce(
+    (max, session, index) => (session.isPlaceholder ? max : Math.max(max, tafsirSessionNumber(session, index))),
+    0
+  );
+
   useEffect(() => {
     if (!target || target.sheetId !== SHEET_ID) return;
 
@@ -114,6 +127,10 @@ export const BenefitTafsir = () => {
       target.itemDomId?.startsWith("tafsir-session-")
     ) {
       setTartibiTopicValue("tafsir-tartibi-hamd");
+    }
+    if (target.accordionValue === "tafsir-mozooei" && target.itemDomId?.startsWith("tafsir-nur-session-")) {
+      setThematicTopicValue("tafsir-mozooei-ahsan");
+      setSurahValue("tafsir-mozooei-nur");
     }
     if (
       target.accordionValue === "tafsir-mozooei" &&
@@ -128,6 +145,191 @@ export const BenefitTafsir = () => {
 
     return () => clearTimeout(timer);
   }, [target, clear]);
+
+  const renderThematic = (sessions: TafsirSessionItem[], lastNumber: number, idPrefix: string, surahTitle: string) => (
+                              <Accordion
+                          type="single"
+                          collapsible
+                          value={sessionValue}
+                          onValueChange={setSessionValue}
+                          className="sd-list"
+                          dir="rtl"
+                        >
+                          {sessions.map((session, index) => {
+                            const itemId = `${idPrefix}${session.id || index}`;
+                            const audioUrl = session.audioUrl || session.url || "";
+                            const streamUrl = toStreamableUrl(audioUrl);
+                            const lessonSegment = resolveLessonSegment(session);
+                            const isCurrentTrack = current?.url === streamUrl;
+                            const isLessonActive =
+                              isCurrentTrack && current?.segmentMode === "lesson";
+                            const isFullActive =
+                              isCurrentTrack && current?.segmentMode !== "lesson";
+                            const sessionNumber = tafsirSessionNumber(session, index);
+                            const sessionTitle =
+                              normalizeSessionTitle(session.title, sessionNumber) ||
+                              tafsirSessionTitle(sessionNumber);
+                            const pdfs = [
+                              ...(session.pdfs || []),
+                              ...(session.files || []),
+                              ...(session.pdfUrl
+                                ? [
+                                    {
+                                      title: "قسمت ۱",
+                                      url: session.pdfUrl,
+                                    },
+                                  ]
+                                : []),
+                            ].filter((pdf) => pdf.url || pdf.pdfUrl);
+
+                            return (
+                              <AccordionItem
+                                key={session.id || `${session.title}-${index}`}
+                                id={itemId}
+                                value={itemId}
+                                className="sd-item"
+                                data-playing={playingAttr(current, isPlaying, itemId)}
+                                data-soon={session.isPlaceholder ? "" : undefined}
+                              >
+                                <span className="sd-node" aria-hidden="true">
+                                  {toPersianDigits(sessionNumber)}
+                                </span>
+                                <div className="sd-card">
+                                <AccordionTrigger className="sd-toggle">
+                                  <span className="sd-name block flex-1 text-right">
+                                    {sessionTitle}
+                                    {!session.isPlaceholder && sessions.filter((item) => !item.isPlaceholder).length > 1 && sessionNumber === lastNumber ? (
+                                      <span className="sd-last">(جلسه آخر)</span>
+                                    ) : null}
+                                  </span>
+                                </AccordionTrigger>
+                                <AccordionContent className="sd-body">
+                                  {session.isPlaceholder ? (
+                                    <p className="py-4 text-center text-lg font-semibold text-muted-foreground">
+                                      به زودی
+                                    </p>
+                                  ) : (
+                                    <div className="space-y-5 text-center">
+                                      {session.subtitle ? (
+                                        <p className="sd-intro">
+                                          {Array.isArray(session.subtitle)
+                                            ? toPersianDigits(session.subtitle.join("\n"))
+                                            : toPersianDigits(session.subtitle)}
+                                        </p>
+                                      ) : null}
+
+                                      {audioUrl ? (
+                                        <div className="lesson-audio-card">
+                                          <p className="lesson-audio-title">
+                                            <span>صوت</span>
+                                            <Headphones className="sd-headphone" aria-hidden="true" />
+<SoundWave />
+                                          </p>
+
+
+                                          <div className="lesson-action-row">
+                                            <a
+                                              className="lesson-download-action"
+                                              href={toDownloadUrl(audioUrl)}
+                                              download={`${
+                                                session.title || "tafsir-topic-audio"
+                                              }.mp3`}
+                                            >
+                                              <span>دانلود صوت</span>
+                                              <Download aria-hidden="true" />
+                                            </a>
+
+                                            <button
+                                              type="button"
+                                              onClick={() =>
+                                                play({
+                                                  title:
+                                                    `${surahTitle} ـ ${sessionTitle}`,
+                                                  url: streamUrl,
+                                                  description: "احسن الحدیث",
+                                                  lessonStart: lessonSegment?.start ?? null,
+                                                  lessonEnd: lessonSegment?.end ?? null,
+                                                  segmentMode: "full",
+                                                  navTarget: {
+                                                    sheetId: "tafsir",
+                                                    accordionValue: "tafsir-mozooei",
+                                                    itemDomId: itemId,
+                                                  },
+                                                })
+                                              }
+                                              className="lesson-primary-action"
+                                            >
+                                              <span>پخش</span>
+                                              <Play aria-hidden="true" />
+                                            </button>
+                                          </div>
+                                        </div>
+                                      ) : null}
+
+                                      {pdfs.length ? (
+                                        <div className="space-y-3 sd-written">
+                                          <p className="sd-written-title">
+                                            خلاصه متن محتوا
+                                          </p>
+
+                                          {pdfs.map((pdf, pdfIndex) => {
+                                            const pdfUrl =
+                                              pdf.url || pdf.pdfUrl || "";
+
+                                            return (
+                                              <div
+                                                key={`${pdf.title || "pdf"}-${pdfIndex}`}
+                                                className="sd-written-card"
+                                              >
+                                                <p className="mb-3 text-center text-sm font-semibold text-primary">
+                                                  {toPersianDigits(
+                                                    pdf.title || `قسمت ${pdfIndex + 1}`
+                                                  )}
+                                                </p>
+
+                                                <div className="flex flex-col justify-center gap-2 sm:flex-row">
+                                                  <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() =>
+                                                      window.open(
+                                                        toPdfViewUrl(pdfUrl),
+                                                        "_blank"
+                                                      )
+                                                    }
+                                                  >
+                                                    مشاهده
+                                                  </Button>
+
+                                                  <a
+                                                    href={toDownloadUrl(pdfUrl)}
+                                                    download={`${
+                                                      pdf.title ||
+                                                      `tafsir-topic-part-${pdfIndex + 1}`
+                                                    }.pdf`}
+                                                  >
+                                                    <Button
+                                                      size="sm"
+                                                      className="text-background"
+                                                    >
+                                                      دانلود
+                                                    </Button>
+                                                  </a>
+                                                </div>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      ) : null}
+                                    </div>
+                                  )}
+                                </AccordionContent>
+                                </div>
+                              </AccordionItem>
+                            );
+                          })}
+                        </Accordion>
+  );
 
   return (
     <>
@@ -447,187 +649,20 @@ export const BenefitTafsir = () => {
                               سوره واقعه ـ مباحث معاد
                             </AccordionTrigger>
                             <AccordionContent className="sd-group-body">
-                              <Accordion
-                          type="single"
-                          collapsible
-                          value={sessionValue}
-                          onValueChange={setSessionValue}
-                          className="sd-list"
-                          dir="rtl"
-                        >
-                          {thematicTafsirSessions.map((session, index) => {
-                            const itemId = `tafsir-mozooei-session-${session.id || index}`;
-                            const audioUrl = session.audioUrl || session.url || "";
-                            const streamUrl = toStreamableUrl(audioUrl);
-                            const lessonSegment = resolveLessonSegment(session);
-                            const isCurrentTrack = current?.url === streamUrl;
-                            const isLessonActive =
-                              isCurrentTrack && current?.segmentMode === "lesson";
-                            const isFullActive =
-                              isCurrentTrack && current?.segmentMode !== "lesson";
-                            const sessionNumber = tafsirSessionNumber(session, index);
-                            const sessionTitle =
-                              normalizeSessionTitle(session.title, sessionNumber) ||
-                              tafsirSessionTitle(sessionNumber);
-                            const pdfs = [
-                              ...(session.pdfs || []),
-                              ...(session.files || []),
-                              ...(session.pdfUrl
-                                ? [
-                                    {
-                                      title: "قسمت ۱",
-                                      url: session.pdfUrl,
-                                    },
-                                  ]
-                                : []),
-                            ].filter((pdf) => pdf.url || pdf.pdfUrl);
+                              {renderThematic(thematicTafsirSessions, lastThematicNumber, "tafsir-mozooei-session-", "سوره واقعه ـ مباحث معاد")}
+                            </AccordionContent>
+                          </AccordionItem>
 
-                            return (
-                              <AccordionItem
-                                key={session.id || `${session.title}-${index}`}
-                                id={itemId}
-                                value={itemId}
-                                className="sd-item"
-                                data-playing={playingAttr(current, isPlaying, itemId)}
-                              >
-                                <span className="sd-node" aria-hidden="true">
-                                  {toPersianDigits(sessionNumber)}
-                                </span>
-                                <div className="sd-card">
-                                <AccordionTrigger className="sd-toggle">
-                                  <span className="sd-name block flex-1 text-right">
-                                    {sessionTitle}
-                                    {!session.isPlaceholder && sessionNumber === lastThematicNumber ? (
-                                      <span className="sd-last">(جلسه آخر)</span>
-                                    ) : null}
-                                  </span>
-                                </AccordionTrigger>
-                                <AccordionContent className="sd-body">
-                                  {session.isPlaceholder ? (
-                                    <p className="py-4 text-center text-lg font-semibold text-muted-foreground">
-                                      به زودی
-                                    </p>
-                                  ) : (
-                                    <div className="space-y-5 text-center">
-                                      {session.subtitle ? (
-                                        <p className="sd-intro">
-                                          {Array.isArray(session.subtitle)
-                                            ? toPersianDigits(session.subtitle.join("\n"))
-                                            : toPersianDigits(session.subtitle)}
-                                        </p>
-                                      ) : null}
-
-                                      {audioUrl ? (
-                                        <div className="lesson-audio-card">
-                                          <p className="lesson-audio-title">
-                                            <span>صوت</span>
-                                            <Headphones className="sd-headphone" aria-hidden="true" />
-<SoundWave />
-                                          </p>
-
-
-                                          <div className="lesson-action-row">
-                                            <a
-                                              className="lesson-download-action"
-                                              href={toDownloadUrl(audioUrl)}
-                                              download={`${
-                                                session.title || "tafsir-topic-audio"
-                                              }.mp3`}
-                                            >
-                                              <span>دانلود صوت</span>
-                                              <Download aria-hidden="true" />
-                                            </a>
-
-                                            <button
-                                              type="button"
-                                              onClick={() =>
-                                                play({
-                                                  title:
-                                                    `سوره واقعه ـ مباحث معاد ـ ${sessionTitle}`,
-                                                  url: streamUrl,
-                                                  description: "احسن الحدیث",
-                                                  lessonStart: lessonSegment?.start ?? null,
-                                                  lessonEnd: lessonSegment?.end ?? null,
-                                                  segmentMode: "full",
-                                                  navTarget: {
-                                                    sheetId: "tafsir",
-                                                    accordionValue: "tafsir-mozooei",
-                                                    itemDomId: itemId,
-                                                  },
-                                                })
-                                              }
-                                              className="lesson-primary-action"
-                                            >
-                                              <span>پخش</span>
-                                              <Play aria-hidden="true" />
-                                            </button>
-                                          </div>
-                                        </div>
-                                      ) : null}
-
-                                      {pdfs.length ? (
-                                        <div className="space-y-3 sd-written">
-                                          <p className="sd-written-title">
-                                            خلاصه متن محتوا
-                                          </p>
-
-                                          {pdfs.map((pdf, pdfIndex) => {
-                                            const pdfUrl =
-                                              pdf.url || pdf.pdfUrl || "";
-
-                                            return (
-                                              <div
-                                                key={`${pdf.title || "pdf"}-${pdfIndex}`}
-                                                className="sd-written-card"
-                                              >
-                                                <p className="mb-3 text-center text-sm font-semibold text-primary">
-                                                  {toPersianDigits(
-                                                    pdf.title || `قسمت ${pdfIndex + 1}`
-                                                  )}
-                                                </p>
-
-                                                <div className="flex flex-col justify-center gap-2 sm:flex-row">
-                                                  <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() =>
-                                                      window.open(
-                                                        toPdfViewUrl(pdfUrl),
-                                                        "_blank"
-                                                      )
-                                                    }
-                                                  >
-                                                    مشاهده
-                                                  </Button>
-
-                                                  <a
-                                                    href={toDownloadUrl(pdfUrl)}
-                                                    download={`${
-                                                      pdf.title ||
-                                                      `tafsir-topic-part-${pdfIndex + 1}`
-                                                    }.pdf`}
-                                                  >
-                                                    <Button
-                                                      size="sm"
-                                                      className="text-background"
-                                                    >
-                                                      دانلود
-                                                    </Button>
-                                                  </a>
-                                                </div>
-                                              </div>
-                                            );
-                                          })}
-                                        </div>
-                                      ) : null}
-                                    </div>
-                                  )}
-                                </AccordionContent>
-                                </div>
-                              </AccordionItem>
-                            );
-                          })}
-                        </Accordion>
+                          <AccordionItem value="tafsir-mozooei-nur" className="sd-group">
+                            <AccordionTrigger className="sd-toggle">
+                              سوره نور
+                            </AccordionTrigger>
+                            <AccordionContent className="sd-group-body">
+                              {nurSessions.length ? (
+                                renderThematic(nurSessions, lastNurNumber, "tafsir-nur-session-", "سوره نور")
+                              ) : (
+                                <p className="py-4 text-center text-lg font-semibold text-muted-foreground">به زودی</p>
+                              )}
                             </AccordionContent>
                           </AccordionItem>
                         </Accordion>

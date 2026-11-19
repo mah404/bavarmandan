@@ -6225,3 +6225,10 @@ html:not(.dark) .scal-pick { box-shadow: 0 8px 20px -10px rgba(2, 62, 138, 0.4),
     font-family: var(--font-arabic), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
     font-variant-numeric: normal;
 }
+
+/* a session that is not uploaded yet is not joined to the others by the line */
+.sd-item[data-soon]::before,
+.sd-item:has(+ .sd-item[data-soon])::before { display: none; }
+
+/* the pattern is gone before the end of the page (see PatternFade) */
+.bg-pattern { opacity: var(--pattern-o, 1); }
