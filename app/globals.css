@@ -6225,6 +6225,28 @@ html:not(.dark) .scal-pick { box-shadow: 0 8px 20px -10px rgba(2, 62, 138, 0.4),
     font-family: inherit;
     font-variant-numeric: normal;
 }
+.scal-ev-citation {
+    direction: rtl;
+    unicode-bidi: isolate;
+}
+.scal-ev-citation-short {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    max-width: 100%;
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+    break-inside: avoid;
+    vertical-align: baseline;
+}
+.scal-ev-citation-short > bdi { white-space: nowrap; word-break: keep-all; overflow-wrap: normal; }
+.scal-ev-paren {
+    direction: ltr;
+    unicode-bidi: isolate;
+    flex: none;
+}
 
 /* a session that is not uploaded yet is not joined to the others by the line */
 .sd-item[data-soon]::before,

@@ -151,6 +151,15 @@ function ScalPattern({ id }: { id: string }) {
  * into pieces by stretch marks and stray spaces («الّسـ لام»). All of that is put right here, and the digits become Persian.
  */
 const PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
+
+const FEMALE_NAME =
+  "(?:ا[ّ]?م(?:‌|\\s)+(?:البنین|کلثوم)|فاطمه(?:\\s+(?:زهرا|زهراء|معصومه|بنت\\s+اسد))?|زهرا|زهراء|زینب(?:\\s+کبری)?|خدیجه(?:\\s+کبری)?|معصومه|سکینه|رقیه|رباب|آمنه|حوا|مریم|فضه|نرجس(?:\\s+خاتون)?|ملیکه|حکیمه(?:\\s+خاتون)?|حمیده(?:\\s+المصفاه)?|نجمه|سمانه|سوسن|حدیثه|شهربانو|ریحانه|صفیه|ماریه)";
+
+const femaleHonorific = new RegExp(
+  `((?:(?:حضرت|جناب|بانو|سیده|علیا مخدره)\\s+)?${FEMALE_NAME})\\s+علیه(?:ما)?[‌\\s]*السلام`,
+  "g"
+);
+
 const tidy = (text: string) =>
   text
     // a stretch mark inside a word, with the stray space it leaves behind, is dropped
@@ -160,7 +169,30 @@ const tidy = (text: string) =>
     .replace(/الّ?سّ?\s*لام/g, "السلام")
     .replace(/ال\s*َّ\s*لّ?\s*ه/g, "الله")
     .replace(/(ص)ّ(ل)/g, "$1$2")
-    .replace(/[()]/g, (c) => (c === "(" ? ")" : "("))
+    .replace(/(^|[^؀-ۿ])ا[ّ]?م\s+(?=[ء-ی])/g, "$1ام‌")
+    .replace(/سّیده/g, "سیده")
+    // PDF extraction reverses many pairs. A citation also leaves its final page number after the wrong bracket.
+    .replace(/\)([^()\n]*?)\(\s*([.\s]*[0-9۰-۹][0-9۰-۹\s.,،-]*)/g, (_, body: string, tail: string) =>
+      `(${body.trim()} ${tail.trim()})`
+    )
+    .replace(/\)([^()\n]+?)\(/g, "($1)")
+    .replace(/\)(?=[ء-ی])/g, ") ")
+    // Persian guillemets are reversed in the extracted book text.
+    .replace(/»(\s*:)?\s*([^«»\n]+?)\s*«/g, (_, colon: string | undefined, body: string) =>
+      `${colon ? ":" : ""} «${body.trim()}»`
+    )
+    // Make volume/page references read naturally and keep their number beside «ص».
+    .replace(/(\d)\s*ص\s*\.?\s*(?=\d)/g, "$1، ص ")
+    .replace(/\s*:\s*ج\s*،?\s*/g, ": ج ")
+    .replace(/\s*:\s*ص\s*\.?\s*/g, ": ص ")
+    .replace(/ص\s*\.\s*(?=\d)/g, "ص ")
+    // Keep singular, dual and plural blessings grammatically distinct.
+    .replace(/عثمان\s+علیهما[‌\s]*الّ?سلام/g, "عثمان علیه‌السلام")
+    .replace(/علیهما[‌\s]*الّ?سلام/g, "علیهما‌السلام")
+    .replace(/علیهم[‌\s]*الّ?سلام/g, "علیهم‌السلام")
+    .replace(/علیه[‌\s]*الّ?سلام/g, "علیه‌السلام")
+    .replace(/علیها[‌\s]*الّ?سلام/g, "علیها سلام")
+    .replace(femaleHonorific, "$1 علیها سلام")
     .replace(/(\d)([؀-ۿ])/g, "$1 $2")
     .replace(/([؀-ۿ])(\d)/g, "$1 $2")
     .replace(/\d/g, (d) => PERSIAN_DIGITS[Number(d)]);
@@ -172,6 +204,36 @@ const paragraphs = (text: string) =>
     .map((part) => tidy(part.replace(/\s*\n\s*/g, " ").trim()))
     .filter(Boolean);
 
+/** Parenthetical references need their own bidi isolate, otherwise a wrapped page number can move outside its bracket. */
+function CalendarText({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/(\([^()]+\))/g).map((part, index) => {
+        if (!(part.startsWith("(") && part.endsWith(")"))) {
+          return <React.Fragment key={index}>{part}</React.Fragment>;
+        }
+
+        const citation = part.slice(1, -1).trim();
+        if (part.length <= 64) {
+          return (
+            <span key={index} dir="rtl" className="scal-ev-citation scal-ev-citation-short">
+              <span dir="ltr" className="scal-ev-paren" aria-hidden="true">(</span>
+              <bdi dir="rtl">{citation.replace(/\s+/g, " ")}</bdi>
+              <span dir="ltr" className="scal-ev-paren" aria-hidden="true">)</span>
+            </span>
+          );
+        }
+
+        return (
+          <bdi key={index} dir="rtl" className="scal-ev-citation">
+            {part}
+          </bdi>
+        );
+      })}
+    </>
+  );
+}
+
 /** One occasion: its title and, when the book has one, a faded preview of the description that opens with «بیشتر». */
 function EventBlock({ event }: { event: EventItem }) {
   const [open, setOpen] = React.useState(false);
@@ -181,7 +243,7 @@ function EventBlock({ event }: { event: EventItem }) {
   const move = (delay = 0) => ({ duration: reduce ? 0 : 0.5, ease: EASE, delay: reduce ? 0 : delay });
   return (
     <section className={`scal-ev-item ${open ? "open" : ""}`}>
-      <h4 className="scal-ev-title">{event.title}</h4>
+      <h4 className="scal-ev-title">{tidy(event.title)}</h4>
       {texts.length ? (
         <>
           <AnimatePresence initial={false}>
@@ -194,7 +256,7 @@ function EventBlock({ event }: { event: EventItem }) {
                 animate={{ opacity: 1, height: "auto", transition: move() }}
                 exit={{ opacity: 0, height: 0, transition: move() }}
               >
-                {texts[0]}
+                <CalendarText text={texts[0]} />
               </motion.p>
             )}
           </AnimatePresence>
@@ -211,7 +273,7 @@ function EventBlock({ event }: { event: EventItem }) {
                 <div className="scal-ev-text" dir="rtl">
                   {texts.map((text, index) => (
                     <motion.p key={index} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={move(0.12 + index * 0.08)}>
-                      {text}
+                      <CalendarText text={text} />
                     </motion.p>
                   ))}
                 </div>
@@ -251,7 +313,7 @@ function ShiaCalendar() {
   const [today, setToday] = React.useState<Date>(todayNoon);
   const [anchor, setAnchor] = React.useState<Date>(today);
   const [selected, setSelected] = React.useState<Date>(today);
-  const [showEvents, setShowEvents] = React.useState(false);
+  const [showEvents, setShowEvents] = React.useState(true);
   // the days of difference between the counted lunar date and the true one (from the service)
   const [apiOffset, setApiOffset] = React.useState<number>(apiOffsetCache ?? 0);
   const [months, setMonths] = React.useState<HijriMonth[] | null>(null);
