@@ -159,10 +159,19 @@ export const ServicesSection = () => {
                       <p className="text-sm text-primary">کتب مفید:</p>
                       <Link
                         dir="rtl"
+                        href="/manteq.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-sm text-primary underline underline-offset-4"
+                      >
+                        دانش منطق منتظری مقدم (PDF)
+                      </Link>
+                      <Link
+                        dir="rtl"
                         href="/taghvim-shia.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-primary underline underline-offset-4"
+                        className="block text-sm text-primary underline underline-offset-4"
                       >
                         تقویم شیعه - عبدالحسین بندانی نیشابوری (PDF)
                       </Link>

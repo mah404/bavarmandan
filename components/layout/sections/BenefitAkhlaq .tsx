@@ -569,7 +569,9 @@ export const BenefitAkhlaq = () => {
                               </p>
 
                               {session.audios.map((audio) => {
-                                const streamUrl = toStreamableUrl(audio.url);
+                                // DineFetri's signed MP3 URL already supports byte ranges and
+                                // plays natively; proxying it can make the signature unusable.
+                                const streamUrl = audio.url;
                                 const playerTitle = `${sessionTitle} - ${session.title}`;
 
                                 return (
