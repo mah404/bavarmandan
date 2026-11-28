@@ -43,6 +43,10 @@ function latestTitle(item: LatestCatalogItem, fallbackIndex: number) {
     return toPersianDigits(`نشآت وجودی انسان: درجات و درکات - ${title}`);
   }
 
+  if (item.section === "aghayed" && item.collection === "dine-fetri") {
+    return toPersianDigits(`دین فطری - مقدمه - ${title}`);
+  }
+
   return toPersianDigits([item.collectionTitle || item.collection, title]
     .filter(Boolean)
     .join(" - "));
@@ -118,6 +122,14 @@ function latestTarget(
     };
   }
 
+  if (item.section === "aghayed" && item.collection === "dine-fetri") {
+    return {
+      sheetId: "akhlagh",
+      accordionValue: "fitri-religion",
+      itemDomId: "audio-akhlagh-fitri-1",
+    };
+  }
+
   if (item.section === "akhlagh" && item.collection) {
     const groups = Object.entries(catalog?.akhlagh || {})
       .map(([key, topic], originalIndex) => ({
@@ -190,7 +202,19 @@ function splitLatestTitle(text: string) {
 
 export const FeaturesSection = () => {
   const { catalog, loading, error, load } = useAudioCatalog();
-  const latest5 = (catalog?.latest || []).slice(0, 5);
+  const dineFetriLatest: LatestCatalogItem = {
+    id: "1",
+    key: "dine-fetri-session-1",
+    title: "جلسه اول",
+    subtitle: "مقدمه",
+    section: "aghayed",
+    collection: "dine-fetri",
+    collectionTitle: "دین فطری",
+  };
+  const latest5 = [
+    dineFetriLatest,
+    ...(catalog?.latest || []),
+  ].slice(0, 5);
   const { goTo } = useSheetNav();
 
   useEffect(() => {

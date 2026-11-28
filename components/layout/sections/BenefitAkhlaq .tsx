@@ -24,6 +24,7 @@ import {
   formatSessionTitle,
   normalizeSessionTitle,
   normalizeBeliefTopic,
+  persianOrdinal,
   toPersianDigits,
   toDownloadUrl,
   toPdfViewUrl,
@@ -50,6 +51,29 @@ const AghayedSkeleton = () => (
   </div>
 );
 
+type DineFetriSession = {
+  id: string;
+  number: number;
+  title: string;
+  audios: Array<{ id: string; title: string; url: string }>;
+};
+
+const DINE_FETRI_CACHE_KEY = "bavarmandan-dine-fetri-v1";
+
+function hasValidDineFetriAudio(sessions: DineFetriSession[]) {
+  const expires = sessions
+    .flatMap((session) => session.audios)
+    .map((audio) => {
+      try {
+        return Number(new URL(audio.url).searchParams.get("expires"));
+      } catch {
+        return 0;
+      }
+    });
+
+  return expires.length > 0 && expires.every((value) => value * 1000 > Date.now() + 60 * 60 * 1000);
+}
+
 export const BenefitAkhlaq = () => {
   const SHEET_ID = "akhlagh";
 
@@ -61,6 +85,9 @@ export const BenefitAkhlaq = () => {
   );
   // the lessons of the other topics are collapsible rows; a "latest" click opens the one it points at
   const [openTopicSessions, setOpenTopicSessions] = useState<string[]>([]);
+  const [dineFetriSessions, setDineFetriSessions] = useState<DineFetriSession[]>([]);
+  const [dineFetriLoading, setDineFetriLoading] = useState(false);
+  const [dineFetriError, setDineFetriError] = useState("");
 
   const { current, isPlaying, play, notifyLessonSoon } = useAudioPlayer();
   const { target, clear } = useSheetNav();
@@ -127,6 +154,53 @@ export const BenefitAkhlaq = () => {
     if (!open) return;
     load(true);
   }, [open, load]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let hasCachedSessions = false;
+
+    try {
+      const cached = JSON.parse(
+        window.localStorage.getItem(DINE_FETRI_CACHE_KEY) || "null"
+      ) as { sessions?: DineFetriSession[] } | null;
+      if (cached?.sessions && hasValidDineFetriAudio(cached.sessions)) {
+        hasCachedSessions = true;
+        setDineFetriSessions(cached.sessions);
+      }
+    } catch {
+      window.localStorage.removeItem(DINE_FETRI_CACHE_KEY);
+    }
+
+    setDineFetriLoading(!hasCachedSessions);
+    setDineFetriError("");
+
+    fetch("/api/dine-fetri", { signal: controller.signal, cache: "no-store" })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data?.error || "دریافت جلسات ممکن نشد.");
+        const sessions = Array.isArray(data?.sessions) ? data.sessions : [];
+        setDineFetriSessions(sessions);
+        if (hasValidDineFetriAudio(sessions)) {
+          window.localStorage.setItem(
+            DINE_FETRI_CACHE_KEY,
+            JSON.stringify({ sessions })
+          );
+        }
+      })
+      .catch((fetchError) => {
+        if (fetchError instanceof DOMException && fetchError.name === "AbortError") return;
+        if (!hasCachedSessions) {
+          setDineFetriError(
+            fetchError instanceof Error ? fetchError.message : "دریافت جلسات ممکن نشد."
+          );
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setDineFetriLoading(false);
+      });
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     if (!target) return;
@@ -452,6 +526,101 @@ export const BenefitAkhlaq = () => {
                       </div>
                     </div>
                   </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="fitri-religion" className="sd-group">
+                <AccordionTrigger className="sd-toggle">دین فطری</AccordionTrigger>
+                <AccordionContent className="sd-group-body">
+                  {dineFetriLoading ? (
+                    <div className="py-6 text-center text-muted-foreground">
+                      در حال دریافت جلسات...
+                    </div>
+                  ) : dineFetriError ? (
+                    <div className="py-6 text-center text-muted-foreground">
+                      {dineFetriError}
+                    </div>
+                  ) : (
+                    <SessionList
+                      multi
+                      value={openTopicSessions}
+                      onValueChange={setOpenTopicSessions}
+                    >
+                      {dineFetriSessions.map((session) => {
+                        const itemId = `audio-akhlagh-fitri-${session.id}`;
+                        const sessionTitle = `جلسه ${persianOrdinal(session.number)}`;
+
+                        return (
+                          <SessionRow
+                            id={itemId}
+                            key={session.id}
+                            multi
+                            value={itemId}
+                            node={toPersianDigits(session.number)}
+                            title={toPersianDigits(sessionTitle)}
+                            playing={playingAttr(current, isPlaying, itemId)}
+                          >
+                            <div className="space-y-5 text-center">
+                              <p className="text-lg font-bold text-primary">
+                                {toPersianDigits(session.title)}
+                              </p>
+                              <p className="font-bold text-primary">
+                                حجت‌الاسلام والمسلمین سید هادی عظیمی
+                              </p>
+
+                              {session.audios.map((audio) => {
+                                const streamUrl = toStreamableUrl(audio.url);
+                                const playerTitle = `${sessionTitle} - ${session.title}`;
+
+                                return (
+                                  <div className="lesson-audio-card" key={audio.id}>
+                                    <p className="lesson-audio-title">
+                                      <span>{toPersianDigits(audio.title)}</span>
+                                      <Headphones className="sd-headphone" aria-hidden="true" />
+                                      <SoundWave />
+                                    </p>
+
+                                    <div className="lesson-action-row">
+                                      <a
+                                        className="lesson-download-action"
+                                        href={toDownloadUrl(audio.url)}
+                                        download={`${playerTitle}.mp3`}
+                                        rel="noopener noreferrer"
+                                      >
+                                        <span>دانلود صوت</span>
+                                        <Download aria-hidden="true" />
+                                      </a>
+
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          play({
+                                            title: playerTitle,
+                                            url: streamUrl,
+                                            description: "دین فطری",
+                                            segmentMode: "full",
+                                            navTarget: {
+                                              sheetId: "akhlagh",
+                                              accordionValue: "fitri-religion",
+                                              itemDomId: itemId,
+                                            },
+                                          })
+                                        }
+                                        className="lesson-primary-action"
+                                      >
+                                        <span>پخش</span>
+                                        <Play aria-hidden="true" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </SessionRow>
+                        );
+                      })}
+                    </SessionList>
+                  )}
                 </AccordionContent>
               </AccordionItem>
 
